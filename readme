@@ -40,4 +40,5 @@ autotrade backtest --set B --synthetic
 - [戦略仮説 v1](docs/HYPOTHESIS.md)
 - [バックテスト設計](docs/BACKTEST_DESIGN.md)
 - [ローカルで別ウィンドウを開く](docs/LOCAL_DEV.md)
+- [画面レイアウト（左フォルダ / 右チャット）](docs/LAYOUT.md)
 - [Secrets（APIキー）](secrets/README.md)

@@ -1,0 +1,9 @@
+{
+  // Editor layout: Explorer left, editor center, Agent/Chat right.
+  // In Cursor, sideBar "left" maps to Editor layout (not Agent layout).
+  "workbench.sideBar.location": "left",
+  "workbench.activityBar.location": "default",
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.editor.openSideBySideDirection": "right",
+  "explorer.autoReveal": true
+}
