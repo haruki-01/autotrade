@@ -1,1 +1,16 @@
+# autotrade
 
+Bybit BTC-USDT の自動売買 bot（研究〜実運用）。
+
+## いまの方針
+
+- 1本の bot で「仮説 → バックテスト → デモ → 少額本番」を通す
+- UI なし（ログと数値で管理）
+- 時間足: **日足=全体トレンド / 4時間=現在トレンド / 15分=エントリー**
+
+## ドキュメント
+
+- [全体プラン](docs/PROJECT_PLAN.md)
+- [戦略仮説 v1](docs/HYPOTHESIS.md)
+- [バックテスト設計](docs/BACKTEST_DESIGN.md)
+- [Secrets（APIキー）](secrets/README.md)
