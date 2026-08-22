@@ -16,7 +16,8 @@
 | バックテスト引擎 | **コード完了** | 手数料・スリッページ込みシミュレータ |
 | メトリクス/合否 | **コード完了** | DD・期待値・最低トレード数ゲート |
 | 実データ Set B | **実施済み・FAIL** | 2024年・Binance Vision。詳細は `docs/BACKTEST_RESULTS.md` |
-| 仮説カタログ | **完了** | 公開情報ベースの検証候補 20本超。`docs/HYPOTHESIS_CATALOG.md` |
+| 仮説カタログ | **完了→v2** | 歪み起点に再編。`docs/HYPOTHESIS_CATALOG.md` |
+| 歪み・優位の前提 | **完了** | `docs/MARKET_EDGE_MAP.md`（思想・歪みマップ・検証順） |
 | 合成データでの動作確認 | **完了** | `--synthetic` でパイプライン通確認済み |
 | デモ注文（testnet） | **未着手** | |
 | 本番執行 | **未着手** | |
@@ -58,7 +59,7 @@ autotrade backtest --set B --synthetic
 3. 履歴の長さは Bybit 側の保持範囲に依存（足りなければ期間を分割して取得）
 
 → **過去検証（バックテスト）用データとしてそのまま使える。**  
-　Set B は実施済み（FAIL）。次は仮説カタログの優先5本を1本ずつ再検証。
+　Set B は実施済み（FAIL）。次は `MARKET_EDGE_MAP.md` の L-COST → L-MOM-VOL → L-BREAK。
 
 ---
 
@@ -81,15 +82,18 @@ autotrade backtest --set B --synthetic
 - 大量パラメータ探索はしない
 - 別ファミリー（ブレイク、レジーム、イグジット変更）は `docs/HYPOTHESIS_CATALOG.md` の優先5本から1本ずつ
 
-### Step A2 — 仮説カタログから再スクリーニング（いまここ）
+### Step A2 — 歪み起点の再設計（いまここ）
 
-v1 は Set B FAIL。次はカタログの優先バッチ:
+正本: `docs/MARKET_EDGE_MAP.md`
 
-1. H22 固定利確をやめる（v1と1点差）
-2. H07 ATR損切り
-3. H06 ADXレジーム
-4. H02 Donchian 20/10
-5. H21 ロングオンリー
+思想: 勝つ = 歪みの特定 × 他者より上手く取る − 費用。  
+v1 FAIL の主因仮説: 固定利確がトレンドの大勝ちを切り、緩い押し目が費用負け。
+
+次の実装バッチ:
+
+1. **L-COST** 費用ゲート（取引しない優位）
+2. **L-MOM-VOL** ボラ調整トレンド・トレール利確（固定%廃止）
+3. **L-BREAK** Donchian系（押し目を捨てる別ファミリー）
 
 ### Step B — 執行レイヤ（demo）
 

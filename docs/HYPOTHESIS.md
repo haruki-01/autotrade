@@ -140,4 +140,4 @@ v1の仮ルール（どちらか先に到達）:
 
 具体的なデータ期間・コスト・合否は [BACKTEST_DESIGN.md](./BACKTEST_DESIGN.md) を正とする。
 
-v1 は 2024 Set B で FAIL。代替・改良候補は [HYPOTHESIS_CATALOG.md](./HYPOTHESIS_CATALOG.md)。
+v1 は 2024 Set B で FAIL。敗因の構造整理と次ロジックは [MARKET_EDGE_MAP.md](./MARKET_EDGE_MAP.md) / [HYPOTHESIS_CATALOG.md](./HYPOTHESIS_CATALOG.md)。

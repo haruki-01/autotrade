@@ -121,7 +121,8 @@ Bybit の BTC-USDT で、**勝てる自動売買 bot を1本**つくり、
 ## 11. 関連ドキュメント
 
 - [実装プラン（現状と次タスク）](./IMPLEMENTATION_PLAN.md)
+- [市場の歪みと優位性（最上位前提）](./MARKET_EDGE_MAP.md)
 - [仮説 v1](./HYPOTHESIS.md)
-- [仮説カタログ](./HYPOTHESIS_CATALOG.md)
+- [仮説カタログ v2](./HYPOTHESIS_CATALOG.md)
 - [バックテスト設計](./BACKTEST_DESIGN.md)
 - [Secrets](../secrets/README.md)
