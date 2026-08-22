@@ -1,0 +1,220 @@
+schema_version: 1
+runs:
+  - run_id: "20260822-001"
+    recorded_at: "2026-08-22T04:17:21Z"
+    status: smoke
+    hypothesis:
+      id: H01
+      logic_id: mtf_ema_pullback_v1
+      name: MTF EMA押し目 v1
+      distortion_ids: []
+      one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り（歪み未タグの初期版）
+    logic:
+      daily: "EMA50 方向フィルタ"
+      h4: "EMA20 方向フィルタ"
+      m15_entry: "EMA20 押し目 + 陽線/陰線"
+      exit_stop: "固定 1.0%"
+      exit_tp: "固定 1.5%"
+      leverage: 3
+      max_positions: 1
+    test:
+      set: B
+      eval_start: "2024-01-01"
+      eval_end: "2024-12-31"
+      bars: 35041
+      data_source: synthetic
+      synthetic: true
+      config: configs/backtest_v1.yaml
+      git_commit: null
+    results:
+      trades: 397
+      avg_trade_pnl: 235.87
+      total_return_pct: 841.34
+      monthly_return_pct_approx: 20.56
+      max_drawdown_pct: 11.67
+      win_rate_pct: 66.75
+      payoff_ratio: 1.28
+      total_fees: 19026.47
+      long_trades: 215
+      short_trades: 182
+      final_equity: 94133.75
+      gate_pass: true
+      gate_failures: []
+    artifacts:
+      dir: artifacts/backtests/20260822T041721Z_setB
+      metrics_json: artifacts/backtests/20260822T041721Z_setB/metrics.json
+    learnings:
+      one_liner: 合成GBMデータではPASSするが採用判断不可
+      summary: パイプライン動作確認用。相場構造を反映しないため成績は参考にしない。
+      structural: []
+      keep:
+        - マルチTFマージの実装パス
+      discard:
+        - 合成データでのゲートPASSを意思決定に使うこと
+    next_actions:
+      - 実データで Set B を再実行
+    notes: Cloud 環境での smoke test
+    entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-smoke.md
+
+  - run_id: "20260822-002"
+    recorded_at: "2026-08-22T05:00:37Z"
+    status: fail
+    hypothesis:
+      id: H01
+      logic_id: mtf_ema_pullback_v1
+      name: MTF EMA押し目 v1
+      distortion_ids: []
+      one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り
+    logic:
+      daily: "EMA50 方向フィルタ"
+      h4: "EMA20 方向フィルタ"
+      m15_entry: "EMA20 押し目 + 陽線/陰線"
+      exit_stop: "固定 1.0%"
+      exit_tp: "固定 1.5%"
+      leverage: 3
+      max_positions: 1
+    test:
+      set: B
+      eval_start: "2024-01-01"
+      eval_end: "2024-12-31"
+      bars: 35136
+      data_source: binance_vision
+      synthetic: false
+      config: configs/backtest_v1.yaml
+      git_commit: null
+    results:
+      trades: 594
+      avg_trade_pnl: -3.10
+      total_return_pct: -43.28
+      monthly_return_pct_approx: -4.61
+      max_drawdown_pct: 49.37
+      win_rate_pct: 40.24
+      payoff_ratio: 1.38
+      total_fees: 4978.92
+      long_trades: 390
+      short_trades: 204
+      final_equity: 5671.66
+      gate_pass: false
+      gate_failures:
+        - expectancy
+        - drawdown
+    artifacts:
+      dir: artifacts/backtests/20260822T050037Z_setB
+      metrics_json: artifacts/backtests/20260822T050037Z_setB/metrics.json
+    learnings:
+      one_liner: コスト込み2024年で期待値マイナス。デモ/本番不可。
+      summary: 実BTC足でトレード過多かつ平均損益がマイナス。固定利確はトレンドの大勝ちを切る可能性。
+      structural:
+        - 歪み（E1トレンド）を取る設計なのに固定1.5%利確で利幅を制限
+        - 押し目条件が緩く回転が増え、手数料負け（E8）
+        - EMAは強制注文の歪みを直接見ていない
+      keep:
+        - 日足/4H/15m の役割分担という検証枠組み
+        - 同一エンジンでのコスト込み検証
+      discard:
+        - 固定%損切/利確のまま本番へ
+        - このエントリー条件のままパラメータだけ大量探索
+    next_actions:
+      - L-COST 費用ゲート
+      - L-MOM-VOL 固定利確廃止 + ATR
+      - L-BREAK Donchian 別ファミリー
+    notes: Binance Vision spot。本番前に Bybit 足で再確認推奨。
+    entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822.md
+
+  - run_id: "20260822-003"
+    recorded_at: "2026-08-22T05:18:00Z"
+    status: proposed
+    hypothesis:
+      id: L-COST
+      logic_id: cost_gate_v1
+      name: 費用ゲート
+      distortion_ids:
+        - E8
+      one_liner: 推定値幅が往復コスト+余裕未満の取引を捨て、過剰取引の負の歪みを回避
+    logic:
+      change_from: H01
+      rule: "ATRから必要値動きを見積もり、fee+slip下回りならスキップ"
+    test:
+      set: B
+      eval_start: null
+      eval_end: null
+      bars: null
+      data_source: null
+      synthetic: null
+      config: configs/backtest_v1.yaml
+      git_commit: null
+    results: {}
+    artifacts: {}
+    learnings:
+      summary: 未検証。MARKET_EDGE_MAP 優先バッチ #1
+    next_actions:
+      - 実装後 Set B で H01 と比較
+    notes: 仮説登録のみ
+    entry_doc: null
+
+  - run_id: "20260822-004"
+    recorded_at: "2026-08-22T05:18:00Z"
+    status: proposed
+    hypothesis:
+      id: L-MOM-VOL
+      logic_id: vol_scaled_trend_v1
+      name: ボラ調整トレンド・トレール
+      distortion_ids:
+        - E1
+        - E6
+      one_liner: トレンド継続を取り、固定利確をやめATRでサイズと退出
+    logic:
+      change_from: H01
+      daily: "SMA200 または Donchian 状態"
+      h4: "ADX>20 または Supertrend"
+      m15: "執行のみ"
+      exit: "ATRトレール、固定%利確なし"
+    test:
+      set: B
+      eval_start: null
+      eval_end: null
+      bars: null
+      data_source: null
+      synthetic: null
+      config: null
+      git_commit: null
+    results: {}
+    artifacts: {}
+    learnings:
+      summary: 未検証。v1 FAIL の構造修正候補本命
+    next_actions:
+      - L-COST 後に実装
+    notes: 仮説登録のみ
+    entry_doc: null
+
+  - run_id: "20260822-005"
+    recorded_at: "2026-08-22T05:18:00Z"
+    status: proposed
+    hypothesis:
+      id: L-BREAK
+      logic_id: donchian_20_10_v1
+      name: Donchian 20/10 ブレイク
+      distortion_ids:
+        - E1
+      one_liner: 押し目を捨て、N日高値更新でトレンドに乗る
+    logic:
+      entry: "日足20日高値更新"
+      exit: "10日安値割れ"
+      long_only: "比較用"
+    test:
+      set: B
+      eval_start: null
+      eval_end: null
+      bars: null
+      data_source: null
+      synthetic: null
+      config: null
+      git_commit: null
+    results: {}
+    artifacts: {}
+    learnings:
+      summary: 未検証。別ファミリー
+    next_actions:
+      - L-MOM-VOL 後に実装
+    notes: 仮説登録のみ
+    entry_doc: null

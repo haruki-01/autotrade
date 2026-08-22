@@ -19,6 +19,7 @@
 | 仮説カタログ | **完了→v2** | 歪み起点に再編。`docs/HYPOTHESIS_CATALOG.md` |
 | 歪み・優位の前提 | **完了** | `docs/MARKET_EDGE_MAP.md`（思想・歪みマップ・検証順） |
 | 合成データでの動作確認 | **完了** | `--synthetic` でパイプライン通確認済み |
+| 研究ログ基盤 | **完了** | `docs/research/` — 仮説・ロジック・結果・知見の蓄積 |
 | デモ注文（testnet） | **未着手** | |
 | 本番執行 | **未着手** | |
 | Dashboard / UI | **対象外（後回し）** | |
@@ -36,7 +37,13 @@ autotrade backtest --set B
 
 # Cloud等で API が使えないとき（動作確認のみ・成績は参考にしない）
 autotrade backtest --set B --synthetic
+
+# 研究ログ一覧を再生成（registry.yaml 手動編集後）
+autotrade research refresh-index
 ```
+
+バックテスト実行後、デフォルトで `docs/research/registry.yaml` と `entries/` に追記される。  
+詳細は [docs/research/README.md](./research/README.md) と [INDEX.md](./research/INDEX.md)。
 
 ---
 
@@ -80,7 +87,7 @@ autotrade backtest --set B --synthetic
 - エントリー条件を **1点だけ** 変えて再検証
 - 時間足の役割（1D/4H/15m）は変えない
 - 大量パラメータ探索はしない
-- 別ファミリー（ブレイク、レジーム、イグジット変更）は `docs/HYPOTHESIS_CATALOG.md` の優先5本から1本ずつ
+- 別ファミリーは `docs/MARKET_EDGE_MAP.md` / `HYPOTHESIS_CATALOG.md` の優先バッチから1本ずつ
 
 ### Step A2 — 歪み起点の再設計（いまここ）
 

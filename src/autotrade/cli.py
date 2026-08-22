@@ -15,6 +15,7 @@ from autotrade.data.synthetic import write_synthetic_cache
 from autotrade.backtest.engine import run_backtest, trades_to_frame
 from autotrade.backtest.metrics import compute_metrics, metrics_to_dict, monthly_returns
 from autotrade.strategy.mtf_trend import StrategyParams, prepare_frames
+from autotrade.research.log import record_backtest_run, refresh_index
 
 
 def _load_or_fetch_frames(
@@ -97,6 +98,17 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Use synthetic data if cache missing / for offline runs",
     )
+    bt.add_argument("--hypothesis-id", default="H01", help="Hypothesis ID for research log")
+    bt.add_argument("--logic-id", default="mtf_ema_pullback_v1", help="Logic variant ID")
+    bt.add_argument(
+        "--no-research-log",
+        action="store_true",
+        help="Do not append to docs/research registry",
+    )
+
+    res = sub.add_parser("research", help="Research knowledge base")
+    res_sub = res.add_subparsers(dest="research_command", required=True)
+    res_sub.add_parser("refresh-index", help="Regenerate docs/research/INDEX.md from registry")
 
     return p.parse_args(argv)
 
@@ -186,6 +198,21 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     }
     (out_dir / "metrics.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
+    if not args.no_research_log:
+        learnings = _default_learnings(hypothesis_id=args.hypothesis_id, gate_pass=metrics.gate_pass, synthetic=bool(args.synthetic) or source == "synthetic")
+        run = record_backtest_run(
+            payload=payload,
+            artifacts_dir=out_dir,
+            hypothesis_id=args.hypothesis_id,
+            logic_id=args.logic_id,
+            hypothesis_name=_hypothesis_name(args.hypothesis_id),
+            distortion_ids=_distortion_ids(args.hypothesis_id),
+            logic_summary=_logic_summary(cfg, args.logic_id),
+            learnings=learnings,
+            next_actions=_next_actions(args.hypothesis_id, metrics.gate_pass),
+        )
+        print(f"Research log: {run['entry_doc']} (run_id={run['run_id']})")
+
     print(json.dumps(payload, indent=2))
     print(f"\nArtifacts: {out_dir}")
     print(f"GATE: {'PASS' if metrics.gate_pass else 'FAIL'}")
@@ -195,12 +222,84 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     return 0 if metrics.gate_pass or args.set != "B" else 2
 
 
+def _hypothesis_name(hypothesis_id: str) -> str:
+    names = {
+        "H01": "MTF EMA押し目 v1",
+        "L-COST": "費用ゲート",
+        "L-MOM-VOL": "ボラ調整トレンド・トレール",
+        "L-BREAK": "Donchian 20/10 ブレイク",
+    }
+    return names.get(hypothesis_id, hypothesis_id)
+
+
+def _distortion_ids(hypothesis_id: str) -> list[str]:
+    mapping = {
+        "L-COST": ["E8"],
+        "L-MOM-VOL": ["E1", "E6"],
+        "L-BREAK": ["E1"],
+    }
+    return mapping.get(hypothesis_id, [])
+
+
+def _logic_summary(cfg, logic_id: str) -> dict:
+    if logic_id == "mtf_ema_pullback_v1":
+        return {
+            "daily": f"EMA{cfg.daily_ema} 方向フィルタ",
+            "h4": f"EMA{cfg.h4_ema} 方向フィルタ",
+            "m15_entry": f"EMA{cfg.m15_ema} 押し目 + 陽線/陰線",
+            "exit_stop": f"固定 {cfg.stop_loss_pct}%",
+            "exit_tp": f"固定 {cfg.take_profit_pct}%",
+            "leverage": cfg.leverage,
+            "max_positions": 1,
+        }
+    return {"logic_id": logic_id}
+
+
+def _default_learnings(*, hypothesis_id: str, gate_pass: bool, synthetic: bool) -> dict:
+    if synthetic:
+        return {
+            "one_liner": "合成データ smoke。採用判断に使わない。",
+            "summary": "パイプライン動作確認。",
+        }
+    if hypothesis_id == "H01" and not gate_pass:
+        return {
+            "one_liner": "コスト込みで期待値マイナス",
+            "summary": "固定利確と緩い押し目で費用負けの可能性。",
+            "structural": [
+                "トレンド狙いなのに固定利確で大勝ちを切る",
+                "押し目条件が緩く回転が増える",
+            ],
+            "discard": ["固定%利確のまま本番"],
+        }
+    if gate_pass:
+        return {"summary": "Set B ゲート合格。Set C で耐久確認へ。"}
+    return {"summary": "ゲート不合格。知見を entries に追記すること。"}
+
+
+def _next_actions(hypothesis_id: str, gate_pass: bool) -> list[str]:
+    if gate_pass:
+        return ["Set C で耐久確認", "demo 執行の設計"]
+    if hypothesis_id == "H01":
+        return ["L-COST", "L-MOM-VOL", "L-BREAK"]
+    return ["MARKET_EDGE_MAP の優先バッチを参照"]
+
+
+def cmd_research(args: argparse.Namespace) -> int:
+    if args.research_command == "refresh-index":
+        refresh_index()
+        print("Updated docs/research/INDEX.md")
+        return 0
+    return 1
+
+
 def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     if args.command == "fetch-data":
         raise SystemExit(cmd_fetch(args))
     if args.command == "backtest":
         raise SystemExit(cmd_backtest(args))
+    if args.command == "research":
+        raise SystemExit(cmd_research(args))
     raise SystemExit(1)
 
 
