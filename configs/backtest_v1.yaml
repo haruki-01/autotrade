@@ -1,0 +1,38 @@
+symbol: BTCUSDT
+category: linear
+base_url: https://api.bybit.com
+
+# Virtual account
+initial_equity: 10000.0
+leverage: 3.0
+risk_per_trade_pct: 1.0
+
+# Indicators (hypothesis v1)
+daily_ema: 50
+h4_ema: 20
+m15_ema: 20
+
+# Exits (percent of entry price)
+stop_loss_pct: 1.0
+take_profit_pct: 1.5
+
+# Costs
+fee_rate_per_side: 0.00055
+slippage_pct_per_side: 0.0002
+
+# Data windows (UTC dates, inclusive start / exclusive end for clarity in code)
+# A: smoke / sanity, B: primary gate, C: recent holdout
+sets:
+  A:
+    start: "2023-01-01"
+    end: "2023-12-31"
+  B:
+    start: "2024-01-01"
+    end: "2024-12-31"
+  C:
+    start: "2025-01-01"
+    end: "2026-08-22"
+
+# Gate thresholds (BACKTEST_DESIGN)
+min_trades: 100
+max_drawdown_pct: 20.0

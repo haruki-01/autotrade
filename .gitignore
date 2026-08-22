@@ -21,3 +21,16 @@ secrets/**/bybit.env
 *.swp
 .idea/
 .vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Market data cache & run artifacts
+data/cache/
+artifacts/
