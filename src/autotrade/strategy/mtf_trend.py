@@ -44,13 +44,18 @@ def prepare_frames(
     For a 15m bar at time T, we use the latest fully closed higher-TF candle
     whose start is strictly before T (no lookahead on the current forming HTF bar).
     """
-    d = daily.copy()
+    def _norm(df: pd.DataFrame) -> pd.DataFrame:
+        out = df.copy()
+        out.index = pd.to_datetime(out.index, utc=True).as_unit("ns")
+        return out.sort_index()
+
+    d = _norm(daily)
     d["daily_bias"] = _trend_from_ema(d["close"], params.daily_ema)
 
-    h = h4.copy()
+    h = _norm(h4)
     h["h4_bias"] = _trend_from_ema(h["close"], params.h4_ema)
 
-    m = m15.copy()
+    m = _norm(m15)
     m["m15_ema"] = ema(m["close"], params.m15_ema)
     m["bullish"] = m["close"] > m["open"]
     m["bearish"] = m["close"] < m["open"]

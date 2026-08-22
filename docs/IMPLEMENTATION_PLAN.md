@@ -11,10 +11,11 @@
 | BT設計 | **完了** | コスト・期間分割・合否（`docs/BACKTEST_DESIGN.md`） |
 | Secrets配置 | **完了** | `secrets/demo` / `secrets/live` |
 | データ取得（Bybit） | **コード完了** | `src/autotrade/data/bybit.py` + CLI `fetch-data` |
+| データ取得フォールバック | **完了** | Bybit 403時は Binance Vision 実足（研究用） |
 | MTFシグナル | **コード完了** | `src/autotrade/strategy/mtf_trend.py` |
 | バックテスト引擎 | **コード完了** | 手数料・スリッページ込みシミュレータ |
 | メトリクス/合否 | **コード完了** | DD・期待値・最低トレード数ゲート |
-| 実BybitデータでのBT | **未完了（環境依存）** | Cloud から Bybit が国制限403。**手元PCで実行が必要** |
+| 実データ Set B | **実施済み・FAIL** | 2024年・Binance Vision。詳細は `docs/BACKTEST_RESULTS.md` |
 | 合成データでの動作確認 | **完了** | `--synthetic` でパイプライン通確認済み |
 | デモ注文（testnet） | **未着手** | |
 | 本番執行 | **未着手** | |

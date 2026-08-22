@@ -10,16 +10,20 @@ import pandas as pd
 
 from autotrade.config import load_config
 from autotrade.data.bybit import BybitPublicClient, ensure_data, load_ohlcv
+from autotrade.data.binance_vision import BinanceVisionClient, ensure_binance_data
 from autotrade.data.synthetic import write_synthetic_cache
 from autotrade.backtest.engine import run_backtest, trades_to_frame
 from autotrade.backtest.metrics import compute_metrics, metrics_to_dict, monthly_returns
 from autotrade.strategy.mtf_trend import StrategyParams, prepare_frames
 
 
-def _load_or_fetch_frames(cfg, set_name: str, *, force: bool, synthetic: bool) -> dict:
+def _load_or_fetch_frames(
+    cfg, set_name: str, *, force: bool, synthetic: bool
+) -> tuple[dict, str]:
+    """Return (frames, data_source). source is synthetic|bybit|binance_vision."""
     start, end = _set_bounds(cfg, set_name)
     cache = Path("data/cache")
-    frames = {}
+    frames: dict = {}
     if synthetic:
         write_synthetic_cache(
             cache,
@@ -31,13 +35,14 @@ def _load_or_fetch_frames(cfg, set_name: str, *, force: bool, synthetic: bool) -
         for interval in ("1d", "4h", "15m"):
             path = cache / f"{cfg.symbol}_{cfg.category}_{interval}_{start}_{end}.csv"
             frames[interval] = load_ohlcv(path)
-        return frames
+        return frames, "synthetic"
 
-    client = BybitPublicClient(base_url=cfg.base_url)
+    # Prefer Bybit (target venue). Fall back to Binance Vision when geo-blocked.
+    bybit_client = BybitPublicClient(base_url=cfg.base_url)
     try:
         for interval in ("1d", "4h", "15m"):
             frames[interval] = ensure_data(
-                client,
+                bybit_client,
                 symbol=cfg.symbol,
                 category=cfg.category,
                 interval=interval,
@@ -46,16 +51,27 @@ def _load_or_fetch_frames(cfg, set_name: str, *, force: bool, synthetic: bool) -
                 cache_dir=cache,
                 force=force,
             )
-    except Exception as exc:  # noqa: BLE001
+        return frames, "bybit"
+    except Exception as bybit_exc:  # noqa: BLE001
         print(
-            f"Bybit fetch failed ({exc}).\n"
-            "This environment may block exchange APIs by region.\n"
-            "Re-run with --synthetic for an offline smoke test, "
-            "or run fetch-data from your local machine.",
+            f"Bybit fetch failed ({bybit_exc}).\n"
+            "Falling back to Binance Vision public BTCUSDT klines for research.\n"
+            "Note: not identical to Bybit linear; re-run on Bybit locally before live.",
             file=sys.stderr,
         )
-        raise
-    return frames
+
+    vision = BinanceVisionClient()
+    for interval in ("1d", "4h", "15m"):
+        frames[interval] = ensure_binance_data(
+            vision,
+            symbol=cfg.symbol,
+            interval=interval,
+            start=start,
+            end=end,
+            cache_dir=cache,
+            force=force,
+        )
+    return frames, "binance_vision"
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -99,9 +115,10 @@ def cmd_fetch(args: argparse.Namespace) -> int:
     for name in names:
         start, end = _set_bounds(cfg, name)
         print(f"Fetching set {name}: {start} → {end}")
-        frames = _load_or_fetch_frames(
+        frames, source = _load_or_fetch_frames(
             cfg, name, force=args.force, synthetic=args.synthetic
         )
+        print(f"  data_source: {source}")
         for interval, df in frames.items():
             print(f"  {interval}: {len(df)} bars")
     return 0
@@ -109,7 +126,7 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
 def cmd_backtest(args: argparse.Namespace) -> int:
     cfg = load_config(args.config)
-    frames = _load_or_fetch_frames(
+    frames, source = _load_or_fetch_frames(
         cfg, args.set, force=args.force_fetch, synthetic=args.synthetic
     )
 
@@ -162,7 +179,8 @@ def cmd_backtest(args: argparse.Namespace) -> int:
         "eval_start": cfg.sets[args.set].start,
         "eval_end": cfg.sets[args.set].end,
         "bars": len(prepared),
-        "synthetic": bool(args.synthetic),
+        "synthetic": bool(args.synthetic) or source == "synthetic",
+        "data_source": source,
         "metrics": metrics_to_dict(metrics),
         "final_equity": result.final_equity,
     }
@@ -172,7 +190,7 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     print(f"\nArtifacts: {out_dir}")
     print(f"GATE: {'PASS' if metrics.gate_pass else 'FAIL'}")
     # Synthetic runs are smoke tests only — do not fail CI on strategy gate
-    if args.synthetic:
+    if args.synthetic or source == "synthetic":
         return 0
     return 0 if metrics.gate_pass or args.set != "B" else 2
 
