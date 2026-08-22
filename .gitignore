@@ -20,7 +20,8 @@ secrets/**/bybit.env
 .DS_Store
 *.swp
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # Python
 __pycache__/
