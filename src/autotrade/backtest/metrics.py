@@ -45,7 +45,10 @@ def compute_metrics(
     n = len(trades)
     total_ret = (result.final_equity / result.initial_equity - 1.0) * 100.0
 
-    if result.equity_curve.index.size >= 2:
+    if result.final_equity <= 0:
+        # Account wiped out — a compounding rate is undefined, not complex.
+        monthly = -100.0
+    elif result.equity_curve.index.size >= 2:
         days = (result.equity_curve.index[-1] - result.equity_curve.index[0]).total_seconds() / 86400.0
         months = max(days / 30.4375, 1e-9)
         monthly = ((result.final_equity / result.initial_equity) ** (1 / months) - 1.0) * 100.0
