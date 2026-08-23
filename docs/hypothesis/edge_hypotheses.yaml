@@ -1,0 +1,178 @@
+schema_version: 1
+# 検証すべき仮説リスト（機械可読）。正本の説明は EDGE_HYPOTHESES.md
+# status: proposed | ready | in_eval | fail | pass | holdout_pass | holdout_fail | archived | blocked
+created: "2026-08-23"
+
+data_prereqs:
+  - id: DATA-OI
+    desc: Binance futures metrics（OI・上位長短比・全口座長短比・成行買売比、5分）
+    status: available
+  - id: DATA-FUND
+    desc: Binance futures fundingRate（8時間）
+    status: available
+  - id: DATA-PREM
+    desc: Binance futures premiumIndexKlines（1時間）
+    status: available
+  - id: DATA-PERP
+    desc: Binance perp klines（15分・成行買い出来高つき）
+    status: available
+  - id: DATA-LIQ
+    desc: 清算スナップショット
+    status: unavailable
+    note: 配布終了。EH-07 は OI 急減で代理する
+  - id: WORK-FUNDING-PNL
+    desc: バックテストへの funding 計上
+    status: todo
+    blocks: [EH-04, EH-10]
+
+hypotheses:
+  - id: EH-01
+    title: 建玉が増える突破だけが本物
+    direction: both
+    distortions: [E1, E7]
+    data: [DATA-OI]
+    priority: 1
+    status: proposed
+    claim: N日高値/安値の突破は OI 増加を伴うときだけ継続し、OI 減少の突破は買い戻し/解消なので戻る
+    unpriced_because: 新規資金の突破と解消の突破が価格チャートでは同じ形に見える
+    who_loses: 形だけで飛び乗る参加者（自分たちの L-BREAK を含む）
+    testable: OI増減で二分して先行リターン分布が有意に異なり、増加側のみ費用後EV>0
+    kill_when: 二群に差が出ない、または増加側でも費用後EV≤0
+    one_knob: 既存 Donchian 突破に OI 増減ゲートのみ追加
+
+  - id: EH-02
+    title: 現物が先に動いた時だけ乗る
+    direction: both
+    distortions: [E1]
+    data: [DATA-PERP]
+    priority: 2
+    status: proposed
+    claim: 同一15分足で現物リターンが先物リターンを上回る局面は現金主導で継続しやすい
+    unpriced_because: 先物だけを見る参加者には主導者が現物かレバかが見えない
+    who_loses: 先物チャートのみで順張りし、レバ主導の動きで清算される側
+    testable: (現物−先物)乖離の上位帯のみで費用後EV>0 かつ n>=100
+    kill_when: 乖離でグループ分けしても先行リターンが変わらない / 乖離が費用未満
+    one_knob: 既存入口に spot-perp 乖離ゲートのみ追加
+
+  - id: EH-03
+    title: プレミアム先行の上昇は続かない
+    direction: short
+    distortions: [E3, E7]
+    data: [DATA-PREM]
+    priority: 3
+    status: proposed
+    claim: 先物プレミアムが高位に張り付き現物上昇が伴わない上昇はショートが取れる
+    unpriced_because: その上昇がいくらのコストで買われているかは価格に出ない
+    who_loses: 高プレミアムを払って上を追う側
+    testable: プレミアム上位帯×現物非追随でショート、費用後EV>0 / DD<=20%
+    kill_when: トレンド中は高プレミアムが持続し下落しないケースが支配的
+    one_knob: 価格の失速確認を必須にしたうえで閾値1点
+
+  - id: EH-04
+    title: 保有コストが安いトレンドだけ伸びる
+    direction: both
+    distortions: [E3, E1]
+    data: [DATA-FUND, WORK-FUNDING-PNL]
+    priority: 4
+    status: blocked
+    blocked_by: WORK-FUNDING-PNL
+    claim: 資金調達が安い/受け取れる方向のトレンドは長寿命、高コスト側は短命
+    unpriced_because: 「極端＝反転」ではなくトレンド寿命に対するコスト非対称性を見ている
+    who_loses: 混み合った高コスト側で保有し資金調達と清算で削られる側
+    testable: 同一トレンドロジックを funding 高/低で二分し低コスト側のみ費用後EV>0
+    kill_when: funding を損益計上しても二群に差が出ない
+    one_knob: funding 水準ゲートのみ
+
+  - id: EH-05
+    title: 建玉の山＋高値更新失敗は落ちる
+    direction: short
+    distortions: [E7, E2]
+    data: [DATA-OI]
+    priority: 5
+    status: proposed
+    claim: OI高水準 かつ k本以内に高値更新失敗 かつ上位長短比が買い偏重なら下落しやすい
+    unpriced_because: 横ばいに見える価格の下にどれだけロングが積まれているかは価格に出ない
+    who_loses: 高値圏で建玉を積んだ高レバのロング
+    testable: 条件成立後の下方向リターンが無条件分布より有意に悪い / ショート費用後EV>0
+    kill_when: 建玉高位のまま上昇継続が支配的（トレンド逆張り死）
+    one_knob: 建玉高水準の定義のみ
+
+  - id: EH-06
+    title: 個人と上位が逆を向いたら上位側
+    direction: both
+    distortions: [E7]
+    data: [DATA-OI]
+    priority: 6
+    status: proposed
+    claim: 全口座長短比と上位トレーダー長短比が逆方向に乖離したとき上位側に付く
+    unpriced_because: 公開値だが多数側と資金量側のズレとして使う参加者は少ない
+    who_loses: 多数側に張った小口
+    testable: 乖離上位帯のみで費用後EV>0 かつ n>=100
+    kill_when: 乖離の符号と先行リターンが無相関 / 該当局面が年数回
+    caveat: Binance の参加者構成であり市場全体ではない
+
+  - id: EH-07
+    title: 建玉が吹き飛んだ直後は元の方向に戻る
+    direction: both
+    distortions: [E2]
+    data: [DATA-OI]
+    priority: 7
+    status: proposed
+    claim: OI急減＋大陽線/大陰線のあと、急変前のトレンド方向へ戻りやすい
+    unpriced_because: 清算の初動は速度勝負で取れない。終了判定は価格の髭では分からない
+    who_loses: 清算で強制的に降ろされた側
+    testable: OI急減イベント後の急変前方向リターン中央値が費用後プラス
+    kill_when: 遅れて入ると中央値ゼロ以下 / イベントが年10回未満
+    caveat: 清算スナップショット不在のため OI 代理
+
+  - id: EH-08
+    title: 静かなのに建玉が増える＝仕込み
+    direction: both
+    distortions: [E1, E6]
+    data: [DATA-OI]
+    priority: 8
+    status: proposed
+    claim: ボラ圧縮中に OI が継続増加した後のブレイクは通常より大きく伸びる
+    unpriced_because: 価格が動かない間の建玉増加は「ただのレンジ」に見える
+    who_loses: レンジと判断して逆張りしていた参加者
+    testable: 圧縮+OI増 と 圧縮のみ でブレイク後の伸びと費用後EVが有意に違う
+    kill_when: 二群に差がない / イベントが年10回未満
+    one_knob: OI増加の定義のみ
+
+  - id: EH-09
+    title: 高値更新しても成行買いが減る＝吸収
+    direction: short
+    distortions: [E1]
+    data: [DATA-OI]
+    priority: 9
+    status: proposed
+    claim: 価格が高値更新する一方で成行買い比率が低下しているとき反転しやすい
+    unpriced_because: 上昇中に買いの勢いが弱まるズレは価格・出来高だけでは見えない
+    who_loses: 高値更新で順張りする参加者
+    testable: 高値更新×成行買い比率下降でショートして費用後EV>0
+    kill_when: 傾きと先行リターンが無相関 / 強トレンドで踏まれ DD 超過
+    one_knob: 成行比率の傾き測定窓のみ
+
+  - id: EH-10
+    title: 資金調達がリセットされた継続は本物
+    direction: both
+    distortions: [E3, E1]
+    data: [DATA-FUND, WORK-FUNDING-PNL]
+    priority: 10
+    status: blocked
+    blocked_by: WORK-FUNDING-PNL
+    claim: 押し目後に資金調達が平常へ戻り構造が維持されていればトレンド再開
+    unpriced_because: 同じ形の押し目でも混み合いが解消したかは資金調達にしか出ない
+    who_loses: 混み合ったままの押し目を買って次の下落で清算される側
+    testable: 押し目継続ロジックを funding リセット有無で二分しリセット側のみEV>0
+    kill_when: 二群に差がない
+
+common_rules:
+  - ノブは1点だけ（フィルタの積み上げは DB-21 で失敗）
+  - Set B PASS だけで採用しない。必ず Set C holdout
+  - min_trades=100 は Set B（1年）の合計
+  - EMA は使わない / 足は15分以上
+  - 合成データで合否を出さない
+  - positioning は Binance 由来。Bybit 本番前に再確認
+
+eval_order: [EH-01, EH-02, EH-05, EH-03, EH-09, EH-08, EH-06, EH-07, EH-04, EH-10]

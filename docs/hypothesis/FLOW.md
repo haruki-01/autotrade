@@ -17,12 +17,18 @@
 | **③ 検証** | ロジック単位で formal eval | [craft/VALIDATION_FLOW.md](./craft/VALIDATION_FLOW.md) · `eval/` |
 | 規律 | 再現性・多重検定などの衛生 | [craft/RESEARCH_HYGIENE.md](./craft/RESEARCH_HYGIENE.md) |
 
+### 現在の検証待ちリスト（正本）
+
+**[EDGE_HYPOTHESES.md](./EDGE_HYPOTHESES.md)** — 建玉・資金調達・現物先物のズレを使う10本（EH-01〜EH-10）。  
+機械可読は [edge_hypotheses.yaml](./edge_hypotheses.yaml)。価格のみのカタログ系より優先する。
+
 ### ①の作り方（2系統・別ファイル）
 
 | 系統 | 何をするか | 文書 |
 |------|------------|------|
 | **A. 演繹（深い複合）** | 見落とし＋複合条件＋攻め方で①を書く | [craft/DEEP_COMPOSITE_SPOTS.md](./craft/DEEP_COMPOSITE_SPOTS.md)（地図は [spots/CATALOG.md](./spots/CATALOG.md)） |
 | **B. 帰納（データ逆算）** | 過去の伸びた局面から条件を逆算し①にする | [craft/REVERSE_DISCOVERY.md](./craft/REVERSE_DISCOVERY.md) · [spots/DISCOVERED_FROM_DATA.md](./spots/DISCOVERED_FROM_DATA.md) |
+| **C. 追加データ（価格外）** | 建玉・資金調達・現物先物のズレから①を書く | [EDGE_HYPOTHESES.md](./EDGE_HYPOTHESES.md) |
 
 ```text
 系統A or B で①を増やす（深いもの優先）

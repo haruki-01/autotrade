@@ -19,6 +19,11 @@
 
 \* formal: EV+/DD良・n不足。
 
+## 次に検証する10本（価格外データ）
+
+価格のみの族（ダブルボトム51本・4H系41本）は全滅したため、次は建玉・資金調達・現物先物のズレを使う。  
+正本: [../EDGE_HYPOTHESES.md](../EDGE_HYPOTHESES.md) / [../edge_hypotheses.yaml](../edge_hypotheses.yaml)
+
 ## 作成の次
 
 優先議論: ゲート n=100 を運用に合わせるか / 有望4H系の**15m執行化**（新カード）。  
