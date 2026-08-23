@@ -1,7 +1,7 @@
 ---
 id: DB-21
 title: "1H×上昇×鮮度×高値奪還（SPOT-001 学習合成）"
-status: ready
+status: fail
 primary_distortion: E1
 created: 2026-08-23
 updated: 2026-08-23
@@ -50,4 +50,9 @@ Set B で EV≤0 または DD>20%。PASSでも Set C で符号が崩れたら棄
 
 - logic_id: `db_1h_up_fresh_reclaim_v1`
 - Formal: Set B →（PASSなら）Set C
-- workstream: `docs/workstreams/SPOT-001-double-bottom/`
+- workstream: `docs/workstreams/DB-21-1h-up-fresh-reclaim/`
+
+## 結果
+
+- Set B: **FAIL** — EV -0.31 / DD 4.1% / n=27
+- 学び: 4Hで効いた質フィルタの積を1Hへそのまま移植すると、回数もエッジも消える。次はノブ1点に戻すか別スポットへ。

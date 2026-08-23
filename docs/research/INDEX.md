@@ -8,6 +8,7 @@
 
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
+| 20260823-023 | 2026-08-23 | DB-21 | db_1h_up_fresh_reclaim_v1 | B | binance_vision | `fail` | -0.31 | 4.1% | 27 | [doc](entries/DB-21-db_1h_up_fresh_reclaim_v1-setB-20260823-023.md) |
 | 20260823-022 | 2026-08-23 | DB-10 | db_struct_1h_v1 | C | binance_vision | `fail` | -0.10 | 11.1% | 209 | [doc](entries/DB-10-db_struct_1h_v1-setC-20260823-022.md) |
 | 20260823-021 | 2026-08-23 | DB-20 | db_1h_up_pct_height_v1 | B | binance_vision | `fail` | -0.48 | 4.2% | 23 | [doc](entries/DB-20-db_1h_up_pct_height_v1-setB-20260823-021.md) |
 | 20260823-020 | 2026-08-23 | DB-19 | db_trail_atr_v1 | B | binance_vision | `fail` | 0.33 | 2.9% | 34 | [doc](entries/DB-19-db_trail_atr_v1-setB-20260823-020.md) |
