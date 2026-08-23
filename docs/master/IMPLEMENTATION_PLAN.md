@@ -129,8 +129,30 @@ L-BREAK-2: [eval/reports/20260823-formal-eval-L-BREAK-2-setB.md](../../eval/repo
 判定は単体EVではなく「本命と対照のEV差が両期間で同符号か」で行う方式に変えた。
 バックテストは **funding を実費計上**するようになった（高回転ロジックは Set C で証拠金を割り込む）。
 
+### 改良と3期間検証（2026-08-23）— 累計217本・採用0
+
+改良63本（EH-01R/07R/02R）に続き、EH-06R/09R を54本、**Set A(2023) を三期目に加えて**検証した。
+
+| 結果 | 値 |
+|------|-----|
+| 3期間（A/B/C）すべてPASS | **0 / 54** |
+| EH-09（吸収） | **棄却** — Set A で20本すべてマイナス、対照が優位 |
+| EH-06（個人vs上位の乖離） | **機構は3期間で成立**。ただし水準がコストに届かない |
+
+**検証基盤のバグを発見・修正した。** `run_backtest` がエントリー手数料を equity からのみ引き、
+`Trade.pnl` は決済側しか引いていなかった。expectancy ゲートが読む値が1トレードあたり
+**約 +0.05 USDT 過大**で、これは測っていたエッジと同じオーダー。修正済み。
+`compute_metrics` に `sum(trade.pnl) == equity 増減` の検算を入れて再発を防ぐ。
+
+**判明した最大の制約はコストの床。** 1トレード往復のコストは 0.135 USDT ＝ 元本(90 USDT)の 0.150%
+＝ 許容損失(3 USDT)の 4.5%。測ってきたエッジ 0.05〜0.25 USDT と同じオーダーで、
+「わずかにプラス／わずかにマイナス」を繰り返していた理由がここにある。
+**次はシグナル探索ではなく、保有時間と元本の設計に手を付ける。**
+
 正本: [docs/hypothesis/EDGE_HYPOTHESES.md](../hypothesis/EDGE_HYPOTHESES.md) ·
-postmortem: [docs/hypothesis/postmortems/2026-08-23-edge-100-cycles.md](../hypothesis/postmortems/2026-08-23-edge-100-cycles.md)
+postmortem: [100サイクル](../hypothesis/postmortems/2026-08-23-edge-100-cycles.md) ·
+[改良3フェーズ](../hypothesis/postmortems/2026-08-23-edge-refine-cycles.md) ·
+[EH-06R/09Rと手数料バグ](../hypothesis/postmortems/2026-08-23-edge-06-09-and-fee-bug.md)
 
 ### Step B — 執行レイヤ（demo）
 

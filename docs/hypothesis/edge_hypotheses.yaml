@@ -13,29 +13,57 @@ last_eval: "2026-08-23"
 eval_summary:
   cycles: 100
   refine_cycles: 63
-  total_formal_evals: 163
+  refine2_cycles: 54
+  total_formal_evals: 217
   logics_per_hypothesis: 10
   set_b_pass: 11
   set_c_holdout_pass: 2
   both_period_pass: [eh01_brk_192, eh08_trail_4]
+  three_period_pass: []
   adopted: 0
   note: >
-    両期間PASSの2本もEVがコストと同じ桁（+0.008〜+0.038/トレード）で採用しない。
-    判定は単体EVではなく「本命と対照のEV差の符号が両期間で保たれるか」で行った。
+    3期間（A/B/C）すべてゲートを通ったロジックは0本。判定は単体EVではなく
+    「本命と対照のEV差の符号が全期間で保たれるか」で行った。
+  known_issue:
+    id: BUG-ENTRY-FEE
+    fixed: "2026-08-23"
+    desc: >
+      run_backtest がエントリー手数料を equity からのみ引き、Trade.pnl は決済側の
+      手数料しか引いていなかった。expectancy ゲートが読む値が1トレードあたり
+      約 +0.05 USDT 過大だった。修正前の全評価（100サイクル・改良63本）の EV は
+      この分を差し引いて読むこと。修正は成績を下げる方向なので不合格の結論は不変。
+    guard: compute_metrics が sum(trade.pnl) と equity 増減の一致を検算する
+  cost_floor:
+    notional_usdt: 90.0
+    round_trip_cost_usdt: 0.135
+    pct_of_notional: 0.150
+    pct_of_risk_budget: 4.5
+    note: 測定したエッジ（0.05〜0.25 USDT/トレード）とコストが同じオーダー
   postmortem: docs/hypothesis/postmortems/2026-08-23-edge-100-cycles.md
   refine_postmortem: docs/hypothesis/postmortems/2026-08-23-edge-refine-cycles.md
+  refine2_postmortem: docs/hypothesis/postmortems/2026-08-23-edge-06-09-and-fee-bug.md
   refine_result:
     eh01r: {set_b_pass: 3, set_c_holdout_pass: 0, note: 退出の改良では帯から出ない}
     eh07r: {set_b_pass: 0, both_period_positive: [eh07r_oi_rebuild_pre48], note: 希少で回数を増やすと消える}
     eh02r: {set_b_pass: 0, note: 頻度は解決したが全滅。ゲートを外したほうが良い}
+    eh09r: {set_a_pass: 0, set_b_pass: 7, set_c_pass: 0, note: Set A で20本すべてマイナス・対照が優位。棄却}
+    eh06r: {set_a_pass: 4, set_b_pass: 1, set_c_pass: 0, note: 回転を落とすと A/B は好転するが C が届かない}
+    eh06n: {set_a_pass: 7, set_b_pass: 6, set_c_pass: 1, note: 近傍は傾斜。閾値もクールダウンも単調に効く}
   carry_forward:
     - 退出は構造退出のみ、またはATRトレール4以上（2.5は勝ちを切る）
     - 突破系でエントリーを遅らせない
+    - 評価は3期間（A/B/C）。未使用の期間を必ず1つ残す
+    - 組合せだけが効く設定は、採用前に近傍を地図にして傾斜か一点かを見る
+    - シグナル探索より先にコスト構造（保有時間・元本）を決める
   reports:
     - eval/reports/20260823-edge-100-cycles-setB.md
     - eval/reports/20260823-edge-100-cycles-setC.md
     - eval/reports/20260823-edge-100-holdout-setC.md
     - eval/reports/20260823-edge-100-replication.md
+    - eval/reports/20260823-edge-feefix-setA.md
+    - eval/reports/20260823-edge-feefix-setB.md
+    - eval/reports/20260823-edge-feefix-setC.md
+    - eval/reports/20260823-edge-feefix-three-periods.md
 
 data_prereqs:
   - id: DATA-OI
@@ -186,7 +214,24 @@ hypotheses:
       set_b_pass: [eh06_win_10d]
       both_period_pass: []
       caveat: 差が小さく、回転が多くDDが大きい（B 19% / C 59%）
-      next: 回転を落とした形で再測定
+      next: 完了（EH-06R / EH-06N）
+      refine:
+        phase: EH-06R（20本・回転とDDを落とす）+ EH-06N（14本・近傍地図）
+        periods: [A, B, C]
+        set_a_pass: 11
+        set_b_pass: 7
+        set_c_pass: 1
+        three_period_pass: []
+        control_delta:
+          set_a: 0.299
+          set_b: 0.476
+          set_c: 0.216
+        finding: >
+          符号反転の対照は3期間すべて −0.25 前後で、乖離の向きには本物の情報がある。
+          絞り込み（2.0σ + 24hクールダウン）で Set A +0.045 / Set B +0.185 まで上がるが
+          Set C は −0.043。近傍地図では閾値もクールダウンも単調（傾斜であり一点ではない）。
+        verdict: 機構は3期間で成立。ただし水準がコストに届かず単独では採用不可
+        next: 単独の入口ではなく、他ロジックに対する拒否フィルタとして再設計
     claim: 全口座長短比と上位トレーダー長短比が逆方向に乖離したとき上位側に付く
     unpriced_because: 公開値だが多数側と資金量側のズレとして使う参加者は少ない
     who_loses: 多数側に張った小口
@@ -246,13 +291,34 @@ hypotheses:
     distortions: [E1]
     data: [DATA-OI]
     priority: 9
-    status: mechanism_replicated
+    status: fail
     result:
-      status_reason: 吸収ダイバージェンスが順張り対照を両期間で上回る（+0.121/+0.065）
+      status_reason: Set A(2023) で符号が反転し、対照（順張り）のほうが優位。2024年限定の現象
       set_b_pass: [eh09_base, eh09_win_8, eh09_win_32, eh09_slope_0p05, eh09_trail_2p5]
       both_period_pass: []
       caveat: Set B PASS 5本すべてが Set C で反転。機構はあるがEVが薄い
-      next: EH-01 のフィルタにはしない（積み禁止）。単独でEVを上げる
+      next: 完了（EH-09R で棄却）
+      refine:
+        phase: EH-09R（20本・成行比を先物出来高で測り直す + 退出）
+        periods: [A, B, C]
+        set_a_pass: 0
+        set_b_pass: 7
+        set_c_pass: 0
+        set_a_positive_ev: 0
+        control_delta:
+          set_a: -0.050
+          set_b: 0.121
+          set_c: 0.065
+        control_delta_volume_version:
+          set_a: -0.080
+          set_b: 0.193
+          set_c: 0.100
+        finding: >
+          Set B で7本がゲートを通り Set C でも符号は保たれたが、Set A では20本すべて
+          マイナスで対照が優位。metrics の集計比を先物出来高のテイカー買い比率に
+          置き換えても同じ結論。
+        verdict: 棄却。機構ではなく2024年の局面依存
+        next: 再探索しない
     claim: 価格が高値更新する一方で成行買い比率が低下しているとき反転しやすい
     unpriced_because: 上昇中に買いの勢いが弱まるズレは価格・出来高だけでは見えない
     who_loses: 高値更新で順張りする参加者
