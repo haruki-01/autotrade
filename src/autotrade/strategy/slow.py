@@ -55,6 +55,8 @@ class SlowParams:
     # --- direction
     long_only: bool = False
     short_only: bool = False
+    # --- falsification: a slow edge should survive being acted on late
+    signal_delay_bars: int = 0
 
 
 def _tf_atr(m15: pd.DataFrame, tf: str, period: int) -> pd.Series:
@@ -181,6 +183,10 @@ def prepare_frames(
             # Inverted control: refuse the trades the veto would have kept.
             long_c, short_c = long_c & ~crowd_short, short_c & ~crowd_long
 
+    if params.signal_delay_bars:
+        long_c = long_c.shift(params.signal_delay_bars).fillna(False)
+        short_c = short_c.shift(params.signal_delay_bars).fillna(False)
+
     if params.long_only:
         short_c = pd.Series(False, index=f.index)
     if params.short_only:
@@ -253,6 +259,17 @@ _VARIANTS: list[tuple[str, str, str, dict[str, Any]]] = [
      {"veto_mode": "block_with", "veto_thr": 0.0}),
     ("veto_ctrl", "対照: 拒否の向きを反転", "拒否フィルタの符号反転。差を読むための対照。",
      {"veto_mode": "block_with", "veto_thr": 1.0}),
+    ("delay_1h", "反証: シグナルを1時間遅らせる",
+     "遅らせても残るなら先読みではない。日足規模のエッジが1時間で消えるはずがない。",
+     {"signal_delay_bars": 4}),
+    ("delay_1d", "反証: シグナルを1日遅らせる",
+     "同上。ここまで遅らせて残るかは、エッジの持続時間そのものの測定でもある。",
+     {"signal_delay_bars": BARS_PER_DAY}),
+    ("tp4_delay_1h", "反証: 3期間PASS版を1時間遅らせる",
+     "唯一3期間ゲートを通った設定を、同じやり方で疑う。",
+     {"tp_atr_mult": 4.0, "signal_delay_bars": 4}),
+    ("tp4_delay_1d", "反証: 3期間PASS版を1日遅らせる", "同上。",
+     {"tp_atr_mult": 4.0, "signal_delay_bars": BARS_PER_DAY}),
 ]
 
 CYCLE_SLOW: dict[str, tuple[SlowParams, str, str, str, str]] = {
