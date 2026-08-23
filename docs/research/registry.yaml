@@ -1,220 +1,3208 @@
 schema_version: 1
 runs:
-  - run_id: "20260822-001"
-    recorded_at: "2026-08-22T04:17:21Z"
-    status: smoke
-    hypothesis:
-      id: H01
-      logic_id: mtf_ema_pullback_v1
-      name: MTF EMA押し目 v1
-      distortion_ids: []
-      one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り（歪み未タグの初期版）
-    logic:
-      daily: "EMA50 方向フィルタ"
-      h4: "EMA20 方向フィルタ"
-      m15_entry: "EMA20 押し目 + 陽線/陰線"
-      exit_stop: "固定 1.0%"
-      exit_tp: "固定 1.5%"
-      leverage: 3
-      max_positions: 1
-    test:
-      set: B
-      eval_start: "2024-01-01"
-      eval_end: "2024-12-31"
-      bars: 35041
-      data_source: synthetic
-      synthetic: true
-      config: configs/backtest_v1.yaml
-      git_commit: null
-    results:
-      trades: 397
-      avg_trade_pnl: 235.87
-      total_return_pct: 841.34
-      monthly_return_pct_approx: 20.56
-      max_drawdown_pct: 11.67
-      win_rate_pct: 66.75
-      payoff_ratio: 1.28
-      total_fees: 19026.47
-      long_trades: 215
-      short_trades: 182
-      final_equity: 94133.75
-      gate_pass: true
-      gate_failures: []
-    artifacts:
-      dir: artifacts/backtests/20260822T041721Z_setB
-      metrics_json: artifacts/backtests/20260822T041721Z_setB/metrics.json
-    learnings:
-      one_liner: 合成GBMデータではPASSするが採用判断不可
-      summary: パイプライン動作確認用。相場構造を反映しないため成績は参考にしない。
-      structural: []
-      keep:
-        - マルチTFマージの実装パス
-      discard:
-        - 合成データでのゲートPASSを意思決定に使うこと
-    next_actions:
-      - 実データで Set B を再実行
-    notes: Cloud 環境での smoke test
-    entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-smoke.md
-
-  - run_id: "20260822-002"
-    recorded_at: "2026-08-22T05:00:37Z"
-    status: fail
-    hypothesis:
-      id: H01
-      logic_id: mtf_ema_pullback_v1
-      name: MTF EMA押し目 v1
-      distortion_ids: []
-      one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り
-    logic:
-      daily: "EMA50 方向フィルタ"
-      h4: "EMA20 方向フィルタ"
-      m15_entry: "EMA20 押し目 + 陽線/陰線"
-      exit_stop: "固定 1.0%"
-      exit_tp: "固定 1.5%"
-      leverage: 3
-      max_positions: 1
-    test:
-      set: B
-      eval_start: "2024-01-01"
-      eval_end: "2024-12-31"
-      bars: 35136
-      data_source: binance_vision
-      synthetic: false
-      config: configs/backtest_v1.yaml
-      git_commit: null
-    results:
-      trades: 594
-      avg_trade_pnl: -3.10
-      total_return_pct: -43.28
-      monthly_return_pct_approx: -4.61
-      max_drawdown_pct: 49.37
-      win_rate_pct: 40.24
-      payoff_ratio: 1.38
-      total_fees: 4978.92
-      long_trades: 390
-      short_trades: 204
-      final_equity: 5671.66
-      gate_pass: false
-      gate_failures:
-        - expectancy
-        - drawdown
-    artifacts:
-      dir: artifacts/backtests/20260822T050037Z_setB
-      metrics_json: artifacts/backtests/20260822T050037Z_setB/metrics.json
-    learnings:
-      one_liner: コスト込み2024年で期待値マイナス。デモ/本番不可。
-      summary: 実BTC足でトレード過多かつ平均損益がマイナス。固定利確はトレンドの大勝ちを切る可能性。
-      structural:
-        - 歪み（E1トレンド）を取る設計なのに固定1.5%利確で利幅を制限
-        - 押し目条件が緩く回転が増え、手数料負け（E8）
-        - EMAは強制注文の歪みを直接見ていない
-      keep:
-        - 日足/4H/15m の役割分担という検証枠組み
-        - 同一エンジンでのコスト込み検証
-      discard:
-        - 固定%損切/利確のまま本番へ
-        - このエントリー条件のままパラメータだけ大量探索
-    next_actions:
-      - L-COST 費用ゲート
-      - L-MOM-VOL 固定利確廃止 + ATR
-      - L-BREAK Donchian 別ファミリー
-    notes: Binance Vision spot。本番前に Bybit 足で再確認推奨。
-    entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822.md
-
-  - run_id: "20260822-003"
-    recorded_at: "2026-08-22T05:18:00Z"
-    status: proposed
-    hypothesis:
-      id: L-COST
-      logic_id: cost_gate_v1
-      name: 費用ゲート
-      distortion_ids:
-        - E8
-      one_liner: 推定値幅が往復コスト+余裕未満の取引を捨て、過剰取引の負の歪みを回避
-    logic:
-      change_from: H01
-      rule: "ATRから必要値動きを見積もり、fee+slip下回りならスキップ"
-    test:
-      set: B
-      eval_start: null
-      eval_end: null
-      bars: null
-      data_source: null
-      synthetic: null
-      config: configs/backtest_v1.yaml
-      git_commit: null
-    results: {}
-    artifacts: {}
-    learnings:
-      summary: 未検証。MARKET_EDGE_MAP 優先バッチ #1
-    next_actions:
-      - 実装後 Set B で H01 と比較
-    notes: 仮説登録のみ
-    entry_doc: null
-
-  - run_id: "20260822-004"
-    recorded_at: "2026-08-22T05:18:00Z"
-    status: proposed
-    hypothesis:
-      id: L-MOM-VOL
-      logic_id: vol_scaled_trend_v1
-      name: ボラ調整トレンド・トレール
-      distortion_ids:
-        - E1
-        - E6
-      one_liner: トレンド継続を取り、固定利確をやめATRでサイズと退出
-    logic:
-      change_from: H01
-      daily: "SMA200 または Donchian 状態"
-      h4: "ADX>20 または Supertrend"
-      m15: "執行のみ"
-      exit: "ATRトレール、固定%利確なし"
-    test:
-      set: B
-      eval_start: null
-      eval_end: null
-      bars: null
-      data_source: null
-      synthetic: null
-      config: null
-      git_commit: null
-    results: {}
-    artifacts: {}
-    learnings:
-      summary: 未検証。v1 FAIL の構造修正候補本命
-    next_actions:
-      - L-COST 後に実装
-    notes: 仮説登録のみ
-    entry_doc: null
-
-  - run_id: "20260822-005"
-    recorded_at: "2026-08-22T05:18:00Z"
-    status: proposed
-    hypothesis:
-      id: L-BREAK
-      logic_id: donchian_20_10_v1
-      name: Donchian 20/10 ブレイク
-      distortion_ids:
-        - E1
-      one_liner: 押し目を捨て、N日高値更新でトレンドに乗る
-    logic:
-      entry: "日足20日高値更新"
-      exit: "10日安値割れ"
-      long_only: "比較用"
-    test:
-      set: B
-      eval_start: null
-      eval_end: null
-      bars: null
-      data_source: null
-      synthetic: null
-      config: null
-      git_commit: null
-    results: {}
-    artifacts: {}
-    learnings:
-      summary: 未検証。別ファミリー
-    next_actions:
-      - L-MOM-VOL 後に実装
-    notes: 仮説登録のみ
-    entry_doc: null
+- run_id: 20260822-001
+  recorded_at: '2026-08-22T04:17:21Z'
+  status: smoke
+  hypothesis:
+    id: H01
+    logic_id: mtf_ema_pullback_v1
+    name: MTF EMA押し目 v1
+    distortion_ids: []
+    one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り（歪み未タグの初期版）
+  logic:
+    daily: EMA50 方向フィルタ
+    h4: EMA20 方向フィルタ
+    m15_entry: EMA20 押し目 + 陽線/陰線
+    exit_stop: 固定 1.0%
+    exit_tp: 固定 1.5%
+    leverage: 3
+    max_positions: 1
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: null
+  results:
+    trades: 397
+    avg_trade_pnl: 235.87
+    total_return_pct: 841.34
+    monthly_return_pct_approx: 20.56
+    max_drawdown_pct: 11.67
+    win_rate_pct: 66.75
+    payoff_ratio: 1.28
+    total_fees: 19026.47
+    long_trades: 215
+    short_trades: 182
+    final_equity: 94133.75
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: artifacts/backtests/20260822T041721Z_setB
+    metrics_json: artifacts/backtests/20260822T041721Z_setB/metrics.json
+  learnings:
+    one_liner: 合成GBMデータではPASSするが採用判断不可
+    summary: パイプライン動作確認用。相場構造を反映しないため成績は参考にしない。
+    structural: []
+    keep:
+    - マルチTFマージの実装パス
+    discard:
+    - 合成データでのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データで Set B を再実行
+  notes: Cloud 環境での smoke test
+  entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-smoke.md
+- run_id: 20260822-002
+  recorded_at: '2026-08-22T05:00:37Z'
+  status: fail
+  hypothesis:
+    id: H01
+    logic_id: mtf_ema_pullback_v1
+    name: MTF EMA押し目 v1
+    distortion_ids: []
+    one_liner: 日足/4H方向一致時のみ15m EMA押し目で順張り
+  logic:
+    daily: EMA50 方向フィルタ
+    h4: EMA20 方向フィルタ
+    m15_entry: EMA20 押し目 + 陽線/陰線
+    exit_stop: 固定 1.0%
+    exit_tp: 固定 1.5%
+    leverage: 3
+    max_positions: 1
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/backtest_v1.yaml
+    git_commit: null
+  results:
+    trades: 594
+    avg_trade_pnl: -3.1
+    total_return_pct: -43.28
+    monthly_return_pct_approx: -4.61
+    max_drawdown_pct: 49.37
+    win_rate_pct: 40.24
+    payoff_ratio: 1.38
+    total_fees: 4978.92
+    long_trades: 390
+    short_trades: 204
+    final_equity: 5671.66
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - drawdown
+  artifacts:
+    dir: artifacts/backtests/20260822T050037Z_setB
+    metrics_json: artifacts/backtests/20260822T050037Z_setB/metrics.json
+  learnings:
+    one_liner: コスト込み2024年で期待値マイナス。デモ/本番不可。
+    summary: 実BTC足でトレード過多かつ平均損益がマイナス。固定利確はトレンドの大勝ちを切る可能性。
+    structural:
+    - 歪み（E1トレンド）を取る設計なのに固定1.5%利確で利幅を制限
+    - 押し目条件が緩く回転が増え、手数料負け（E8）
+    - EMAは強制注文の歪みを直接見ていない
+    keep:
+    - 日足/4H/15m の役割分担という検証枠組み
+    - 同一エンジンでのコスト込み検証
+    discard:
+    - 固定%損切/利確のまま本番へ
+    - このエントリー条件のままパラメータだけ大量探索
+  next_actions:
+  - L-COST 費用ゲート
+  - L-MOM-VOL 固定利確廃止 + ATR
+  - L-BREAK Donchian 別ファミリー
+  notes: Binance Vision spot。本番前に Bybit 足で再確認推奨。
+  entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822.md
+- run_id: 20260822-003
+  recorded_at: '2026-08-22T05:18:00Z'
+  status: proposed
+  hypothesis:
+    id: L-COST
+    logic_id: cost_gate_v1
+    name: 費用ゲート
+    distortion_ids:
+    - E8
+    one_liner: 推定値幅が往復コスト+余裕未満の取引を捨て、過剰取引の負の歪みを回避
+  logic:
+    change_from: H01
+    rule: ATRから必要値動きを見積もり、fee+slip下回りならスキップ
+  test:
+    set: B
+    eval_start: null
+    eval_end: null
+    bars: null
+    data_source: null
+    synthetic: null
+    config: configs/backtest_v1.yaml
+    git_commit: null
+  results: {}
+  artifacts: {}
+  learnings:
+    summary: 未検証。MARKET_EDGE_MAP 優先バッチ
+  next_actions:
+  - 実装後 Set B で H01 と比較
+  notes: 仮説登録のみ
+  entry_doc: null
+- run_id: 20260822-004
+  recorded_at: '2026-08-22T05:18:00Z'
+  status: proposed
+  hypothesis:
+    id: L-MOM-VOL
+    logic_id: vol_scaled_trend_v1
+    name: ボラ調整トレンド・トレール
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: トレンド継続を取り、固定利確をやめATRでサイズと退出
+  logic:
+    change_from: H01
+    daily: SMA200 または Donchian 状態
+    h4: ADX>20 または Supertrend
+    m15: 執行のみ
+    exit: ATRトレール、固定%利確なし
+  test:
+    set: B
+    eval_start: null
+    eval_end: null
+    bars: null
+    data_source: null
+    synthetic: null
+    config: null
+    git_commit: null
+  results: {}
+  artifacts: {}
+  learnings:
+    summary: 未検証。v1 FAIL の構造修正候補本命
+  next_actions:
+  - L-COST 後に実装
+  notes: 仮説登録のみ
+  entry_doc: null
+- run_id: 20260822-005
+  recorded_at: '2026-08-22T05:18:00Z'
+  status: proposed
+  hypothesis:
+    id: L-BREAK
+    logic_id: donchian_20_10_v1
+    name: Donchian 20/10 ブレイク
+    distortion_ids:
+    - E1
+    one_liner: 押し目を捨て、N日高値更新でトレンドに乗る
+  logic:
+    entry: 日足20日高値更新
+    exit: 10日安値割れ
+    long_only: 比較用
+  test:
+    set: B
+    eval_start: null
+    eval_end: null
+    bars: null
+    data_source: null
+    synthetic: null
+    config: null
+    git_commit: null
+  results: {}
+  artifacts: {}
+  learnings:
+    summary: 未検証。別ファミリー
+  next_actions:
+  - L-MOM-VOL 後に実装
+  notes: 仮説登録のみ
+  entry_doc: null
+- run_id: 20260822-006
+  recorded_at: '2026-08-22T05:37:43Z'
+  status: smoke
+  hypothesis:
+    id: H01
+    logic_id: mtf_ema_pullback_v1
+    name: MTF EMA押し目 v1
+    distortion_ids: []
+    one_liner: 合成データ smoke。採用判断に使わない。
+  logic:
+    daily: EMA50 方向フィルタ
+    h4: EMA20 方向フィルタ
+    m15_entry: EMA20 押し目 + 陽線/陰線
+    exit_stop: 固定 1.0%
+    exit_tp: 固定 1.5%
+    leverage: 3.0
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 385
+    avg_trade_pnl: 242.0669264431476
+    total_return_pct: 849.0821908777424
+    monthly_return_pct_approx: 20.641788663461604
+    max_drawdown_pct: 11.670032557474938
+    win_rate_pct: 67.53246753246754
+    payoff_ratio: 1.4100987061973782
+    total_fees: 16566.76694523174
+    long_trades: 208
+    short_trades: 177
+    final_equity: 94908.21908777424
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: artifacts/backtests/20260822T053743Z_setB_mtf_ema_pullback_v1
+    metrics_json: artifacts/backtests/20260822T053743Z_setB_mtf_ema_pullback_v1/metrics.json
+  learnings:
+    one_liner: 合成データ smoke。採用判断に使わない。
+    summary: パイプライン・ロジック実装の動作確認。次は実データ Set B。
+    keep:
+    - 実装パスと research / workstream への自動蓄積
+    discard:
+    - 合成でのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データ（Bybit or Vision）で Set B を再実行
+  - workstream README の現状を更新
+  notes: synthetic smoke
+  entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-006-smoke.md
+- run_id: 20260822-007
+  recorded_at: '2026-08-22T05:37:46Z'
+  status: smoke
+  hypothesis:
+    id: L-COST
+    logic_id: cost_gate_v1
+    name: 費用ゲート
+    distortion_ids:
+    - E8
+    one_liner: 合成データ smoke。採用判断に使わない。
+  logic:
+    change_from: H01
+    rule: ATRが往復コスト×1.5未満ならスキップ
+    exit_stop: 固定 1.0%
+    exit_tp: 固定 1.5%
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 385
+    avg_trade_pnl: 242.0669264431476
+    total_return_pct: 849.0821908777424
+    monthly_return_pct_approx: 20.641788663461604
+    max_drawdown_pct: 11.670032557474938
+    win_rate_pct: 67.53246753246754
+    payoff_ratio: 1.4100987061973782
+    total_fees: 16566.76694523174
+    long_trades: 208
+    short_trades: 177
+    final_equity: 94908.21908777424
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: artifacts/backtests/20260822T053746Z_setB_cost_gate_v1
+    metrics_json: artifacts/backtests/20260822T053746Z_setB_cost_gate_v1/metrics.json
+  learnings:
+    one_liner: 合成データ smoke。採用判断に使わない。
+    summary: パイプライン・ロジック実装の動作確認。次は実データ Set B。
+    keep:
+    - 実装パスと research / workstream への自動蓄積
+    discard:
+    - 合成でのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データ（Bybit or Vision）で Set B を再実行
+  - workstream README の現状を更新
+  notes: synthetic smoke
+  entry_doc: docs/research/entries/L-COST-cost_gate_v1-setB-20260822-007-smoke.md
+- run_id: 20260822-008
+  recorded_at: '2026-08-22T05:37:49Z'
+  status: smoke
+  hypothesis:
+    id: L-MOM-VOL
+    logic_id: vol_scaled_trend_v1
+    name: ボラ調整トレンド・トレール
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: 合成データ smoke。採用判断に使わない。
+  logic:
+    daily: SMA200 レジーム
+    h4: EMA20 方向
+    m15: EMA押し目執行
+    exit: ATRトレール 2.5x、固定利確なし
+    size: ATRストップ基準リスク%
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 566
+    avg_trade_pnl: 356.26442416158693
+    total_return_pct: 1498.9809085269326
+    monthly_return_pct_approx: 26.005350205451137
+    max_drawdown_pct: 30.2266287454002
+    win_rate_pct: 41.342756183745585
+    payoff_ratio: 2.6311255216999285
+    total_fees: 103450.46824031371
+    long_trades: 338
+    short_trades: 228
+    final_equity: 159898.09085269328
+    gate_pass: false
+    gate_failures:
+    - drawdown
+  artifacts:
+    dir: artifacts/backtests/20260822T053748Z_setB_vol_scaled_trend_v1
+    metrics_json: artifacts/backtests/20260822T053748Z_setB_vol_scaled_trend_v1/metrics.json
+  learnings:
+    one_liner: 合成データ smoke。採用判断に使わない。
+    summary: パイプライン・ロジック実装の動作確認。次は実データ Set B。
+    keep:
+    - 実装パスと research / workstream への自動蓄積
+    discard:
+    - 合成でのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データ（Bybit or Vision）で Set B を再実行
+  - workstream README の現状を更新
+  notes: synthetic smoke
+  entry_doc: docs/research/entries/L-MOM-VOL-vol_scaled_trend_v1-setB-20260822-008-smoke.md
+- run_id: 20260822-009
+  recorded_at: '2026-08-22T05:37:51Z'
+  status: smoke
+  hypothesis:
+    id: L-BREAK
+    logic_id: donchian_20_10_v1
+    name: Donchian 20/10 ブレイク
+    distortion_ids:
+    - E1
+    one_liner: 合成データ smoke。採用判断に使わない。
+  logic:
+    entry: 日足20 Donchian ブレイク
+    exit: 日足10 Donchian 逆側 + ATRストップ
+    long_only: false
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 4474.326657667223
+    total_return_pct: 223.5580220068855
+    monthly_return_pct_approx: 10.287202614214497
+    max_drawdown_pct: 0.02248627571211898
+    win_rate_pct: 100.0
+    payoff_ratio: null
+    total_fees: 35.84510565302358
+    long_trades: 3
+    short_trades: 2
+    final_equity: 32355.802200688548
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/backtests/20260822T053751Z_setB_donchian_20_10_v1
+    metrics_json: artifacts/backtests/20260822T053751Z_setB_donchian_20_10_v1/metrics.json
+  learnings:
+    one_liner: 合成データ smoke。採用判断に使わない。
+    summary: パイプライン・ロジック実装の動作確認。次は実データ Set B。
+    keep:
+    - 実装パスと research / workstream への自動蓄積
+    discard:
+    - 合成でのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データ（Bybit or Vision）で Set B を再実行
+  - workstream README の現状を更新
+  notes: synthetic smoke
+  entry_doc: docs/research/entries/L-BREAK-donchian_20_10_v1-setB-20260822-009-smoke.md
+- run_id: 20260822-010
+  recorded_at: '2026-08-22T05:37:54Z'
+  status: smoke
+  hypothesis:
+    id: H21
+    logic_id: donchian_20_10_long_only
+    name: Donchian 20/10 Long only
+    distortion_ids:
+    - E1
+    one_liner: 合成データ smoke。採用判断に使わない。
+  logic:
+    entry: 日足20 Donchian 上抜けのみ
+    exit: 日足10 Donchian 下抜け + ATRストップ
+    long_only: true
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35041
+    data_source: synthetic
+    synthetic: true
+    config: configs/backtest_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 3
+    avg_trade_pnl: 4102.211351084604
+    total_return_pct: 122.99550805170027
+    monthly_return_pct_approx: 6.916456382159808
+    max_drawdown_pct: 0.018999477510841772
+    win_rate_pct: 100.0
+    payoff_ratio: null
+    total_fees: 20.942767632612593
+    long_trades: 3
+    short_trades: 0
+    final_equity: 22299.550805170027
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/backtests/20260822T053753Z_setB_donchian_20_10_long_only
+    metrics_json: artifacts/backtests/20260822T053753Z_setB_donchian_20_10_long_only/metrics.json
+  learnings:
+    one_liner: 合成データ smoke。採用判断に使わない。
+    summary: パイプライン・ロジック実装の動作確認。次は実データ Set B。
+    keep:
+    - 実装パスと research / workstream への自動蓄積
+    discard:
+    - 合成でのゲートPASSを意思決定に使うこと
+  next_actions:
+  - 実データ（Bybit or Vision）で Set B を再実行
+  - workstream README の現状を更新
+  notes: synthetic smoke
+  entry_doc: docs/research/entries/H21-donchian_20_10_long_only-setB-20260822-010-smoke.md
+- run_id: 20260822-011
+  recorded_at: '2026-08-22T07:31:14Z'
+  status: fail
+  hypothesis:
+    id: H01
+    logic_id: mtf_ema_pullback_v1
+    name: MTF EMA押し目 v1
+    distortion_ids: []
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 594
+    avg_trade_pnl: -3.0963373046045253
+    total_return_pct: -43.28338885291508
+    monthly_return_pct_approx: -4.606819054731803
+    max_drawdown_pct: 49.37358558027742
+    win_rate_pct: 40.235690235690235
+    payoff_ratio: 1.384125506703571
+    total_fees: 4978.91684758007
+    long_trades: 390
+    short_trades: 204
+    final_equity: 5671.661114708491
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - drawdown
+  artifacts:
+    dir: artifacts/evals/20260822T073113Z_setB_mtf_ema_pullback_v1
+    metrics_json: artifacts/evals/20260822T073113Z_setB_mtf_ema_pullback_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-011.md
+- run_id: 20260822-012
+  recorded_at: '2026-08-22T07:33:01Z'
+  status: fail
+  hypothesis:
+    id: H01
+    logic_id: mtf_ema_pullback_v1
+    name: MTF EMA押し目 v1
+    distortion_ids: []
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 594
+    avg_trade_pnl: -3.0963373046045253
+    total_return_pct: -43.28338885291508
+    monthly_return_pct_approx: -4.606819054731803
+    max_drawdown_pct: 49.37358558027742
+    win_rate_pct: 40.235690235690235
+    payoff_ratio: 1.384125506703571
+    total_fees: 4978.91684758007
+    long_trades: 390
+    short_trades: 204
+    final_equity: 5671.661114708491
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - drawdown
+  artifacts:
+    dir: artifacts/evals/20260822T073301Z_setB_mtf_ema_pullback_v1
+    metrics_json: artifacts/evals/20260822T073301Z_setB_mtf_ema_pullback_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/H01-mtf_ema_pullback_v1-setB-20260822-012.md
+- run_id: 20260822-013
+  recorded_at: '2026-08-22T07:33:03Z'
+  status: fail
+  hypothesis:
+    id: L-COST
+    logic_id: cost_gate_v1
+    name: 費用ゲート
+    distortion_ids:
+    - E8
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 570
+    avg_trade_pnl: -3.727967898188822
+    total_return_pct: -44.98879077120107
+    monthly_return_pct_approx: -4.848718851715539
+    max_drawdown_pct: 51.581796866089135
+    win_rate_pct: 40.0
+    payoff_ratio: 1.378079550105306
+    total_fees: 4748.335647773606
+    long_trades: 373
+    short_trades: 197
+    final_equity: 5501.120922879893
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - drawdown
+  artifacts:
+    dir: artifacts/evals/20260822T073303Z_setB_cost_gate_v1
+    metrics_json: artifacts/evals/20260822T073303Z_setB_cost_gate_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/L-COST-cost_gate_v1-setB-20260822-013.md
+- run_id: 20260822-014
+  recorded_at: '2026-08-22T07:33:06Z'
+  status: fail
+  hypothesis:
+    id: L-MOM-VOL
+    logic_id: vol_scaled_trend_v1
+    name: ボラ調整トレンド・トレール
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1064
+    avg_trade_pnl: -6.590907971222384
+    total_return_pct: -98.31171613325186
+    monthly_return_pct_approx: -28.782681519355812
+    max_drawdown_pct: 98.3590823939005
+    win_rate_pct: 28.665413533834588
+    payoff_ratio: 1.4389108907566648
+    total_fees: 5635.021526265238
+    long_trades: 865
+    short_trades: 199
+    final_equity: 168.82838667481275
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - drawdown
+  artifacts:
+    dir: artifacts/evals/20260822T073305Z_setB_vol_scaled_trend_v1
+    metrics_json: artifacts/evals/20260822T073305Z_setB_vol_scaled_trend_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/L-MOM-VOL-vol_scaled_trend_v1-setB-20260822-014.md
+- run_id: 20260822-015
+  recorded_at: '2026-08-22T07:33:07Z'
+  status: fail
+  hypothesis:
+    id: L-BREAK
+    logic_id: donchian_20_10_v1
+    name: Donchian 20/10 ブレイク
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 13
+    avg_trade_pnl: 54.34106041919324
+    total_return_pct: 6.968799561911743
+    monthly_return_pct_approx: 0.5618297044665876
+    max_drawdown_pct: 3.8483004225688613
+    win_rate_pct: 23.076923076923077
+    payoff_ratio: 6.292433501723789
+    total_fees: 19.776208528678858
+    long_trades: 8
+    short_trades: 5
+    final_equity: 10696.879956191175
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T073307Z_setB_donchian_20_10_v1
+    metrics_json: artifacts/evals/20260822T073307Z_setB_donchian_20_10_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/L-BREAK-donchian_20_10_v1-setB-20260822-015.md
+- run_id: 20260822-016
+  recorded_at: '2026-08-22T07:33:09Z'
+  status: fail
+  hypothesis:
+    id: H21
+    logic_id: donchian_20_10_long_only
+    name: Donchian 20/10 Long only
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 8
+    avg_trade_pnl: 122.43206347068006
+    total_return_pct: 9.731675383218018
+    monthly_return_pct_approx: 0.7753253665777393
+    max_drawdown_pct: 2.0343853091155326
+    win_rate_pct: 25.0
+    payoff_ratio: 10.31120469141379
+    total_fees: 13.12039725183846
+    long_trades: 8
+    short_trades: 0
+    final_equity: 10973.167538321803
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T073309Z_setB_donchian_20_10_long_only
+    metrics_json: artifacts/evals/20260822T073309Z_setB_donchian_20_10_long_only/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/H21-donchian_20_10_long_only-setB-20260822-016.md
+- run_id: 20260822-017
+  recorded_at: '2026-08-22T07:50:23Z'
+  status: fail
+  hypothesis:
+    id: HYP-002
+    logic_id: donchian_20_10_long_v2
+    name: Donchian Long v2 (新規上抜け+4H確認)
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 6
+    avg_trade_pnl: 5.919546211823732
+    total_return_pct: 11.79280986776645
+    monthly_return_pct_approx: 0.9314091169496219
+    max_drawdown_pct: 1.8249120127243061
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 14.315195426566014
+    total_fees: 0.29731699591554756
+    long_trades: 6
+    short_trades: 0
+    final_equity: 335.37842960329937
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T075022Z_setB_donchian_20_10_long_v2
+    metrics_json: artifacts/evals/20260822T075022Z_setB_donchian_20_10_long_v2/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-002-donchian_20_10_long_v2-setB-20260822-017.md
+- run_id: 20260822-018
+  recorded_at: '2026-08-22T09:59:30Z'
+  status: fail
+  hypothesis:
+    id: HYP-011
+    logic_id: near_high_expanded_v1
+    name: R-001 高値圏×ボラ拡大
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 2
+    avg_trade_pnl: -0.6011329268172005
+    total_return_pct: -0.41237978797511454
+    monthly_return_pct_approx: -0.034360542722278176
+    max_drawdown_pct: 0.8526085073524617
+    win_rate_pct: 50.0
+    payoff_ratio: 0.5234686002637672
+    total_fees: 0.069104601462537
+    long_trades: 2
+    short_trades: 0
+    final_equity: 298.76286063607466
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T095930Z_setB_near_high_expanded_v1
+    metrics_json: artifacts/evals/20260822T095930Z_setB_near_high_expanded_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-011-near_high_expanded_v1-setB-20260822-018.md
+- run_id: 20260822-019
+  recorded_at: '2026-08-22T09:59:32Z'
+  status: fail
+  hypothesis:
+    id: HYP-009
+    logic_id: fake_then_rebreak_v1
+    name: D-001 だまし後本突破初日
+    distortion_ids:
+    - E1
+    - E6
+    - E8
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1
+    avg_trade_pnl: -0.808937613922857
+    total_return_pct: -0.2769427561095772
+    monthly_return_pct_approx: -0.023061218503162006
+    max_drawdown_pct: 0.27694275610957675
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.04334819477130305
+    long_trades: 1
+    short_trades: 0
+    final_equity: 299.16917173167127
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T095931Z_setB_fake_then_rebreak_v1
+    metrics_json: artifacts/evals/20260822T095931Z_setB_fake_then_rebreak_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-009-fake_then_rebreak_v1-setB-20260822-019.md
+- run_id: 20260822-020
+  recorded_at: '2026-08-22T09:59:33Z'
+  status: fail
+  hypothesis:
+    id: HYP-010
+    logic_id: fake_then_retest_v1
+    name: D-001 だまし後本突破の再テスト
+    distortion_ids:
+    - E1
+    - E6
+    - E8
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1
+    avg_trade_pnl: -0.621024599541603
+    total_return_pct: -0.21420538392910027
+    monthly_return_pct_approx: -0.01783189378091743
+    max_drawdown_pct: 0.2142053839291028
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.04285323488710496
+    long_trades: 1
+    short_trades: 0
+    final_equity: 299.3573838482127
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T095933Z_setB_fake_then_retest_v1
+    metrics_json: artifacts/evals/20260822T095933Z_setB_fake_then_retest_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-010-fake_then_retest_v1-setB-20260822-020.md
+- run_id: 20260822-021
+  recorded_at: '2026-08-22T10:15:10Z'
+  status: fail
+  hypothesis:
+    id: HYP-012
+    logic_id: h4_break_non_asia_v1
+    name: R4H-001 アジア外4H突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 31
+    avg_trade_pnl: 1.4149078041623382
+    total_return_pct: 14.125772816220007
+    monthly_return_pct_approx: 1.1049256865018897
+    max_drawdown_pct: 4.361048628678245
+    win_rate_pct: 35.483870967741936
+    payoff_ratio: 4.079502279241496
+    total_fees: 2.994601516724459
+    long_trades: 31
+    short_trades: 0
+    final_equity: 342.37731844866005
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101509Z_setB_h4_break_non_asia_v1
+    metrics_json: artifacts/evals/20260822T101509Z_setB_h4_break_non_asia_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-012-h4_break_non_asia_v1-setB-20260822-021.md
+- run_id: 20260822-022
+  recorded_at: '2026-08-22T10:15:24Z'
+  status: fail
+  hypothesis:
+    id: HYP-012
+    logic_id: h4_break_non_asia_v1
+    name: R4H-001 アジア外4H突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 31
+    avg_trade_pnl: 1.4149078041623382
+    total_return_pct: 14.125772816220007
+    monthly_return_pct_approx: 1.1049256865018897
+    max_drawdown_pct: 4.361048628678245
+    win_rate_pct: 35.483870967741936
+    payoff_ratio: 4.079502279241496
+    total_fees: 2.994601516724459
+    long_trades: 31
+    short_trades: 0
+    final_equity: 342.37731844866005
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101524Z_setB_h4_break_non_asia_v1
+    metrics_json: artifacts/evals/20260822T101524Z_setB_h4_break_non_asia_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-012-h4_break_non_asia_v1-setB-20260822-022.md
+- run_id: 20260822-023
+  recorded_at: '2026-08-22T10:15:26Z'
+  status: fail
+  hypothesis:
+    id: HYP-013
+    logic_id: h4_break_london_v1
+    name: R4H-003 ロンドン4H突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 22
+    avg_trade_pnl: 2.0698275317120127
+    total_return_pct: 14.821750648699883
+    monthly_return_pct_approx: 1.1560600858501635
+    max_drawdown_pct: 3.3498757941659254
+    win_rate_pct: 31.818181818181817
+    payoff_ratio: 6.154164770162003
+    total_fees: 2.1675555472494645
+    long_trades: 22
+    short_trades: 0
+    final_equity: 344.46525194609967
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101526Z_setB_h4_break_london_v1
+    metrics_json: artifacts/evals/20260822T101526Z_setB_h4_break_london_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-013-h4_break_london_v1-setB-20260822-023.md
+- run_id: 20260822-024
+  recorded_at: '2026-08-22T10:15:28Z'
+  status: fail
+  hypothesis:
+    id: HYP-014
+    logic_id: h4_shallow_pb_exp_v1
+    name: R4H-002 浅い押し×拡大
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 16
+    avg_trade_pnl: 0.199423687247785
+    total_return_pct: 0.8382346194474533
+    monthly_return_pct_approx: 0.06944527854684246
+    max_drawdown_pct: 1.9306302001266733
+    win_rate_pct: 37.5
+    payoff_ratio: 1.9380921139094627
+    total_fees: 1.354278215384689
+    long_trades: 16
+    short_trades: 0
+    final_equity: 302.51470385834233
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101528Z_setB_h4_shallow_pb_exp_v1
+    metrics_json: artifacts/evals/20260822T101528Z_setB_h4_shallow_pb_exp_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-014-h4_shallow_pb_exp_v1-setB-20260822-024.md
+- run_id: 20260822-025
+  recorded_at: '2026-08-22T10:15:30Z'
+  status: fail
+  hypothesis:
+    id: HYP-015
+    logic_id: h4_bm_entry_v1
+    name: R-BM-001 伸び入口
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 33
+    avg_trade_pnl: 1.4850741373506224
+    total_return_pct: 15.814074191498895
+    monthly_return_pct_approx: 1.2284781269228828
+    max_drawdown_pct: 4.63664422341694
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 4.719779524292661
+    total_fees: 3.1582781915678404
+    long_trades: 33
+    short_trades: 0
+    final_equity: 347.44222257449667
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101530Z_setB_h4_bm_entry_v1
+    metrics_json: artifacts/evals/20260822T101530Z_setB_h4_bm_entry_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-015-h4_bm_entry_v1-setB-20260822-025.md
+- run_id: 20260822-026
+  recorded_at: '2026-08-22T10:15:33Z'
+  status: fail
+  hypothesis:
+    id: HYP-016
+    logic_id: h4_half_pb_london_v1
+    name: R4H-004 半値押しロンドン
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 18
+    avg_trade_pnl: -0.2362077815556659
+    total_return_pct: -1.6784292405614742
+    monthly_return_pct_approx: -0.14067212795810802
+    max_drawdown_pct: 4.25528828332133
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 1.6196639597975042
+    total_fees: 1.5651867518309268
+    long_trades: 18
+    short_trades: 0
+    final_equity: 294.9647122783156
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101532Z_setB_h4_half_pb_london_v1
+    metrics_json: artifacts/evals/20260822T101532Z_setB_h4_half_pb_london_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-016-h4_half_pb_london_v1-setB-20260822-026.md
+- run_id: 20260822-027
+  recorded_at: '2026-08-22T10:15:35Z'
+  status: fail
+  hypothesis:
+    id: HYP-017
+    logic_id: h4_break_ny_v1
+    name: NY重なり4H突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 21
+    avg_trade_pnl: 2.121082580792828
+    total_return_pct: 14.514302457980133
+    monthly_return_pct_approx: 1.1335066037268415
+    max_drawdown_pct: 4.1917728119831805
+    win_rate_pct: 42.857142857142854
+    payoff_ratio: 3.954419515724033
+    total_fees: 2.024715838183893
+    long_trades: 21
+    short_trades: 0
+    final_equity: 343.5429073739404
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101535Z_setB_h4_break_ny_v1
+    metrics_json: artifacts/evals/20260822T101535Z_setB_h4_break_ny_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-017-h4_break_ny_v1-setB-20260822-027.md
+- run_id: 20260822-028
+  recorded_at: '2026-08-22T10:15:37Z'
+  status: fail
+  hypothesis:
+    id: HYP-018
+    logic_id: h4_break_asia_only_v1
+    name: アジアのみ突破（対照）
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 26
+    avg_trade_pnl: 1.3927788991657193
+    total_return_pct: 11.657163712370666
+    monthly_return_pct_approx: 0.9212184667291012
+    max_drawdown_pct: 5.751266560331046
+    win_rate_pct: 26.923076923076923
+    payoff_ratio: 5.64313351121666
+    total_fees: 2.5021309745539626
+    long_trades: 26
+    short_trades: 0
+    final_equity: 334.97149113711197
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101537Z_setB_h4_break_asia_only_v1
+    metrics_json: artifacts/evals/20260822T101537Z_setB_h4_break_asia_only_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-018-h4_break_asia_only_v1-setB-20260822-028.md
+- run_id: 20260822-029
+  recorded_at: '2026-08-22T10:15:39Z'
+  status: fail
+  hypothesis:
+    id: HYP-019
+    logic_id: h4_fail_ll_reclaim_v1
+    name: D-004系 失敗下抜け回復
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1
+    avg_trade_pnl: -1.7379726801496287
+    total_return_pct: -0.595824226716557
+    monthly_return_pct_approx: -0.04968754435615841
+    max_drawdown_pct: 0.5958242267165588
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.09807082898185773
+    long_trades: 1
+    short_trades: 0
+    final_equity: 298.2125273198503
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101539Z_setB_h4_fail_ll_reclaim_v1
+    metrics_json: artifacts/evals/20260822T101539Z_setB_h4_fail_ll_reclaim_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-019-h4_fail_ll_reclaim_v1-setB-20260822-029.md
+- run_id: 20260822-030
+  recorded_at: '2026-08-22T10:15:42Z'
+  status: fail
+  hypothesis:
+    id: HYP-020
+    logic_id: h4_near_high_exp_lon_v1
+    name: 高値拡大ロンドン
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 13
+    avg_trade_pnl: 2.27018441612758
+    total_return_pct: 9.631909057243515
+    monthly_return_pct_approx: 0.7677023387163251
+    max_drawdown_pct: 3.902843248872016
+    win_rate_pct: 30.76923076923077
+    payoff_ratio: 5.51210530308586
+    total_fees: 1.2499205821202717
+    long_trades: 13
+    short_trades: 0
+    final_equity: 328.8957271717305
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101541Z_setB_h4_near_high_exp_lon_v1
+    metrics_json: artifacts/evals/20260822T101541Z_setB_h4_near_high_exp_lon_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-020-h4_near_high_exp_lon_v1-setB-20260822-030.md
+- run_id: 20260822-031
+  recorded_at: '2026-08-22T10:15:44Z'
+  status: fail
+  hypothesis:
+    id: HYP-021
+    logic_id: h4_pb_after_break_v1
+    name: 突破後の浅い押し
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 14
+    avg_trade_pnl: 0.6812121229721655
+    total_return_pct: 2.969619950125857
+    monthly_return_pct_approx: 0.24366865039904262
+    max_drawdown_pct: 3.230876695273943
+    win_rate_pct: 42.857142857142854
+    payoff_ratio: 2.14456136065785
+    total_fees: 1.2618136128699746
+    long_trades: 14
+    short_trades: 0
+    final_equity: 308.90885985037755
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101544Z_setB_h4_pb_after_break_v1
+    metrics_json: artifacts/evals/20260822T101544Z_setB_h4_pb_after_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-021-h4_pb_after_break_v1-setB-20260822-031.md
+- run_id: 20260822-032
+  recorded_at: '2026-08-22T10:15:46Z'
+  status: fail
+  hypothesis:
+    id: HYP-022
+    logic_id: h4_exp_trend_cont_v1
+    name: 拡大トレンド継続
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 15
+    avg_trade_pnl: 1.9668836037540982
+    total_return_pct: 9.5973384115704
+    monthly_return_pct_approx: 0.7650593524199278
+    max_drawdown_pct: 3.473976904718803
+    win_rate_pct: 40.0
+    payoff_ratio: 3.505731457111557
+    total_fees: 1.4391047591968795
+    long_trades: 15
+    short_trades: 0
+    final_equity: 328.7920152347112
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101546Z_setB_h4_exp_trend_cont_v1
+    metrics_json: artifacts/evals/20260822T101546Z_setB_h4_exp_trend_cont_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-022-h4_exp_trend_cont_v1-setB-20260822-032.md
+- run_id: 20260822-033
+  recorded_at: '2026-08-22T10:15:48Z'
+  status: fail
+  hypothesis:
+    id: HYP-023
+    logic_id: h4_compress_break_lon_v1
+    name: 圧縮後ロンドン突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 9
+    avg_trade_pnl: 4.390014814246687
+    total_return_pct: 13.023144229633532
+    monthly_return_pct_approx: 1.0233258595573336
+    max_drawdown_pct: 2.4718245411734228
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 10.595224531507416
+    total_fees: 0.9033863290986517
+    long_trades: 9
+    short_trades: 0
+    final_equity: 339.0694326889006
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101548Z_setB_h4_compress_break_lon_v1
+    metrics_json: artifacts/evals/20260822T101548Z_setB_h4_compress_break_lon_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-023-h4_compress_break_lon_v1-setB-20260822-033.md
+- run_id: 20260822-034
+  recorded_at: '2026-08-22T10:15:53Z'
+  status: fail
+  hypothesis:
+    id: HYP-029
+    logic_id: h4_dn_break_non_asia_v1
+    name: アジア外下抜けショート
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 25
+    avg_trade_pnl: 0.0016943651051905561
+    total_return_pct: -0.3687468232446367
+    monthly_return_pct_approx: -0.03071876731680634
+    max_drawdown_pct: 2.645924717820862
+    win_rate_pct: 36.0
+    payoff_ratio: 1.7802448999581506
+    total_fees: 2.2965445274947034
+    long_trades: 0
+    short_trades: 25
+    final_equity: 298.8937595302661
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101553Z_setB_h4_dn_break_non_asia_v1
+    metrics_json: artifacts/evals/20260822T101553Z_setB_h4_dn_break_non_asia_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-029-h4_dn_break_non_asia_v1-setB-20260822-034.md
+- run_id: 20260822-035
+  recorded_at: '2026-08-22T10:15:55Z'
+  status: fail
+  hypothesis:
+    id: HYP-030
+    logic_id: h4_fade_asia_high_v1
+    name: アジア高値フェード短
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 34
+    avg_trade_pnl: -0.3645202881577323
+    total_return_pct: -4.666215314783129
+    monthly_return_pct_approx: -0.3966227383924714
+    max_drawdown_pct: 8.001459924396821
+    win_rate_pct: 26.47058823529412
+    payoff_ratio: 1.9616328402161916
+    total_fees: 3.215842835681806
+    long_trades: 0
+    short_trades: 34
+    final_equity: 286.0013540556506
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101555Z_setB_h4_fade_asia_high_v1
+    metrics_json: artifacts/evals/20260822T101555Z_setB_h4_fade_asia_high_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-030-h4_fade_asia_high_v1-setB-20260822-035.md
+- run_id: 20260822-036
+  recorded_at: '2026-08-22T10:16:00Z'
+  status: fail
+  hypothesis:
+    id: HYP-037
+    logic_id: h4_repeat_break_v1
+    name: 4H再突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 27
+    avg_trade_pnl: 1.5705860956089173
+    total_return_pct: 13.706908712190891
+    monthly_return_pct_approx: 1.0740132117646795
+    max_drawdown_pct: 4.098392990788548
+    win_rate_pct: 40.74074074074074
+    payoff_ratio: 3.427118771283468
+    total_fees: 2.594240121177074
+    long_trades: 27
+    short_trades: 0
+    final_equity: 341.12072613657267
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101600Z_setB_h4_repeat_break_v1
+    metrics_json: artifacts/evals/20260822T101600Z_setB_h4_repeat_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-037-h4_repeat_break_v1-setB-20260822-036.md
+- run_id: 20260822-037
+  recorded_at: '2026-08-22T10:16:02Z'
+  status: fail
+  hypothesis:
+    id: HYP-038
+    logic_id: h4_first_break_v1
+    name: 4H初回突破のみ
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 19
+    avg_trade_pnl: 1.7521529571038532
+    total_return_pct: 10.78395894990165
+    monthly_return_pct_approx: 0.8553444407941369
+    max_drawdown_pct: 2.4364879268538706
+    win_rate_pct: 36.84210526315789
+    payoff_ratio: 4.4420661335275335
+    total_fees: 1.89689549532534
+    long_trades: 19
+    short_trades: 0
+    final_equity: 332.3518768497049
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101602Z_setB_h4_first_break_v1
+    metrics_json: artifacts/evals/20260822T101602Z_setB_h4_first_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-038-h4_first_break_v1-setB-20260822-037.md
+- run_id: 20260822-038
+  recorded_at: '2026-08-22T10:16:05Z'
+  status: fail
+  hypothesis:
+    id: HYP-039
+    logic_id: h4_mid_range_break_v1
+    name: レンジ中位からの突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 2
+    avg_trade_pnl: 15.106840153023189
+    total_return_pct: 10.039424356503446
+    monthly_return_pct_approx: 0.7988001368719688
+    max_drawdown_pct: 0.01650000000000773
+    win_rate_pct: 100.0
+    payoff_ratio: null
+    total_fees: 0.20749364476494347
+    long_trades: 2
+    short_trades: 0
+    final_equity: 330.11827306951034
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101604Z_setB_h4_mid_range_break_v1
+    metrics_json: artifacts/evals/20260822T101604Z_setB_h4_mid_range_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-039-h4_mid_range_break_v1-setB-20260822-038.md
+- run_id: 20260822-039
+  recorded_at: '2026-08-22T10:16:07Z'
+  status: fail
+  hypothesis:
+    id: HYP-040
+    logic_id: h4_two_bull_high_v1
+    name: 高値帯連陽
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 37
+    avg_trade_pnl: 1.2400932647449878
+    total_return_pct: 14.705158829242837
+    monthly_return_pct_approx: 1.1475137822545722
+    max_drawdown_pct: 3.2119206246734198
+    win_rate_pct: 37.83783783783784
+    payoff_ratio: 3.5001115528513487
+    total_fees: 3.56217132196617
+    long_trades: 37
+    short_trades: 0
+    final_equity: 344.11547648772853
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101607Z_setB_h4_two_bull_high_v1
+    metrics_json: artifacts/evals/20260822T101607Z_setB_h4_two_bull_high_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-040-h4_two_bull_high_v1-setB-20260822-039.md
+- run_id: 20260822-040
+  recorded_at: '2026-08-22T10:16:09Z'
+  status: fail
+  hypothesis:
+    id: HYP-041
+    logic_id: h4_low_reclaim_v1
+    name: 安値帯からの陽線回復
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 7
+    avg_trade_pnl: -1.898477349491494
+    total_return_pct: -4.545280482146897
+    monthly_return_pct_approx: -0.38612087242969606
+    max_drawdown_pct: 4.545280482146893
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.6858775198403699
+    long_trades: 7
+    short_trades: 0
+    final_equity: 286.3641585535593
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101609Z_setB_h4_low_reclaim_v1
+    metrics_json: artifacts/evals/20260822T101609Z_setB_h4_low_reclaim_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-041-h4_low_reclaim_v1-setB-20260822-040.md
+- run_id: 20260822-041
+  recorded_at: '2026-08-22T10:16:12Z'
+  status: fail
+  hypothesis:
+    id: HYP-042
+    logic_id: h4_break_below_sma_v1
+    name: SMA下での上抜け
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 3
+    avg_trade_pnl: -0.8606325304705152
+    total_return_pct: -0.8975997701003102
+    monthly_return_pct_approx: -0.07495776160852952
+    max_drawdown_pct: 0.897599770100309
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.22044364216133036
+    long_trades: 3
+    short_trades: 0
+    final_equity: 297.3072006896991
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101611Z_setB_h4_break_below_sma_v1
+    metrics_json: artifacts/evals/20260822T101611Z_setB_h4_break_below_sma_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-042-h4_break_below_sma_v1-setB-20260822-041.md
+- run_id: 20260822-042
+  recorded_at: '2026-08-22T10:16:14Z'
+  status: fail
+  hypothesis:
+    id: HYP-052
+    logic_id: h4_break_bull_confirm_v1
+    name: 非アジア突破＋陽線確認
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 30
+    avg_trade_pnl: 1.4624328452071937
+    total_return_pct: 14.143337896878162
+    monthly_return_pct_approx: 1.1062197284216868
+    max_drawdown_pct: 4.259000503599035
+    win_rate_pct: 36.666666666666664
+    payoff_ratio: 3.8767191367792453
+    total_fees: 2.9108808231440086
+    long_trades: 30
+    short_trades: 0
+    final_equity: 342.4300136906345
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101614Z_setB_h4_break_bull_confirm_v1
+    metrics_json: artifacts/evals/20260822T101614Z_setB_h4_break_bull_confirm_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-052-h4_break_bull_confirm_v1-setB-20260822-042.md
+- run_id: 20260822-043
+  recorded_at: '2026-08-22T10:16:17Z'
+  status: fail
+  hypothesis:
+    id: HYP-044
+    logic_id: h4_shallow_pb_exp_lon_v1
+    name: 浅い押し拡大×ロンドン
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 11
+    avg_trade_pnl: 0.3429494406905707
+    total_return_pct: 1.1099767361367974
+    monthly_return_pct_approx: 0.0918447385314991
+    max_drawdown_pct: 1.592481831635295
+    win_rate_pct: 36.36363636363637
+    payoff_ratio: 2.245931916891253
+    total_fees: 0.8873467807156464
+    long_trades: 11
+    short_trades: 0
+    final_equity: 303.3299302084104
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101616Z_setB_h4_shallow_pb_exp_lon_v1
+    metrics_json: artifacts/evals/20260822T101616Z_setB_h4_shallow_pb_exp_lon_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-044-h4_shallow_pb_exp_lon_v1-setB-20260822-043.md
+- run_id: 20260822-044
+  recorded_at: '2026-08-22T10:16:19Z'
+  status: fail
+  hypothesis:
+    id: HYP-045
+    logic_id: h4_shallow_pb_exp_ny_v1
+    name: 浅い押し拡大×NY
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 0.1807564323874366
+    total_return_pct: 0.24515892029171038
+    monthly_return_pct_approx: 0.020365747773709586
+    max_drawdown_pct: 1.076763078590818
+    win_rate_pct: 40.0
+    payoff_ratio: 1.7799314214146371
+    total_fees: 0.33720077476864563
+    long_trades: 5
+    short_trades: 0
+    final_equity: 300.73547676087514
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101619Z_setB_h4_shallow_pb_exp_ny_v1
+    metrics_json: artifacts/evals/20260822T101619Z_setB_h4_shallow_pb_exp_ny_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-045-h4_shallow_pb_exp_ny_v1-setB-20260822-044.md
+- run_id: 20260822-045
+  recorded_at: '2026-08-22T10:16:21Z'
+  status: fail
+  hypothesis:
+    id: HYP-046
+    logic_id: h4_bm_not_asia_v1
+    name: 伸び入口×非アジア
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 30
+    avg_trade_pnl: 1.585261596987209
+    total_return_pct: 15.378966647230573
+    monthly_return_pct_approx: 1.1967950498886548
+    max_drawdown_pct: 3.1705578739094893
+    win_rate_pct: 36.666666666666664
+    payoff_ratio: 4.329196795010964
+    total_fees: 2.8688490978197585
+    long_trades: 30
+    short_trades: 0
+    final_equity: 346.1368999416917
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101621Z_setB_h4_bm_not_asia_v1
+    metrics_json: artifacts/evals/20260822T101621Z_setB_h4_bm_not_asia_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-046-h4_bm_not_asia_v1-setB-20260822-045.md
+- run_id: 20260822-046
+  recorded_at: '2026-08-22T10:16:24Z'
+  status: fail
+  hypothesis:
+    id: HYP-047
+    logic_id: h4_break_non_asia_exp_v1
+    name: 非アジア×拡大突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 10
+    avg_trade_pnl: 3.854009337473778
+    total_return_pct: 12.690820489509868
+    monthly_return_pct_approx: 0.9985891467712671
+    max_drawdown_pct: 2.1179091976095274
+    win_rate_pct: 60.0
+    payoff_ratio: 3.4700622004931643
+    total_fees: 0.9567298676511183
+    long_trades: 10
+    short_trades: 0
+    final_equity: 338.0724614685296
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101623Z_setB_h4_break_non_asia_exp_v1
+    metrics_json: artifacts/evals/20260822T101623Z_setB_h4_break_non_asia_exp_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-047-h4_break_non_asia_exp_v1-setB-20260822-046.md
+- run_id: 20260822-047
+  recorded_at: '2026-08-22T10:16:26Z'
+  status: fail
+  hypothesis:
+    id: HYP-048
+    logic_id: h4_break_non_asia_comp_v1
+    name: 非アジア×圧縮突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 7
+    avg_trade_pnl: 1.8710242730733133
+    total_return_pct: 4.2562348394550975
+    monthly_return_pct_approx: 0.34724525879337165
+    max_drawdown_pct: 3.287119176254521
+    win_rate_pct: 14.285714285714285
+    payoff_ratio: 14.243355568399533
+    total_fees: 0.6643189492026598
+    long_trades: 7
+    short_trades: 0
+    final_equity: 312.76870451836527
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101626Z_setB_h4_break_non_asia_comp_v1
+    metrics_json: artifacts/evals/20260822T101626Z_setB_h4_break_non_asia_comp_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-048-h4_break_non_asia_comp_v1-setB-20260822-047.md
+- run_id: 20260822-048
+  recorded_at: '2026-08-22T10:16:28Z'
+  status: fail
+  hypothesis:
+    id: HYP-049
+    logic_id: h4_break_midweek_v1
+    name: 火水木の非アジア突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 15
+    avg_trade_pnl: 2.7729054713570047
+    total_return_pct: 13.63389097760319
+    monthly_return_pct_approx: 1.0686137664727147
+    max_drawdown_pct: 3.1535752018851406
+    win_rate_pct: 46.666666666666664
+    payoff_ratio: 4.208554741499599
+    total_fees: 1.407088093655052
+    long_trades: 15
+    short_trades: 0
+    final_equity: 340.90167293280956
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101628Z_setB_h4_break_midweek_v1
+    metrics_json: artifacts/evals/20260822T101628Z_setB_h4_break_midweek_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-049-h4_break_midweek_v1-setB-20260822-048.md
+- run_id: 20260822-049
+  recorded_at: '2026-08-22T10:16:31Z'
+  status: fail
+  hypothesis:
+    id: HYP-050
+    logic_id: h4_inside_bar_break_v1
+    name: インサイドバー後突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 9
+    avg_trade_pnl: 1.1725955307988427
+    total_return_pct: 3.3724630559554436
+    monthly_return_pct_approx: 0.2762258014336272
+    max_drawdown_pct: 1.6598319185393458
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 4.031250119543323
+    total_fees: 0.8779886764605432
+    long_trades: 9
+    short_trades: 0
+    final_equity: 310.11738916786635
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101630Z_setB_h4_inside_bar_break_v1
+    metrics_json: artifacts/evals/20260822T101630Z_setB_h4_inside_bar_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-050-h4_inside_bar_break_v1-setB-20260822-049.md
+- run_id: 20260822-050
+  recorded_at: '2026-08-22T10:16:33Z'
+  status: fail
+  hypothesis:
+    id: HYP-051
+    logic_id: h4_fail_ll_reclaim_ny_v1
+    name: 失敗下抜け回復×NY
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1
+    avg_trade_pnl: -2.2408723384168536
+    total_return_pct: -0.7634574461389598
+    monthly_return_pct_approx: -0.0637161929805119
+    max_drawdown_pct: 0.7634574461389624
+    win_rate_pct: 0.0
+    payoff_ratio: 0.0
+    total_fees: 0.09779408195894815
+    long_trades: 1
+    short_trades: 0
+    final_equity: 297.7096276615831
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101633Z_setB_h4_fail_ll_reclaim_ny_v1
+    metrics_json: artifacts/evals/20260822T101633Z_setB_h4_fail_ll_reclaim_ny_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-051-h4_fail_ll_reclaim_ny_v1-setB-20260822-050.md
+- run_id: 20260822-051
+  recorded_at: '2026-08-22T10:17:00Z'
+  status: fail
+  hypothesis:
+    id: HYP-024
+    logic_id: d_second_break_v1
+    name: D-002 二度目突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 2.560856820368461
+    total_return_pct: 4.227304563126921
+    monthly_return_pct_approx: 0.3449291897309692
+    max_drawdown_pct: 2.260742662488396
+    win_rate_pct: 40.0
+    payoff_ratio: 4.3708356364004315
+    total_fees: 0.2518543973708
+    long_trades: 5
+    short_trades: 0
+    final_equity: 312.6819136893808
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101659Z_setB_d_second_break_v1
+    metrics_json: artifacts/evals/20260822T101659Z_setB_d_second_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-024-d_second_break_v1-setB-20260822-051.md
+- run_id: 20260822-052
+  recorded_at: '2026-08-22T10:17:02Z'
+  status: fail
+  hypothesis:
+    id: HYP-025
+    logic_id: d_reclaim_deep_v1
+    name: D-003 深押し取り戻し
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 3
+    avg_trade_pnl: 6.510389121525176
+    total_return_pct: 6.486561675111702
+    monthly_return_pct_approx: 0.5240484112079002
+    max_drawdown_pct: 0.7945548671618264
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 17.516516951472703
+    total_fees: 0.15375206888264062
+    long_trades: 3
+    short_trades: 0
+    final_equity: 319.4596850253351
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101702Z_setB_d_reclaim_deep_v1
+    metrics_json: artifacts/evals/20260822T101702Z_setB_d_reclaim_deep_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-025-d_reclaim_deep_v1-setB-20260822-052.md
+- run_id: 20260822-053
+  recorded_at: '2026-08-22T10:17:04Z'
+  status: fail
+  hypothesis:
+    id: HYP-026
+    logic_id: d_break_not_compress_v1
+    name: 非圧縮日足突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 7.252691873353973
+    total_return_pct: 12.04723246788426
+    monthly_return_pct_approx: 0.9504925160831457
+    max_drawdown_pct: 1.0120726044293438
+    win_rate_pct: 40.0
+    payoff_ratio: 18.77704492152571
+    total_fees: 0.2635468105519852
+    long_trades: 5
+    short_trades: 0
+    final_equity: 336.14169740365276
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101704Z_setB_d_break_not_compress_v1
+    metrics_json: artifacts/evals/20260822T101704Z_setB_d_break_not_compress_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-026-d_break_not_compress_v1-setB-20260822-053.md
+- run_id: 20260822-054
+  recorded_at: '2026-08-22T10:17:06Z'
+  status: fail
+  hypothesis:
+    id: HYP-027
+    logic_id: d_shallow_pb_v1
+    name: 日足浅い押し
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 6
+    avg_trade_pnl: 4.45316892970427
+    total_return_pct: 8.860501573473002
+    monthly_return_pct_approx: 0.7085443515151502
+    max_drawdown_pct: 1.7624888027704986
+    win_rate_pct: 33.33333333333333
+    payoff_ratio: 9.702529424551198
+    total_fees: 0.2897969315217916
+    long_trades: 6
+    short_trades: 0
+    final_equity: 326.581504720419
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101706Z_setB_d_shallow_pb_v1
+    metrics_json: artifacts/evals/20260822T101706Z_setB_d_shallow_pb_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-027-d_shallow_pb_v1-setB-20260822-054.md
+- run_id: 20260822-055
+  recorded_at: '2026-08-22T10:17:08Z'
+  status: fail
+  hypothesis:
+    id: HYP-028
+    logic_id: d_half_pb_v1
+    name: 日足半値押し
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 2.7543764428741913
+    total_return_pct: 4.5578170902127235
+    monthly_return_pct_approx: 0.37135398297938327
+    max_drawdown_pct: 3.3853178060099554
+    win_rate_pct: 20.0
+    payoff_ratio: 9.477246409169359
+    total_fees: 0.20449475778104398
+    long_trades: 5
+    short_trades: 0
+    final_equity: 313.67345127063817
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101708Z_setB_d_half_pb_v1
+    metrics_json: artifacts/evals/20260822T101708Z_setB_d_half_pb_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-028-d_half_pb_v1-setB-20260822-055.md
+- run_id: 20260822-056
+  recorded_at: '2026-08-22T10:17:10Z'
+  status: fail
+  hypothesis:
+    id: HYP-031
+    logic_id: d_dn_break_v1
+    name: 日足下抜けショート
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: -1.635674669562085
+    total_return_pct: -2.7589449413350398
+    monthly_return_pct_approx: -0.2324016191010858
+    max_drawdown_pct: 2.7589449413350358
+    win_rate_pct: 20.0
+    payoff_ratio: 1.19118625882453
+    total_fees: 0.20136446108897899
+    long_trades: 0
+    short_trades: 5
+    final_equity: 291.7231651759949
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101710Z_setB_d_dn_break_v1
+    metrics_json: artifacts/evals/20260822T101710Z_setB_d_dn_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-031-d_dn_break_v1-setB-20260822-056.md
+- run_id: 20260822-057
+  recorded_at: '2026-08-22T10:17:12Z'
+  status: fail
+  hypothesis:
+    id: HYP-032
+    logic_id: d_break_any_v1
+    name: 日足突破（フィルタ薄）
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 7.627382063008483
+    total_return_pct: 12.671626394497991
+    monthly_return_pct_approx: 0.9971583808995765
+    max_drawdown_pct: 1.00618537385985
+    win_rate_pct: 40.0
+    payoff_ratio: 19.66961548034118
+    total_fees: 0.26511626059106486
+    long_trades: 5
+    short_trades: 0
+    final_equity: 338.014879183494
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101712Z_setB_d_break_any_v1
+    metrics_json: artifacts/evals/20260822T101712Z_setB_d_break_any_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-032-d_break_any_v1-setB-20260822-057.md
+- run_id: 20260822-058
+  recorded_at: '2026-08-22T10:17:15Z'
+  status: fail
+  hypothesis:
+    id: HYP-033
+    logic_id: d_monday_break_v1
+    name: 月曜突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 4
+    avg_trade_pnl: 6.742982192836232
+    total_return_pct: 8.956403800121592
+    monthly_return_pct_approx: 0.7159198199006234
+    max_drawdown_pct: 1.5368821672671218
+    win_rate_pct: 50.0
+    payoff_ratio: 6.692345781074044
+    total_fees: 0.22033399192586361
+    long_trades: 4
+    short_trades: 0
+    final_equity: 326.8692114003648
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101714Z_setB_d_monday_break_v1
+    metrics_json: artifacts/evals/20260822T101714Z_setB_d_monday_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-033-d_monday_break_v1-setB-20260822-058.md
+- run_id: 20260822-059
+  recorded_at: '2026-08-22T10:17:17Z'
+  status: fail
+  hypothesis:
+    id: HYP-034
+    logic_id: d_fri_break_v1
+    name: 金曜突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 2
+    avg_trade_pnl: 3.9811278404840547
+    total_return_pct: 2.6367015556038265
+    monthly_return_pct_approx: 0.21667445244086814
+    max_drawdown_pct: 0.5310752794973483
+    win_rate_pct: 50.0
+    payoff_ratio: 5.916748456998903
+    total_fees: 0.10871237768772152
+    long_trades: 2
+    short_trades: 0
+    final_equity: 307.9101046668115
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101717Z_setB_d_fri_break_v1
+    metrics_json: artifacts/evals/20260822T101717Z_setB_d_fri_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-034-d_fri_break_v1-setB-20260822-059.md
+- run_id: 20260822-060
+  recorded_at: '2026-08-22T10:17:19Z'
+  status: fail
+  hypothesis:
+    id: HYP-035
+    logic_id: d_exp_break_v1
+    name: 拡大中の突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 2
+    avg_trade_pnl: -0.8489582957507109
+    total_return_pct: -0.5776045048519918
+    monthly_return_pct_approx: -0.04816410547267003
+    max_drawdown_pct: 1.01783322422934
+    win_rate_pct: 50.0
+    payoff_ratio: 0.43751572090511065
+    total_fees: 0.06887868195124618
+    long_trades: 2
+    short_trades: 0
+    final_equity: 298.26718648544403
+    gate_pass: false
+    gate_failures:
+    - expectancy
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101719Z_setB_d_exp_break_v1
+    metrics_json: artifacts/evals/20260822T101719Z_setB_d_exp_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-035-d_exp_break_v1-setB-20260822-060.md
+- run_id: 20260822-061
+  recorded_at: '2026-08-22T10:17:21Z'
+  status: fail
+  hypothesis:
+    id: HYP-036
+    logic_id: d_comp_break_v1
+    name: 圧縮中の突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 1
+    avg_trade_pnl: 22.04863535377162
+    total_return_pct: 7.3394323593064525
+    monthly_return_pct_approx: 0.5907612283053476
+    max_drawdown_pct: 0.010112758617424333
+    win_rate_pct: 100.0
+    payoff_ratio: null
+    total_fees: 0.07282666976575602
+    long_trades: 1
+    short_trades: 0
+    final_equity: 322.0182970779193
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101721Z_setB_d_comp_break_v1
+    metrics_json: artifacts/evals/20260822T101721Z_setB_d_comp_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-036-d_comp_break_v1-setB-20260822-061.md
+- run_id: 20260822-062
+  recorded_at: '2026-08-22T10:17:23Z'
+  status: fail
+  hypothesis:
+    id: HYP-043
+    logic_id: d_near_high_break_v1
+    name: 高値帯での日足突破
+    distortion_ids:
+    - E1
+    one_liner: Formal eval FAIL
+  logic:
+    eval_version: eval_v1.1
+    set: B
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: 35136
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: cf5c0ee
+  results:
+    trades: 5
+    avg_trade_pnl: 7.627382063008483
+    total_return_pct: 12.671626394497991
+    monthly_return_pct_approx: 0.9971583808995765
+    max_drawdown_pct: 1.00618537385985
+    win_rate_pct: 40.0
+    payoff_ratio: 19.66961548034118
+    total_fees: 0.26511626059106486
+    long_trades: 5
+    short_trades: 0
+    final_equity: 338.014879183494
+    gate_pass: false
+    gate_failures:
+    - min_trades
+  artifacts:
+    dir: artifacts/evals/20260822T101723Z_setB_d_near_high_break_v1
+    metrics_json: artifacts/evals/20260822T101723Z_setB_d_near_high_break_v1/metrics.json
+  learnings:
+    one_liner: Formal eval FAIL
+    summary: 実データ(binance_vision) Set B。costs=eval_v1 lock。 ゲート不合格。
+    keep:
+    - 実データ + 固定コストでの判定
+    discard:
+    - 合成 smoke を合否に使うこと
+  next_actions:
+  - 敗因を workstream notes に1点整理
+  - ルールを1点だけ変更して再 eval
+  notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
+  entry_doc: docs/research/entries/HYP-043-d_near_high_break_v1-setB-20260822-062.md

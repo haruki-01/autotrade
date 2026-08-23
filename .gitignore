@@ -35,3 +35,5 @@ build/
 # Market data cache & run artifacts
 data/cache/
 artifacts/
+eval/reports/*
+!eval/reports/.gitkeep

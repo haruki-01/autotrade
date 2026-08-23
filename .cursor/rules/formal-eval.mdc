@@ -1,0 +1,11 @@
+---
+description: Formal eval は実データのみ。synthetic smoke を合否に使わない
+alwaysApply: true
+---
+
+# 検証・評価の区別
+
+- **検証 / 評価 / 合否** → `.cursor/skills/backtest-eval/SKILL.md` に従い `autotrade eval`（実データ + `configs/eval_v1.yaml`）
+- **synthetic / smoke** → コード動作確認のみ。PASS/FAIL の根拠にしない
+- 合否用コマンドに `--synthetic` を付けない
+- lock（`eval/locks/eval_v1.lock.yaml`）が無ければ先に `eval-prepare`

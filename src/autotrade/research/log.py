@@ -11,6 +11,25 @@ import yaml
 REGISTRY_PATH = Path("docs/research/registry.yaml")
 INDEX_PATH = Path("docs/research/INDEX.md")
 ENTRIES_DIR = Path("docs/research/entries")
+WORKSTREAMS_DIR = Path("docs/workstreams")
+
+# hypothesis_id or logic_id → workstream folder name
+WORKSTREAM_MAP: dict[str, str] = {
+    "H01": "H01-mtf-ema-pullback",
+    "mtf_ema_pullback_v1": "H01-mtf-ema-pullback",
+    "L-COST": "L-COST-cost-gate",
+    "cost_gate_v1": "L-COST-cost-gate",
+    "L-MOM-VOL": "L-MOM-VOL-vol-scaled",
+    "vol_scaled_trend_v1": "L-MOM-VOL-vol-scaled",
+    "L-BREAK": "L-BREAK-donchian",
+    "donchian_20_10_v1": "L-BREAK-donchian",
+    "L-BREAK-2": "L-BREAK-2-donchian-h4",
+    "donchian_h4_20_10_v1": "L-BREAK-2-donchian-h4",
+    "H21": "H21-donchian-long-only",
+    "donchian_20_10_long_only": "H21-donchian-long-only",
+    "HYP-002": "HYP-002-e1-breakout-long-v2",
+    "donchian_20_10_long_v2": "HYP-002-e1-breakout-long-v2",
+}
 
 
 def _git_head() -> str | None:
@@ -96,7 +115,8 @@ def record_backtest_run(
     date_prefix = datetime.now(timezone.utc).strftime("%Y%m%d")
     run_id = _next_run_id(runs, date_prefix)
     recorded_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    entry_slug = f"{hypothesis_id}-{logic_id}-set{payload.get('set')}-{date_prefix}"
+    smoke_tag = "-smoke" if status == "smoke" else ""
+    entry_slug = f"{hypothesis_id}-{logic_id}-set{payload.get('set')}-{run_id}{smoke_tag}"
     entry_path = ENTRIES_DIR / f"{entry_slug}.md"
 
     run_record: dict[str, Any] = {
@@ -151,7 +171,66 @@ def record_backtest_run(
     save_registry(registry)
     _write_entry_markdown(run_record, entry_path)
     refresh_index(registry)
+    _sync_workstream_latest(run_record)
     return run_record
+
+
+def _resolve_workstream_dir(hypothesis_id: str, logic_id: str) -> Path | None:
+    for key in (hypothesis_id, logic_id):
+        folder = WORKSTREAM_MAP.get(key)
+        if folder:
+            path = WORKSTREAMS_DIR / folder
+            if path.is_dir():
+                return path
+    if WORKSTREAMS_DIR.is_dir():
+        for child in sorted(WORKSTREAMS_DIR.iterdir()):
+            if not child.is_dir() or child.name.startswith("_"):
+                continue
+            if child.name.startswith(f"{hypothesis_id}-") or logic_id in child.name:
+                return child
+    return None
+
+
+def _sync_workstream_latest(run: dict[str, Any]) -> Path | None:
+    """Write machine-updated LATEST.md under the matching workstream."""
+    h = run.get("hypothesis") or {}
+    ws = _resolve_workstream_dir(str(h.get("id", "")), str(h.get("logic_id", "")))
+    if ws is None:
+        return None
+
+    t = run.get("test") or {}
+    r = run.get("results") or {}
+    entry = run.get("entry_doc") or ""
+    if entry.startswith("docs/"):
+        entry_rel = Path("../..") / Path(entry).relative_to("docs")
+        entry_link = f"[entry]({entry_rel.as_posix()})"
+    elif entry:
+        entry_link = f"[entry](../../{entry})"
+    else:
+        entry_link = "—"
+    avg = r.get("avg_trade_pnl")
+    avg_s = f"{avg:.2f}" if isinstance(avg, (int, float)) else "—"
+    dd = r.get("max_drawdown_pct")
+    dd_s = f"{dd:.1f}%" if isinstance(dd, (int, float)) else "—"
+
+    lines = [
+        "# 最新ラン（自動更新）",
+        "",
+        "このファイルは `autotrade backtest` 実行時に上書きされる。手編集しない。",
+        "",
+        f"- **Run ID:** `{run.get('run_id')}`",
+        f"- **記録:** {run.get('recorded_at')}",
+        f"- **ステータス:** `{run.get('status')}`",
+        f"- **Set:** {t.get('set')} / {t.get('data_source')}",
+        f"- **期待値:** {avg_s} / **DD:** {dd_s} / **トレード:** {r.get('trades', '—')}",
+        f"- **詳細:** {entry_link}",
+        "",
+        "進捗・次アクションの正は [README.md](./README.md)。",
+        "",
+    ]
+    out = ws / "LATEST.md"
+    out.write_text("\n".join(lines), encoding="utf-8")
+    return out
 
 
 def _write_entry_markdown(run: dict[str, Any], path: Path) -> None:
@@ -342,7 +421,8 @@ def refresh_index(registry: dict[str, Any] | None = None) -> None:
             "- [README（運用ルール）](./README.md)",
             "- [registry.yaml](./registry.yaml) — 機械可読マスタ",
             "- [エントリテンプレート](./_template.md)",
-            "- [市場の歪み前提](../MARKET_EDGE_MAP.md)",
+            "- [市場の歪み前提](../master/MARKET_EDGE_MAP.md)",
+            "- [Workstreams](../workstreams/)",
             "",
         ]
     )

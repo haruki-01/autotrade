@@ -17,7 +17,7 @@
 
 **一言:** （誰が損して、なぜ取れるか）
 
-**狙う歪み:** E1 / E2 / … （[MARKET_EDGE_MAP.md](../MARKET_EDGE_MAP.md)）
+**狙う歪み:** E1 / E2 / … （[MARKET_EDGE_MAP.md](../master/MARKET_EDGE_MAP.md)）
 
 **根拠の確信度:** 高 / 中 / 低
 

@@ -71,11 +71,13 @@ def write_synthetic_cache(
     start: str,
     end: str,
 ) -> dict[str, Path]:
+    """Write synthetic OHLCV under a distinct filename prefix (never overwrite real caches)."""
+    del category  # kept for call-site compatibility; path uses synthetic tag
     frames = generate_synthetic_btc(start=start, end=end)
     cache_dir = Path(cache_dir)
     paths = {}
     for interval, df in frames.items():
-        path = cache_dir / f"{symbol}_{category}_{interval}_{start}_{end}.csv"
+        path = cache_dir / f"{symbol}_synthetic_{interval}_{start}_{end}.csv"
         save_ohlcv(df, path)
         paths[interval] = path
     return paths

@@ -39,7 +39,11 @@ docs/research/
 
 ## 自動追記
 
-バックテスト実行後、デフォルトで `registry.yaml` と `entries/` に追記し、`INDEX.md` を更新する。
+バックテスト実行後、デフォルトで:
+
+1. `registry.yaml` と `entries/` に追記
+2. `INDEX.md` を更新
+3. 対応する `docs/workstreams/<id>/LATEST.md` を上書き
 
 ```bash
 autotrade backtest --set B --hypothesis-id H01 --logic-id mtf_ema_pullback_v1
@@ -65,4 +69,5 @@ autotrade backtest --set B --hypothesis-id H01 --logic-id mtf_ema_pullback_v1
 
 - [INDEX.md](./INDEX.md)
 - [registry.yaml](./registry.yaml)
-- [MARKET_EDGE_MAP.md](../MARKET_EDGE_MAP.md)
+- [MARKET_EDGE_MAP.md](../master/MARKET_EDGE_MAP.md)
+- [Workstreams](../workstreams/) — ロジックごとの進捗

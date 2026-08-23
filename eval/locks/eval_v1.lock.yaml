@@ -1,0 +1,72 @@
+schema_version: 1
+eval_version: eval_v1.1
+created_at: '2026-08-22T07:50:21Z'
+git_commit: cf5c0ee
+config_path: configs/eval_v1.yaml
+config_sha256: f9634b51b4482a8494fa7f03d2e45bfe9bbf07c9a9f15fda0d3cd1ad84fe43a3
+forbid_synthetic: true
+costs:
+  fee_rate_per_side: 0.00055
+  slippage_pct_per_side: 0.0002
+  initial_equity: 300.0
+  leverage: 3.0
+  risk_per_trade_pct: 1.0
+  sizing_mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+gates:
+  min_trades: 100
+  max_drawdown_pct: 20.0
+  primary_gate_set: B
+  holdout_set: C
+datasets:
+  A:
+    eval_window:
+      start: '2023-01-01'
+      end: '2023-12-31'
+    fetch_window:
+      start: '2022-05-26'
+      end: '2023-12-31'
+    data_source: binance_vision
+    bars:
+      1d: 585
+      4h: 3510
+      15m: 56155
+    files:
+      data/cache/BTCUSDT_binance_spot_1d_2022-05-26_2023-12-31.csv: 39d9937ea333c3889d633063270139994bb6805c7e512a5342ee9abda7201bcc
+      data/cache/BTCUSDT_binance_spot_4h_2022-05-26_2023-12-31.csv: 2e4226985033ece0925eeaf6e406bcb78a43745a1f7a796893271b18d157ca21
+      data/cache/BTCUSDT_binance_spot_15m_2022-05-26_2023-12-31.csv: 857e9788e9b8618158304da93520e5328cd1f54470be6038d9ca8fb5bf5941f4
+  B:
+    eval_window:
+      start: '2024-01-01'
+      end: '2024-12-31'
+    fetch_window:
+      start: '2023-05-26'
+      end: '2024-12-31'
+    data_source: binance_vision
+    bars:
+      1d: 586
+      4h: 3516
+      15m: 56256
+    files:
+      data/cache/BTCUSDT_binance_spot_1d_2023-05-26_2024-12-31.csv: 35f851f553922f45129747a07d6b4fa15adda180eeb3c2609f6c05516c205ae1
+      data/cache/BTCUSDT_binance_spot_4h_2023-05-26_2024-12-31.csv: ca81e83229432648b5c10f8fad7a2d56038dbde7e362fe2dfeea096a1f39c18c
+      data/cache/BTCUSDT_binance_spot_15m_2023-05-26_2024-12-31.csv: d463044b2b7293ad7221846f1359edd9215c5df798de9de3444123bc9ff86f17
+  C:
+    eval_window:
+      start: '2025-01-01'
+      end: '2026-08-22'
+    fetch_window:
+      start: '2024-05-26'
+      end: '2026-08-22'
+    data_source: binance_vision
+    bars:
+      1d: 819
+      4h: 4910
+      15m: 78559
+    files:
+      data/cache/BTCUSDT_binance_spot_1d_2024-05-26_2026-08-22.csv: 546b1326fc42d0d61d7b3900f82b8e9a42f234305bd53fb081baf24e708dc687
+      data/cache/BTCUSDT_binance_spot_4h_2024-05-26_2026-08-22.csv: 93775b2bb47f3a28ac1ccf2dbcfd221879090aadde7587f56505731060759edf
+      data/cache/BTCUSDT_binance_spot_15m_2024-05-26_2026-08-22.csv: 536bbc04b716bf3f2499b6b1f137dd3a75f688856f50b09e0efffeaad7776f88
+notes: Formal eval only. Re-run eval-prepare after changing config or refreshing data.
+  If data_source is binance_vision, re-confirm on Bybit before any live decision.

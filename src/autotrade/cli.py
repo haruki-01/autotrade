@@ -14,8 +14,9 @@ from autotrade.data.binance_vision import BinanceVisionClient, ensure_binance_da
 from autotrade.data.synthetic import write_synthetic_cache
 from autotrade.backtest.engine import run_backtest, trades_to_frame
 from autotrade.backtest.metrics import compute_metrics, metrics_to_dict, monthly_returns
-from autotrade.strategy.mtf_trend import StrategyParams, prepare_frames
+from autotrade.strategy.registry import LOGIC_META, known_logic_ids, prepare_strategy
 from autotrade.research.log import record_backtest_run, refresh_index
+from autotrade.eval import prepare_eval_lock, run_formal_eval
 
 
 def _load_or_fetch_frames(
@@ -34,11 +35,10 @@ def _load_or_fetch_frames(
             end=end,
         )
         for interval in ("1d", "4h", "15m"):
-            path = cache / f"{cfg.symbol}_{cfg.category}_{interval}_{start}_{end}.csv"
+            path = cache / f"{cfg.symbol}_synthetic_{interval}_{start}_{end}.csv"
             frames[interval] = load_ohlcv(path)
         return frames, "synthetic"
 
-    # Prefer Bybit (target venue). Fall back to Binance Vision when geo-blocked.
     bybit_client = BybitPublicClient(base_url=cfg.base_url)
     try:
         for interval in ("1d", "4h", "15m"):
@@ -89,7 +89,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Write synthetic OHLCV instead of calling Bybit (offline smoke test)",
     )
 
-    bt = sub.add_parser("backtest", help="Run MTF trend backtest for a data set")
+    bt = sub.add_parser("backtest", help="Run strategy backtest for a data set")
     bt.add_argument("--config", default="configs/backtest_v1.yaml")
     bt.add_argument("--set", choices=["A", "B", "C"], default="B")
     bt.add_argument("--force-fetch", action="store_true")
@@ -98,8 +98,17 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Use synthetic data if cache missing / for offline runs",
     )
-    bt.add_argument("--hypothesis-id", default="H01", help="Hypothesis ID for research log")
-    bt.add_argument("--logic-id", default="mtf_ema_pullback_v1", help="Logic variant ID")
+    bt.add_argument(
+        "--logic-id",
+        default="mtf_ema_pullback_v1",
+        choices=known_logic_ids(),
+        help="Strategy / logic variant",
+    )
+    bt.add_argument(
+        "--hypothesis-id",
+        default=None,
+        help="Override hypothesis ID (default: from logic-id registry)",
+    )
     bt.add_argument(
         "--no-research-log",
         action="store_true",
@@ -110,12 +119,36 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     res_sub = res.add_subparsers(dest="research_command", required=True)
     res_sub.add_parser("refresh-index", help="Regenerate docs/research/INDEX.md from registry")
 
+    ep = sub.add_parser(
+        "eval-prepare",
+        help="Fetch REAL market data and write eval/locks (formal eval environment)",
+    )
+    ep.add_argument("--config", default="configs/eval_v1.yaml")
+    ep.add_argument("--sets", default="A,B,C", help="Comma-separated sets, e.g. A,B,C")
+    ep.add_argument("--force", action="store_true", help="Re-download even if cache exists")
+
+    ev = sub.add_parser(
+        "eval",
+        help="Formal evaluation on locked real data (synthetic forbidden)",
+    )
+    ev.add_argument("--config", default="configs/eval_v1.yaml")
+    ev.add_argument(
+        "--logic-id",
+        required=True,
+        help="One id or comma-separated list",
+    )
+    ev.add_argument("--set", choices=["A", "B", "C"], default=None, help="Default: primary gate B")
+    ev.add_argument(
+        "--no-research-log",
+        action="store_true",
+        help="Do not append to docs/research registry",
+    )
+
     return p.parse_args(argv)
 
 
 def _set_bounds(cfg, set_name: str) -> tuple[str, str]:
-    # Warmup: need history before set start for EMA
-    warm_days = max(cfg.daily_ema * 2, 120)
+    warm_days = max(cfg.daily_ema * 2, 220)
     start = pd.Timestamp(cfg.sets[set_name].start, tz="UTC") - pd.Timedelta(days=warm_days)
     end = cfg.sets[set_name].end
     return start.strftime("%Y-%m-%d"), end
@@ -138,20 +171,17 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
 def cmd_backtest(args: argparse.Namespace) -> int:
     cfg = load_config(args.config)
+    meta = LOGIC_META[args.logic_id]
+    hypothesis_id = args.hypothesis_id or meta["hypothesis_id"]
+
     frames, source = _load_or_fetch_frames(
         cfg, args.set, force=args.force_fetch, synthetic=args.synthetic
     )
 
-    params = StrategyParams(
-        daily_ema=cfg.daily_ema,
-        h4_ema=cfg.h4_ema,
-        m15_ema=cfg.m15_ema,
-        stop_loss_pct=cfg.stop_loss_pct,
-        take_profit_pct=cfg.take_profit_pct,
+    prepared = prepare_strategy(
+        args.logic_id, frames["1d"], frames["4h"], frames["15m"], cfg=cfg
     )
-    prepared = prepare_frames(frames["1d"], frames["4h"], frames["15m"], params)
 
-    # Restrict evaluation window to the declared set (after warmup signals exist)
     set_start = pd.Timestamp(cfg.sets[args.set].start, tz="UTC")
     set_end = pd.Timestamp(cfg.sets[args.set].end, tz="UTC") + pd.Timedelta(days=1)
     prepared = prepared[(prepared.index >= set_start) & (prepared.index < set_end)]
@@ -168,6 +198,9 @@ def cmd_backtest(args: argparse.Namespace) -> int:
         take_profit_pct=cfg.take_profit_pct,
         fee_rate=cfg.fee_rate_per_side,
         slippage_pct=cfg.slippage_pct_per_side,
+        sizing_mode=cfg.sizing_mode,
+        margin_per_trade=cfg.margin_per_trade,
+        risk_per_trade_usdt=cfg.risk_per_trade_usdt,
     )
     metrics = compute_metrics(
         result,
@@ -176,7 +209,7 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     )
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out_dir = Path("artifacts/backtests") / f"{stamp}_set{args.set}"
+    out_dir = Path("artifacts/backtests") / f"{stamp}_set{args.set}_{args.logic_id}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     trades_df = trades_to_frame(result.trades)
@@ -188,6 +221,8 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     payload = {
         "set": args.set,
         "config": args.config,
+        "logic_id": args.logic_id,
+        "hypothesis_id": hypothesis_id,
         "eval_start": cfg.sets[args.set].start,
         "eval_end": cfg.sets[args.set].end,
         "bars": len(prepared),
@@ -199,46 +234,30 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     (out_dir / "metrics.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     if not args.no_research_log:
-        learnings = _default_learnings(hypothesis_id=args.hypothesis_id, gate_pass=metrics.gate_pass, synthetic=bool(args.synthetic) or source == "synthetic")
+        synthetic = bool(args.synthetic) or source == "synthetic"
+        learnings = _default_learnings(
+            hypothesis_id=hypothesis_id, gate_pass=metrics.gate_pass, synthetic=synthetic
+        )
         run = record_backtest_run(
             payload=payload,
             artifacts_dir=out_dir,
-            hypothesis_id=args.hypothesis_id,
+            hypothesis_id=hypothesis_id,
             logic_id=args.logic_id,
-            hypothesis_name=_hypothesis_name(args.hypothesis_id),
-            distortion_ids=_distortion_ids(args.hypothesis_id),
+            hypothesis_name=meta["name"],
+            distortion_ids=list(meta.get("distortion_ids") or []),
             logic_summary=_logic_summary(cfg, args.logic_id),
             learnings=learnings,
-            next_actions=_next_actions(args.hypothesis_id, metrics.gate_pass),
+            next_actions=_next_actions(hypothesis_id, metrics.gate_pass, synthetic),
+            notes="synthetic smoke" if synthetic else "",
         )
         print(f"Research log: {run['entry_doc']} (run_id={run['run_id']})")
 
     print(json.dumps(payload, indent=2))
     print(f"\nArtifacts: {out_dir}")
     print(f"GATE: {'PASS' if metrics.gate_pass else 'FAIL'}")
-    # Synthetic runs are smoke tests only — do not fail CI on strategy gate
     if args.synthetic or source == "synthetic":
         return 0
     return 0 if metrics.gate_pass or args.set != "B" else 2
-
-
-def _hypothesis_name(hypothesis_id: str) -> str:
-    names = {
-        "H01": "MTF EMA押し目 v1",
-        "L-COST": "費用ゲート",
-        "L-MOM-VOL": "ボラ調整トレンド・トレール",
-        "L-BREAK": "Donchian 20/10 ブレイク",
-    }
-    return names.get(hypothesis_id, hypothesis_id)
-
-
-def _distortion_ids(hypothesis_id: str) -> list[str]:
-    mapping = {
-        "L-COST": ["E8"],
-        "L-MOM-VOL": ["E1", "E6"],
-        "L-BREAK": ["E1"],
-    }
-    return mapping.get(hypothesis_id, [])
 
 
 def _logic_summary(cfg, logic_id: str) -> dict:
@@ -250,7 +269,62 @@ def _logic_summary(cfg, logic_id: str) -> dict:
             "exit_stop": f"固定 {cfg.stop_loss_pct}%",
             "exit_tp": f"固定 {cfg.take_profit_pct}%",
             "leverage": cfg.leverage,
-            "max_positions": 1,
+        }
+    if logic_id == "cost_gate_v1":
+        return {
+            "change_from": "H01",
+            "rule": "ATRが往復コスト×1.5未満ならスキップ",
+            "exit_stop": f"固定 {cfg.stop_loss_pct}%",
+            "exit_tp": f"固定 {cfg.take_profit_pct}%",
+        }
+    if logic_id == "vol_scaled_trend_v1":
+        return {
+            "daily": "SMA200 レジーム",
+            "h4": "EMA20 方向",
+            "m15": "EMA押し目執行",
+            "exit": "ATRトレール 2.5x、固定利確なし",
+            "size": "ATRストップ基準リスク%",
+        }
+    if logic_id == "donchian_20_10_v1":
+        return {
+            "entry": "日足20 Donchian ブレイク",
+            "exit": "日足10 Donchian 逆側 + ATRストップ",
+            "long_only": False,
+        }
+    if logic_id == "donchian_20_10_long_only":
+        return {
+            "entry": "日足20 Donchian 上抜けのみ",
+            "exit": "日足10 Donchian 下抜け + ATRストップ",
+            "long_only": True,
+        }
+    if logic_id == "donchian_20_10_long_v2":
+        return {
+            "entry": "新規上抜け初日のみ + 4H確認（陽線 or 4H Donchian上）",
+            "exit": "日足10 Donchian 下抜け + ATRストップ",
+            "long_only": True,
+            "change_from": "donchian_20_10_long_only",
+            "hypothesis": "HYP-002",
+        }
+    if logic_id == "fake_then_rebreak_v1":
+        return {
+            "entry": "圧縮→HH20だまし→再突破初日 + 4H陽線",
+            "exit": "日足10 Donchian 下抜け + ATRストップ",
+            "spot": "SPOT-D001",
+            "hypothesis": "HYP-009",
+        }
+    if logic_id == "fake_then_retest_v1":
+        return {
+            "entry": "だまし後本突破水準の再テスト支え + 4H陽線",
+            "exit": "日足10 Donchian 下抜け + ATRストップ",
+            "spot": "SPOT-D001",
+            "hypothesis": "HYP-010",
+        }
+    if logic_id == "near_high_expanded_v1":
+        return {
+            "entry": "20日高値帯 × ATR%拡大 × SMA50上（新規成立日）+ 4H陽線",
+            "exit": "日足10 Donchian 下抜け + ATRストップ",
+            "spot": "SPOT-R001",
+            "hypothesis": "HYP-011",
         }
     return {"logic_id": logic_id}
 
@@ -259,7 +333,9 @@ def _default_learnings(*, hypothesis_id: str, gate_pass: bool, synthetic: bool) 
     if synthetic:
         return {
             "one_liner": "合成データ smoke。採用判断に使わない。",
-            "summary": "パイプライン動作確認。",
+            "summary": "パイプライン・ロジック実装の動作確認。次は実データ Set B。",
+            "keep": ["実装パスと research / workstream への自動蓄積"],
+            "discard": ["合成でのゲートPASSを意思決定に使うこと"],
         }
     if hypothesis_id == "H01" and not gate_pass:
         return {
@@ -276,7 +352,9 @@ def _default_learnings(*, hypothesis_id: str, gate_pass: bool, synthetic: bool) 
     return {"summary": "ゲート不合格。知見を entries に追記すること。"}
 
 
-def _next_actions(hypothesis_id: str, gate_pass: bool) -> list[str]:
+def _next_actions(hypothesis_id: str, gate_pass: bool, synthetic: bool) -> list[str]:
+    if synthetic:
+        return ["実データ（Bybit or Vision）で Set B を再実行", "workstream README の現状を更新"]
     if gate_pass:
         return ["Set C で耐久確認", "demo 執行の設計"]
     if hypothesis_id == "H01":
@@ -292,6 +370,50 @@ def cmd_research(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_eval_prepare(args: argparse.Namespace) -> int:
+    sets = [s.strip() for s in args.sets.split(",") if s.strip()]
+    lock = prepare_eval_lock(args.config, sets=sets, force=args.force)
+    print(json.dumps(lock, indent=2))
+    print("\nWrote eval/locks/eval_v1.lock.yaml")
+    sources = {k: v.get("data_source") for k, v in lock.get("datasets", {}).items()}
+    print(f"Data sources: {sources}")
+    if any(s == "binance_vision" for s in sources.values()):
+        print(
+            "NOTE: Using Binance Vision (Bybit blocked). "
+            "Re-confirm on Bybit locally before any live decision.",
+            file=sys.stderr,
+        )
+    return 0
+
+
+def cmd_eval(args: argparse.Namespace) -> int:
+    logic_ids = [x.strip() for x in args.logic_id.split(",") if x.strip()]
+    unknown = [x for x in logic_ids if x not in LOGIC_META]
+    if unknown:
+        print(f"Unknown logic-id: {unknown}. Known: {known_logic_ids()}", file=sys.stderr)
+        return 1
+
+    exit_code = 0
+    for logic_id in logic_ids:
+        try:
+            payload = run_formal_eval(
+                config_path=args.config,
+                logic_id=logic_id,
+                set_name=args.set,
+                write_research_log=not args.no_research_log,
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"EVAL ERROR [{logic_id}]: {exc}", file=sys.stderr)
+            exit_code = 1
+            continue
+        print(json.dumps(payload, indent=2))
+        print(f"Report: {payload.get('report_path')}")
+        print(f"GATE: {'PASS' if payload.get('gate_pass') else 'FAIL'}")
+        if args.set in (None, "B") and not payload.get("gate_pass"):
+            exit_code = 2
+    return exit_code
+
+
 def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     if args.command == "fetch-data":
@@ -300,6 +422,10 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit(cmd_backtest(args))
     if args.command == "research":
         raise SystemExit(cmd_research(args))
+    if args.command == "eval-prepare":
+        raise SystemExit(cmd_eval_prepare(args))
+    if args.command == "eval":
+        raise SystemExit(cmd_eval(args))
     raise SystemExit(1)
 
 

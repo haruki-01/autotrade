@@ -3,14 +3,17 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from enum import Enum
 
+import numpy as np
 import pandas as pd
 
 
 class ExitReason(str, Enum):
     STOP = "stop"
     TAKE_PROFIT = "take_profit"
+    TRAIL = "trail"
     H4_BREAK = "h4_break"
     DAILY_BREAK = "daily_break"
+    STRUCTURE = "structure"
     END = "end"
 
 
@@ -37,10 +40,18 @@ class BacktestResult:
 
 
 def _apply_slippage(price: float, side: str, is_entry: bool, slip: float) -> float:
-    # Buy pays more, sell receives less
     if side == "long":
         return price * (1 + slip) if is_entry else price * (1 - slip)
     return price * (1 - slip) if is_entry else price * (1 + slip)
+
+
+def _row_float(row: pd.Series, key: str, default: float | None = None) -> float | None:
+    if key not in row.index:
+        return default
+    val = row[key]
+    if val is None or (isinstance(val, float) and np.isnan(val)):
+        return default
+    return float(val)
 
 
 def run_backtest(
@@ -53,8 +64,17 @@ def run_backtest(
     take_profit_pct: float,
     fee_rate: float,
     slippage_pct: float,
+    sizing_mode: str = "equity_pct",
+    margin_per_trade: float = 30.0,
+    risk_per_trade_usdt: float = 3.0,
 ) -> BacktestResult:
-    """Event loop on 15m bars. Signal on bar t close → fill at bar t+1 open (+slip)."""
+    """Event loop on 15m bars. Signal on bar t close → fill at bar t+1 open (+slip).
+
+    sizing_mode:
+      - equity_pct: risk = equity * risk_per_trade_pct%; notional cap = equity * lev
+      - fixed_margin: risk = risk_per_trade_usdt; notional cap = margin_per_trade * lev
+        (demo unit: margin $30 × lev 3 → max notional $90, risk $3)
+    """
     equity = initial_equity
     peak = equity
     equities: list[tuple[pd.Timestamp, float]] = []
@@ -68,25 +88,35 @@ def run_backtest(
         row = frame.iloc[i]
         equities.append((ts, equity))
 
-        # Fill pending entry at this bar open
         if pending is not None and position is None:
             fill = _apply_slippage(float(row["open"]), pending["side"], True, slippage_pct)
-            stop_pct = stop_loss_pct / 100.0
-            risk_cash = equity * (risk_per_trade_pct / 100.0)
-            # qty such that stop distance * qty ~= risk_cash; notional capped by leverage
+            stop_pct = pending["stop_pct"] / 100.0
             stop_dist = fill * stop_pct
+            if sizing_mode == "fixed_margin":
+                risk_cash = risk_per_trade_usdt
+                max_notional = margin_per_trade * leverage
+            else:
+                risk_cash = equity * (risk_per_trade_pct / 100.0)
+                max_notional = equity * leverage
             qty = risk_cash / stop_dist if stop_dist > 0 else 0.0
-            max_notional = equity * leverage
             if qty * fill > max_notional:
                 qty = max_notional / fill
             fee = qty * fill * fee_rate
             equity -= fee
             if pending["side"] == "long":
                 stop = fill * (1 - stop_pct)
-                tp = fill * (1 + take_profit_pct / 100.0)
+                tp = (
+                    None
+                    if pending["tp_pct"] is None
+                    else fill * (1 + pending["tp_pct"] / 100.0)
+                )
             else:
                 stop = fill * (1 + stop_pct)
-                tp = fill * (1 - take_profit_pct / 100.0)
+                tp = (
+                    None
+                    if pending["tp_pct"] is None
+                    else fill * (1 - pending["tp_pct"] / 100.0)
+                )
             position = {
                 "side": pending["side"],
                 "entry_time": ts,
@@ -95,31 +125,61 @@ def run_backtest(
                 "stop": stop,
                 "tp": tp,
                 "entry_fee": fee,
+                "trail_atr_mult": pending.get("trail_atr_mult"),
+                "initial_stop": stop,
             }
             pending = None
 
-        # Manage open position using this bar's OHLC (conservative: stop before tp if both)
         if position is not None:
             side = position["side"]
             high = float(row["high"])
             low = float(row["low"])
+            close = float(row["close"])
             exit_price = None
             reason = None
 
+            # Trailing stop (ATR) — ratchet only
+            trail_mult = position.get("trail_atr_mult")
+            atr_val = _row_float(row, "atr")
+            if trail_mult is not None and atr_val is not None and atr_val > 0:
+                if side == "long":
+                    trailed = close - atr_val * trail_mult
+                    if trailed > position["stop"]:
+                        position["stop"] = trailed
+                else:
+                    trailed = close + atr_val * trail_mult
+                    if trailed < position["stop"]:
+                        position["stop"] = trailed
+
             if side == "long":
                 hit_stop = low <= position["stop"]
-                hit_tp = high >= position["tp"]
+                hit_tp = position["tp"] is not None and high >= position["tp"]
+                struct = bool(row.get("structure_exit_long", False))
                 if hit_stop and hit_tp:
                     exit_price = position["stop"]
-                    reason = ExitReason.STOP.value
+                    reason = (
+                        ExitReason.TRAIL.value
+                        if position.get("trail_atr_mult")
+                        else ExitReason.STOP.value
+                    )
                 elif hit_stop:
                     exit_price = position["stop"]
-                    reason = ExitReason.STOP.value
+                    reason = (
+                        ExitReason.TRAIL.value
+                        if position.get("trail_atr_mult")
+                        and position["stop"] != position.get("initial_stop")
+                        else ExitReason.STOP.value
+                    )
                 elif hit_tp:
                     exit_price = position["tp"]
                     reason = ExitReason.TAKE_PROFIT.value
-                elif bool(row.get("h4_long_break", False)) or bool(row.get("daily_against_long", False)):
-                    exit_price = float(row["close"])
+                elif struct:
+                    exit_price = close
+                    reason = ExitReason.STRUCTURE.value
+                elif bool(row.get("h4_long_break", False)) or bool(
+                    row.get("daily_against_long", False)
+                ):
+                    exit_price = close
                     reason = (
                         ExitReason.DAILY_BREAK.value
                         if bool(row.get("daily_against_long", False))
@@ -127,18 +187,33 @@ def run_backtest(
                     )
             else:
                 hit_stop = high >= position["stop"]
-                hit_tp = low <= position["tp"]
+                hit_tp = position["tp"] is not None and low <= position["tp"]
+                struct = bool(row.get("structure_exit_short", False))
                 if hit_stop and hit_tp:
                     exit_price = position["stop"]
-                    reason = ExitReason.STOP.value
+                    reason = (
+                        ExitReason.TRAIL.value
+                        if position.get("trail_atr_mult")
+                        else ExitReason.STOP.value
+                    )
                 elif hit_stop:
                     exit_price = position["stop"]
-                    reason = ExitReason.STOP.value
+                    reason = (
+                        ExitReason.TRAIL.value
+                        if position.get("trail_atr_mult")
+                        and position["stop"] != position.get("initial_stop")
+                        else ExitReason.STOP.value
+                    )
                 elif hit_tp:
                     exit_price = position["tp"]
                     reason = ExitReason.TAKE_PROFIT.value
-                elif bool(row.get("h4_short_break", False)) or bool(row.get("daily_against_short", False)):
-                    exit_price = float(row["close"])
+                elif struct:
+                    exit_price = close
+                    reason = ExitReason.STRUCTURE.value
+                elif bool(row.get("h4_short_break", False)) or bool(
+                    row.get("daily_against_short", False)
+                ):
+                    exit_price = close
                     reason = (
                         ExitReason.DAILY_BREAK.value
                         if bool(row.get("daily_against_short", False))
@@ -172,14 +247,29 @@ def run_backtest(
                 position = None
                 peak = max(peak, equity)
 
-        # Queue new signal only if flat and no pending (use confirmed bar signal → next open)
         if position is None and pending is None and i < len(times) - 1:
-            if bool(row["long_signal"]):
-                pending = {"side": "long"}
-            elif bool(row["short_signal"]):
-                pending = {"side": "short"}
+            stop_pct = _row_float(row, "stop_pct", stop_loss_pct)
+            assert stop_pct is not None
+            if "tp_pct" in row.index and pd.isna(row["tp_pct"]):
+                tp_pct = None
+            else:
+                tp_pct = _row_float(row, "tp_pct", take_profit_pct)
+            trail = _row_float(row, "trail_atr_mult")
+            if bool(row.get("long_signal", False)):
+                pending = {
+                    "side": "long",
+                    "stop_pct": stop_pct,
+                    "tp_pct": tp_pct,
+                    "trail_atr_mult": trail,
+                }
+            elif bool(row.get("short_signal", False)):
+                pending = {
+                    "side": "short",
+                    "stop_pct": stop_pct,
+                    "tp_pct": tp_pct,
+                    "trail_atr_mult": trail,
+                }
 
-    # Force close at end
     if position is not None:
         ts = times[-1]
         row = frame.iloc[-1]

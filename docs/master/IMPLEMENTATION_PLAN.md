@@ -6,20 +6,24 @@
 
 | 領域 | 状態 | 内容 |
 |------|------|------|
-| 全体設計 | **完了** | `docs/PROJECT_PLAN.md` |
-| 戦略仮説 v1 | **完了** | 日足/4H/15m 順張り（`docs/HYPOTHESIS.md`） |
-| BT設計 | **完了** | コスト・期間分割・合否（`docs/BACKTEST_DESIGN.md`） |
+| 全体設計 | **完了** | `docs/master/PROJECT_PLAN.md` |
+| 戦略仮説 v1 | **完了** | 日足/4H/15m 順張り（`docs/master/HYPOTHESIS.md`） |
+| BT設計 | **完了** | コスト・期間分割・合否（`docs/master/BACKTEST_DESIGN.md`） |
 | Secrets配置 | **完了** | `secrets/demo` / `secrets/live` |
 | データ取得（Bybit） | **コード完了** | `src/autotrade/data/bybit.py` + CLI `fetch-data` |
 | データ取得フォールバック | **完了** | Bybit 403時は Binance Vision 実足（研究用） |
 | MTFシグナル | **コード完了** | `src/autotrade/strategy/mtf_trend.py` |
 | バックテスト引擎 | **コード完了** | 手数料・スリッページ込みシミュレータ |
 | メトリクス/合否 | **コード完了** | DD・期待値・最低トレード数ゲート |
-| 実データ Set B | **実施済み・FAIL** | 2024年・Binance Vision。詳細は `docs/BACKTEST_RESULTS.md` |
-| 仮説カタログ | **完了→v2** | 歪み起点に再編。`docs/HYPOTHESIS_CATALOG.md` |
-| 歪み・優位の前提 | **完了** | `docs/MARKET_EDGE_MAP.md`（思想・歪みマップ・検証順） |
+| 実データ Set B | **実施済み・FAIL** | 2024年・Binance Vision。詳細は `docs/master/BACKTEST_RESULTS.md` |
+| 仮説カタログ | **完了→v2** | 歪み起点に再編。`docs/master/HYPOTHESIS_CATALOG.md` |
+| 歪み・優位の前提 | **完了** | `docs/master/MARKET_EDGE_MAP.md`（思想・歪みマップ・検証順） |
+| ドキュメント地図 | **完了** | master / workstreams / research の3層（`docs/README.md`） |
 | 合成データでの動作確認 | **完了** | `--synthetic` でパイプライン通確認済み |
 | 研究ログ基盤 | **完了** | `docs/research/` — 仮説・ロジック・結果・知見の蓄積 |
+| 戦略実装（5本） | **完了・formal FAIL** | H01 / L-COST / L-MOM-VOL / L-BREAK / H21。詳細は formal batch レポート |
+| Formal eval 環境 | **完了** | `configs/eval_v1.yaml` + `eval/locks/` + `autotrade eval`。実データのみ |
+| L-BREAK-2 | **実装中** | 4H Donchian（サンプル確保の1点変更） |
 | デモ注文（testnet） | **未着手** | |
 | 本番執行 | **未着手** | |
 | Dashboard / UI | **対象外（後回し）** | |
@@ -87,20 +91,24 @@ autotrade research refresh-index
 - エントリー条件を **1点だけ** 変えて再検証
 - 時間足の役割（1D/4H/15m）は変えない
 - 大量パラメータ探索はしない
-- 別ファミリーは `docs/MARKET_EDGE_MAP.md` / `HYPOTHESIS_CATALOG.md` の優先バッチから1本ずつ
+- 別ファミリーは `docs/master/MARKET_EDGE_MAP.md` / `HYPOTHESIS_CATALOG.md` の優先バッチから1本ずつ
+- 各ロジックの進捗は `docs/workstreams/<id>/` で管理
 
 ### Step A2 — 歪み起点の再設計（いまここ）
 
-正本: `docs/MARKET_EDGE_MAP.md`
+正本: `docs/master/MARKET_EDGE_MAP.md`
 
 思想: 勝つ = 歪みの特定 × 他者より上手く取る − 費用。  
 v1 FAIL の主因仮説: 固定利確がトレンドの大勝ちを切り、緩い押し目が費用負け。
 
 次の実装バッチ:
 
-1. **L-COST** 費用ゲート（取引しない優位）
-2. **L-MOM-VOL** ボラ調整トレンド・トレール利確（固定%廃止）
-3. **L-BREAK** Donchian系（押し目を捨てる別ファミリー）
+1. **L-COST** 費用ゲート（取引しない優位）→ **実装済・合成 smoke 済。次は実データ**
+2. **L-MOM-VOL** ボラ調整トレンド・トレール利確（固定%廃止）→ **実装済・合成 smoke 済。次は実データ**
+3. **L-BREAK** Donchian系（押し目を捨てる別ファミリー）→ **実装済・合成 smoke 済。次は実データ**
+4. **H21** Donchian long only（比較軸）→ **実装済・合成 smoke 済**
+
+合成バッチ要約: [docs/workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md](../workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md)
 
 ### Step B — 執行レイヤ（demo）
 

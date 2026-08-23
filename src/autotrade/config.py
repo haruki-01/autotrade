@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
+
+SizingMode = Literal["equity_pct", "fixed_margin"]
 
 
 @dataclass(frozen=True)
@@ -31,6 +33,10 @@ class BacktestConfig:
     sets: dict[str, DateRange]
     min_trades: int
     max_drawdown_pct: float
+    # Demo / live unit sizing (interpretation B: margin × lev, absolute risk)
+    sizing_mode: SizingMode = "equity_pct"
+    margin_per_trade: float = 30.0
+    risk_per_trade_usdt: float = 3.0
 
     @staticmethod
     def from_dict(data: dict[str, Any]) -> "BacktestConfig":
@@ -38,6 +44,10 @@ class BacktestConfig:
             name: DateRange(start=v["start"], end=v["end"])
             for name, v in data["sets"].items()
         }
+        sizing = data.get("sizing") or {}
+        mode = str(sizing.get("mode", data.get("sizing_mode", "equity_pct")))
+        if mode not in ("equity_pct", "fixed_margin"):
+            mode = "equity_pct"
         return BacktestConfig(
             symbol=data["symbol"],
             category=data["category"],
@@ -55,6 +65,15 @@ class BacktestConfig:
             sets=sets,
             min_trades=int(data["min_trades"]),
             max_drawdown_pct=float(data["max_drawdown_pct"]),
+            sizing_mode=mode,  # type: ignore[arg-type]
+            margin_per_trade=float(
+                sizing.get("margin_per_trade", data.get("margin_per_trade", 30.0))
+            ),
+            risk_per_trade_usdt=float(
+                sizing.get(
+                    "risk_per_trade_usdt", data.get("risk_per_trade_usdt", 3.0)
+                )
+            ),
         )
 
 

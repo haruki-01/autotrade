@@ -22,12 +22,23 @@ pip install -e .
 # 実データ取得（ローカルPCなど Bybit API が使える環境で）
 autotrade fetch-data --set all
 
-# 本検証セット B でバックテスト
-autotrade backtest --set B
+# 本検証セット B でバックテスト（ロジック指定）
+autotrade backtest --set B --logic-id cost_gate_v1
 
 # クラウド等で API が地理制限のとき（動作確認用・成績は参考にしない）
-autotrade backtest --set B --synthetic
+autotrade backtest --set B --synthetic --logic-id vol_scaled_trend_v1
 ```
+
+## 検証・評価（Formal Eval）
+
+合成 smoke は動作確認のみ。**合否は実データ formal eval**:
+
+```bash
+PYTHONPATH=src python3 -m autotrade.cli eval-prepare --config configs/eval_v1.yaml
+PYTHONPATH=src python3 -m autotrade.cli eval --logic-id cost_gate_v1
+```
+
+詳細: [eval/README.md](eval/README.md) · スキル: `.cursor/skills/backtest-eval/`
 
 結果は `artifacts/backtests/` に出力されます。
 
@@ -36,13 +47,10 @@ autotrade backtest --set B --synthetic
 
 ## ドキュメント
 
-- [全体プラン](docs/PROJECT_PLAN.md)
-- [実装プラン（現状と次タスク）](docs/IMPLEMENTATION_PLAN.md)
-- [バックテスト結果](docs/BACKTEST_RESULTS.md)
-- [市場の歪みと優位性（前提）](docs/MARKET_EDGE_MAP.md)
-- [戦略仮説 v1](docs/HYPOTHESIS.md)
-- [仮説カタログ v2](docs/HYPOTHESIS_CATALOG.md)
-- [バックテスト設計](docs/BACKTEST_DESIGN.md)
-- [ローカルで別ウィンドウを開く](docs/LOCAL_DEV.md)
-- [画面レイアウト（左フォルダ / 右チャット）](docs/LAYOUT.md)
-- [Secrets（APIキー）](secrets/README.md)
+地図: [docs/README.md](docs/README.md)
+
+- **仮説ラボ（精度・立て方）:** [docs/hypothesis/](docs/hypothesis/) · [プラン](docs/hypothesis/PLAN.md)
+- **Master（全体設計）:** [docs/master/](docs/master/)
+- **Workstreams:** [docs/workstreams/](docs/workstreams/)
+- **Research / Eval:** [docs/research/](docs/research/) · [eval/](eval/)
+- **Ops:** [docs/ops/](docs/ops/) · [Secrets](secrets/README.md)
