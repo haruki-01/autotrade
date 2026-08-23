@@ -9,12 +9,14 @@ import pandas as pd
 from autotrade.strategy import (
     cost_gate,
     donchian,
+    double_bottom,
     fake_rebreak,
     mom_vol,
     mtf_trend,
     near_high_expanded,
 )
 from autotrade.strategy.donchian import DonchianParams
+from autotrade.strategy.double_bottom import CYCLE_DB, prepare_cycle_db
 from autotrade.strategy.h4_spots import CYCLE_LOGICS, prepare_cycle_logic
 from autotrade.strategy.mom_vol import MomVolParams
 from autotrade.strategy.mtf_trend import StrategyParams
@@ -73,6 +75,15 @@ LOGIC_META: dict[str, dict[str, Any]] = {
         "distortion_ids": ["E1", "E6"],
     },
 }
+
+for _lid, (_params, _hid, _name) in CYCLE_DB.items():
+    LOGIC_META[_lid] = {
+        "hypothesis_id": _hid,
+        "name": _name,
+        "distortion_ids": ["E1"],
+        "spot": "SPOT-001",
+        "cycle_pack": "double_bottom_20",
+    }
 
 for _lid, (_fam, _rule, _hid, _name) in CYCLE_LOGICS.items():
     LOGIC_META[_lid] = {
@@ -139,6 +150,8 @@ def prepare_strategy(
         return fake_rebreak.prepare_frames_retest(daily, h4, m15)
     if logic_id == "near_high_expanded_v1":
         return near_high_expanded.prepare_frames(daily, h4, m15)
+    if logic_id in CYCLE_DB:
+        return prepare_cycle_db(logic_id, daily, h4, m15)
     if logic_id in CYCLE_LOGICS:
         return prepare_cycle_logic(logic_id, daily, h4, m15)
     raise ValueError(f"Unknown logic_id: {logic_id}")
