@@ -25,6 +25,8 @@ WORKSTREAM_MAP: dict[str, str] = {
     "donchian_20_10_v1": "L-BREAK-donchian",
     "L-BREAK-2": "L-BREAK-2-donchian-h4",
     "donchian_h4_20_10_v1": "L-BREAK-2-donchian-h4",
+    "DB-21": "DB-21-1h-up-fresh-reclaim",
+    "db_1h_up_fresh_reclaim_v1": "DB-21-1h-up-fresh-reclaim",
     "H21": "H21-donchian-long-only",
     "donchian_20_10_long_only": "H21-donchian-long-only",
     "HYP-002": "HYP-002-e1-breakout-long-v2",

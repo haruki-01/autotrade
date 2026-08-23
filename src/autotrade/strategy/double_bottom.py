@@ -464,6 +464,20 @@ CYCLE_DB: dict[str, tuple[DoubleBottomParams, str, str]] = {
         "DB-20",
         "DB事前合成: 1H×上昇×高%戻し",
     ),
+    # Post-20 learning card: quality knobs that were EV+ on 4H, ported to 1H for sample size.
+    # Freshness 48×1H ≈ 12×4H wall-clock (same 48h window as DB-14).
+    "db_1h_up_fresh_reclaim_v1": (
+        DoubleBottomParams(
+            structure_tf="1h",
+            htf_filter="up_only",
+            bounce_mode="reclaim_extension",
+            retest_max_bars_after_break=48,
+            min_bars_between=8,
+            max_bars_between=80,
+        ),
+        "DB-21",
+        "DB学習合成: 1H×上昇×鮮度48h×高値奪還",
+    ),
 }
 
 
