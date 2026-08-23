@@ -1,0 +1,410 @@
+[
+  {
+    "logic_id": "db_baseline_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 34,
+    "avg_trade_pnl": 0.17767277778434348,
+    "max_drawdown_pct": 2.6437951774693316,
+    "total_return_pct": 1.4777250383624763,
+    "win_rate_pct": 41.17647058823529,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010425Z_db_baseline_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 1,
+    "knob": "基準",
+    "why": "仮説の最小実装。変数なしのベースライン。",
+    "learning": "n=34 / EV=0.17767277778434348 / DD=2.6437951774693316 / fail=min_trades"
+  },
+  {
+    "logic_id": "db_htf_up_only_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 11,
+    "avg_trade_pnl": 0.5505082306040072,
+    "max_drawdown_pct": 1.7947623401104114,
+    "total_return_pct": 1.8448527298711381,
+    "win_rate_pct": 36.36363636363637,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010427Z_db_htf_up_only_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 2,
+    "knob": "D1 上昇のみ",
+    "why": "上位上昇でのみ取るか。",
+    "learning": "n=11 / EV=0.5505082306040072 / DD=1.7947623401104114 / fail=min_trades 前回比 trades -23."
+  },
+  {
+    "logic_id": "db_htf_not_down_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 26,
+    "avg_trade_pnl": 0.24252883347119583,
+    "max_drawdown_pct": 2.654517211148142,
+    "total_return_pct": 1.6955571149505966,
+    "win_rate_pct": 38.46153846153847,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010430Z_db_htf_not_down_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 3,
+    "knob": "D1 下降以外",
+    "why": "レンジ許容の差を見る。",
+    "learning": "n=26 / EV=0.24252883347119583 / DD=2.654517211148142 / fail=min_trades 前回比 trades +15."
+  },
+  {
+    "logic_id": "db_bounce_reclaim_ext_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 25,
+    "avg_trade_pnl": 0.23396246757515776,
+    "max_drawdown_pct": 1.7531926994113736,
+    "total_return_pct": 1.5676073172587568,
+    "win_rate_pct": 48.0,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010432Z_db_bounce_reclaim_ext_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 4,
+    "knob": "C2 高値奪還",
+    "why": "ロング焼き後の本確定の測り方。",
+    "learning": "n=25 / EV=0.23396246757515776 / DD=1.7531926994113736 / fail=min_trades 前回比 trades -1."
+  },
+  {
+    "logic_id": "db_bounce_pct_height_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 24,
+    "avg_trade_pnl": -0.180419827228842,
+    "max_drawdown_pct": 4.153078408457836,
+    "total_return_pct": -1.7901411624141161,
+    "win_rate_pct": 33.33333333333333,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010434Z_db_bounce_pct_height_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 5,
+    "knob": "C2 高%戻し",
+    "why": "DBスケールに比例した反発。",
+    "learning": "n=24 / EV=-0.180419827228842 / DD=4.153078408457836 / fail=expectancy,min_trades 前回比 trades -1."
+  },
+  {
+    "logic_id": "db_bounce_fixed_pct_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 36,
+    "avg_trade_pnl": -0.11957176088568738,
+    "max_drawdown_pct": 2.9300171673087507,
+    "total_return_pct": -1.995771846380312,
+    "win_rate_pct": 38.88888888888889,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010436Z_db_bounce_fixed_pct_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 6,
+    "knob": "C2 固定%",
+    "why": "固定反発の対照。",
+    "learning": "n=36 / EV=-0.11957176088568738 / DD=2.9300171673087507 / fail=expectancy,min_trades 前回比 trades +12."
+  },
+  {
+    "logic_id": "db_tight_bottoms_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 26,
+    "avg_trade_pnl": -0.35254012073515184,
+    "max_drawdown_pct": 4.0586841857144424,
+    "total_return_pct": -3.4610188525878494,
+    "win_rate_pct": 26.923076923076923,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010438Z_db_tight_bottoms_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 7,
+    "knob": "A3 厳しい2底",
+    "why": "形の質を上げる。",
+    "learning": "n=26 / EV=-0.35254012073515184 / DD=4.0586841857144424 / fail=expectancy,min_trades 前回比 trades -10."
+  },
+  {
+    "logic_id": "db_wide_bottoms_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 41,
+    "avg_trade_pnl": 0.32209182277355486,
+    "max_drawdown_pct": 2.619566100936768,
+    "total_return_pct": 3.7598226833653436,
+    "win_rate_pct": 43.90243902439025,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010441Z_db_wide_bottoms_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 8,
+    "knob": "A3 緩い2底",
+    "why": "サンプル増とノイズのトレードオフ。",
+    "learning": "n=41 / EV=0.32209182277355486 / DD=2.619566100936768 / fail=min_trades 前回比 trades +15."
+  },
+  {
+    "logic_id": "db_wick_break_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 30,
+    "avg_trade_pnl": -0.10623373462128209,
+    "max_drawdown_pct": 3.240385214265488,
+    "total_return_pct": -1.534443146901554,
+    "win_rate_pct": 36.666666666666664,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010443Z_db_wick_break_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 9,
+    "knob": "B1 ヒゲ突破",
+    "why": "終値より早い突破定義。",
+    "learning": "n=30 / EV=-0.10623373462128209 / DD=3.240385214265488 / fail=expectancy,min_trades 前回比 trades -11."
+  },
+  {
+    "logic_id": "db_struct_1h_v1",
+    "error": false,
+    "gate_pass": true,
+    "trades": 109,
+    "avg_trade_pnl": 0.004070949322216269,
+    "max_drawdown_pct": 6.005026386165772,
+    "total_return_pct": -1.6433053539886555,
+    "win_rate_pct": 31.19266055045872,
+    "gate_failures": [],
+    "report_path": "eval/reports/20260823T010445Z_db_struct_1h_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 0,
+    "cycle": 10,
+    "knob": "A1 1H構造",
+    "why": "回数不足対策（1m未満は禁止）。",
+    "learning": "n=109 / EV=0.004070949322216269 / DD=6.005026386165772 前回比 trades +79."
+  },
+  {
+    "logic_id": "db_struct_daily_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 5,
+    "avg_trade_pnl": -1.8583801578684984,
+    "max_drawdown_pct": 3.1570487926235082,
+    "total_return_pct": -3.157048792623507,
+    "win_rate_pct": 20.0,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010447Z_db_struct_daily_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 11,
+    "knob": "A1 日足構造",
+    "why": "より厚いが希少。",
+    "learning": "n=5 / EV=-1.8583801578684984 / DD=3.1570487926235082 / fail=expectancy,min_trades 前回比 trades -104."
+  },
+  {
+    "logic_id": "db_stop_at_bottom_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 34,
+    "avg_trade_pnl": 0.10625563500686007,
+    "max_drawdown_pct": 2.9044233844359546,
+    "total_return_pct": 0.8503810351303098,
+    "win_rate_pct": 44.11764705882353,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010449Z_db_stop_at_bottom_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 12,
+    "knob": "E1 第2底損切",
+    "why": "無効化を構造に合わせる。",
+    "learning": "n=34 / EV=0.10625563500686007 / DD=2.9044233844359546 / fail=min_trades 前回比 trades +29."
+  },
+  {
+    "logic_id": "db_entry_break_bounce_high_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 22,
+    "avg_trade_pnl": -0.11896709289979857,
+    "max_drawdown_pct": 3.3699290513690556,
+    "total_return_pct": -1.1805677140250381,
+    "win_rate_pct": 27.27272727272727,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010452Z_db_entry_break_bounce_high_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 13,
+    "knob": "C2 反発高抜け",
+    "why": "遅延エントリーでダマシ削減。",
+    "learning": "n=22 / EV=-0.11896709289979857 / DD=3.3699290513690556 / fail=expectancy,min_trades 前回比 trades -12."
+  },
+  {
+    "logic_id": "db_retest_fresh_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 24,
+    "avg_trade_pnl": 0.4909417529129649,
+    "max_drawdown_pct": 1.8621374622676778,
+    "total_return_pct": 3.5417376140036483,
+    "win_rate_pct": 54.166666666666664,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010454Z_db_retest_fresh_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 14,
+    "knob": "B2 鮮度",
+    "why": "古い突破の再テストを捨てる。",
+    "learning": "n=24 / EV=0.4909417529129649 / DD=1.8621374622676778 / fail=min_trades 前回比 trades +2."
+  },
+  {
+    "logic_id": "db_clean_break_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 32,
+    "avg_trade_pnl": -0.0518132819301001,
+    "max_drawdown_pct": 2.5130416644097275,
+    "total_return_pct": -1.0555747837811214,
+    "win_rate_pct": 34.375,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010456Z_db_clean_break_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 15,
+    "knob": "B1 きれいな突破",
+    "why": "弱い突破を捨てる。",
+    "learning": "n=32 / EV=-0.0518132819301001 / DD=2.5130416644097275 / fail=expectancy,min_trades 前回比 trades +8."
+  },
+  {
+    "logic_id": "db_first_retest_only_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 31,
+    "avg_trade_pnl": -0.028469471185153604,
+    "max_drawdown_pct": 2.9080691050932423,
+    "total_return_pct": -0.7736348301263685,
+    "win_rate_pct": 45.16129032258064,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010458Z_db_first_retest_only_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 16,
+    "knob": "C1 初回のみ",
+    "why": "二度目以降の薄さ回避。",
+    "learning": "n=31 / EV=-0.028469471185153604 / DD=2.9080691050932423 / fail=expectancy,min_trades 前回比 trades -1."
+  },
+  {
+    "logic_id": "db_mirror_short_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 50,
+    "avg_trade_pnl": -0.4713940667677943,
+    "max_drawdown_pct": 9.594967753384784,
+    "total_return_pct": -8.657476623648808,
+    "win_rate_pct": 30.0,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010501Z_db_mirror_short_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 17,
+    "knob": "対称ショート",
+    "why": "ロング一辺倒の対照実験。",
+    "learning": "n=50 / EV=-0.4713940667677943 / DD=9.594967753384784 / fail=expectancy,min_trades 前回比 trades +19."
+  },
+  {
+    "logic_id": "db_session_lon_ny_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 21,
+    "avg_trade_pnl": 0.12161742685742542,
+    "max_drawdown_pct": 1.7925250430864847,
+    "total_return_pct": 0.5221782860482582,
+    "win_rate_pct": 42.857142857142854,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010503Z_db_session_lon_ny_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 18,
+    "knob": "セッション",
+    "why": "薄い時間の執行を避ける。",
+    "learning": "n=21 / EV=0.12161742685742542 / DD=1.7925250430864847 / fail=min_trades 前回比 trades -29."
+  },
+  {
+    "logic_id": "db_trail_atr_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 34,
+    "avg_trade_pnl": 0.32593394230270806,
+    "max_drawdown_pct": 2.9064171245320067,
+    "total_return_pct": 3.1507342849554254,
+    "win_rate_pct": 44.11764705882353,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010505Z_db_trail_atr_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 19,
+    "knob": "E2 ATRトレール",
+    "why": "大勝ちを残す退出。",
+    "learning": "n=34 / EV=0.32593394230270806 / DD=2.9064171245320067 / fail=min_trades 前回比 trades +13."
+  },
+  {
+    "logic_id": "db_1h_up_pct_height_v1",
+    "error": false,
+    "gate_pass": false,
+    "trades": 23,
+    "avg_trade_pnl": -0.4771759433160435,
+    "max_drawdown_pct": 4.192122260279149,
+    "total_return_pct": -4.020108061156336,
+    "win_rate_pct": 30.434782608695656,
+    "gate_failures": [
+      "expectancy",
+      "min_trades"
+    ],
+    "report_path": "eval/reports/20260823T010508Z_db_1h_up_pct_height_v1_setB.md",
+    "data_source": "binance_vision",
+    "returncode": 2,
+    "cycle": 20,
+    "knob": "事前合成",
+    "why": "1H×上昇×高%戻し（結果見て選ばない事前宣言）。",
+    "learning": "n=23 / EV=-0.4771759433160435 / DD=4.192122260279149 / fail=expectancy,min_trades 前回比 trades -11."
+  }
+]

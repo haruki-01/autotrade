@@ -8,6 +8,27 @@
 
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
+| 20260823-022 | 2026-08-23 | DB-10 | db_struct_1h_v1 | C | binance_vision | `fail` | -0.10 | 11.1% | 209 | [doc](entries/DB-10-db_struct_1h_v1-setC-20260823-022.md) |
+| 20260823-021 | 2026-08-23 | DB-20 | db_1h_up_pct_height_v1 | B | binance_vision | `fail` | -0.48 | 4.2% | 23 | [doc](entries/DB-20-db_1h_up_pct_height_v1-setB-20260823-021.md) |
+| 20260823-020 | 2026-08-23 | DB-19 | db_trail_atr_v1 | B | binance_vision | `fail` | 0.33 | 2.9% | 34 | [doc](entries/DB-19-db_trail_atr_v1-setB-20260823-020.md) |
+| 20260823-019 | 2026-08-23 | DB-18 | db_session_lon_ny_v1 | B | binance_vision | `fail` | 0.12 | 1.8% | 21 | [doc](entries/DB-18-db_session_lon_ny_v1-setB-20260823-019.md) |
+| 20260823-018 | 2026-08-23 | DB-17 | db_mirror_short_v1 | B | binance_vision | `fail` | -0.47 | 9.6% | 50 | [doc](entries/DB-17-db_mirror_short_v1-setB-20260823-018.md) |
+| 20260823-017 | 2026-08-23 | DB-16 | db_first_retest_only_v1 | B | binance_vision | `fail` | -0.03 | 2.9% | 31 | [doc](entries/DB-16-db_first_retest_only_v1-setB-20260823-017.md) |
+| 20260823-016 | 2026-08-23 | DB-15 | db_clean_break_v1 | B | binance_vision | `fail` | -0.05 | 2.5% | 32 | [doc](entries/DB-15-db_clean_break_v1-setB-20260823-016.md) |
+| 20260823-015 | 2026-08-23 | DB-14 | db_retest_fresh_v1 | B | binance_vision | `fail` | 0.49 | 1.9% | 24 | [doc](entries/DB-14-db_retest_fresh_v1-setB-20260823-015.md) |
+| 20260823-014 | 2026-08-23 | DB-13 | db_entry_break_bounce_high_v1 | B | binance_vision | `fail` | -0.12 | 3.4% | 22 | [doc](entries/DB-13-db_entry_break_bounce_high_v1-setB-20260823-014.md) |
+| 20260823-013 | 2026-08-23 | DB-12 | db_stop_at_bottom_v1 | B | binance_vision | `fail` | 0.11 | 2.9% | 34 | [doc](entries/DB-12-db_stop_at_bottom_v1-setB-20260823-013.md) |
+| 20260823-012 | 2026-08-23 | DB-11 | db_struct_daily_v1 | B | binance_vision | `fail` | -1.86 | 3.2% | 5 | [doc](entries/DB-11-db_struct_daily_v1-setB-20260823-012.md) |
+| 20260823-011 | 2026-08-23 | DB-10 | db_struct_1h_v1 | B | binance_vision | `pass` | 0.00 | 6.0% | 109 | [doc](entries/DB-10-db_struct_1h_v1-setB-20260823-011.md) |
+| 20260823-010 | 2026-08-23 | DB-09 | db_wick_break_v1 | B | binance_vision | `fail` | -0.11 | 3.2% | 30 | [doc](entries/DB-09-db_wick_break_v1-setB-20260823-010.md) |
+| 20260823-009 | 2026-08-23 | DB-08 | db_wide_bottoms_v1 | B | binance_vision | `fail` | 0.32 | 2.6% | 41 | [doc](entries/DB-08-db_wide_bottoms_v1-setB-20260823-009.md) |
+| 20260823-008 | 2026-08-23 | DB-07 | db_tight_bottoms_v1 | B | binance_vision | `fail` | -0.35 | 4.1% | 26 | [doc](entries/DB-07-db_tight_bottoms_v1-setB-20260823-008.md) |
+| 20260823-007 | 2026-08-23 | DB-06 | db_bounce_fixed_pct_v1 | B | binance_vision | `fail` | -0.12 | 2.9% | 36 | [doc](entries/DB-06-db_bounce_fixed_pct_v1-setB-20260823-007.md) |
+| 20260823-006 | 2026-08-23 | DB-05 | db_bounce_pct_height_v1 | B | binance_vision | `fail` | -0.18 | 4.2% | 24 | [doc](entries/DB-05-db_bounce_pct_height_v1-setB-20260823-006.md) |
+| 20260823-005 | 2026-08-23 | DB-04 | db_bounce_reclaim_ext_v1 | B | binance_vision | `fail` | 0.23 | 1.8% | 25 | [doc](entries/DB-04-db_bounce_reclaim_ext_v1-setB-20260823-005.md) |
+| 20260823-004 | 2026-08-23 | DB-03 | db_htf_not_down_v1 | B | binance_vision | `fail` | 0.24 | 2.7% | 26 | [doc](entries/DB-03-db_htf_not_down_v1-setB-20260823-004.md) |
+| 20260823-003 | 2026-08-23 | DB-02 | db_htf_up_only_v1 | B | binance_vision | `fail` | 0.55 | 1.8% | 11 | [doc](entries/DB-02-db_htf_up_only_v1-setB-20260823-003.md) |
+| 20260823-002 | 2026-08-23 | DB-01 | db_baseline_v1 | B | binance_vision | `fail` | 0.18 | 2.6% | 34 | [doc](entries/DB-01-db_baseline_v1-setB-20260823-002.md) |
 | 20260823-001 | 2026-08-23 | L-BREAK-2 | donchian_h4_20_10_v1 | B | binance_vision | `fail` | 0.85 | 3.8% | 58 | [doc](entries/L-BREAK-2-donchian_h4_20_10_v1-setB-20260823-001.md) |
 | 20260822-062 | 2026-08-22 | HYP-043 | d_near_high_break_v1 | B | binance_vision | `fail` | 7.63 | 1.0% | 5 | [doc](entries/HYP-043-d_near_high_break_v1-setB-20260822-062.md) |
 | 20260822-061 | 2026-08-22 | HYP-036 | d_comp_break_v1 | B | binance_vision | `fail` | 22.05 | 0.0% | 1 | [doc](entries/HYP-036-d_comp_break_v1-setB-20260822-061.md) |
