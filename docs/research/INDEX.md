@@ -8,6 +8,17 @@
 
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
+| 20260823-071 | 2026-08-23 | EH-09 | eh09_slope_0p05 | B | binance_vision | `pass` | 0.11 | 3.7% | 179 | [doc](entries/EH-09-eh09_slope_0p05-setB-20260823-071.md) |
+| 20260823-072 | 2026-08-23 | EH-09 | eh09_trail_2p5 | B | binance_vision | `pass` | 0.02 | 11.8% | 266 | [doc](entries/EH-09-eh09_trail_2p5-setB-20260823-072.md) |
+| 20260823-068 | 2026-08-23 | EH-09 | eh09_base | B | binance_vision | `pass` | 0.01 | 9.2% | 311 | [doc](entries/EH-09-eh09_base-setB-20260823-068.md) |
+| 20260823-069 | 2026-08-23 | EH-09 | eh09_win_8 | B | binance_vision | `pass` | 0.03 | 11.3% | 302 | [doc](entries/EH-09-eh09_win_8-setB-20260823-069.md) |
+| 20260823-070 | 2026-08-23 | EH-09 | eh09_win_32 | B | binance_vision | `pass` | 0.00 | 11.3% | 291 | [doc](entries/EH-09-eh09_win_32-setB-20260823-070.md) |
+| 20260823-065 | 2026-08-23 | EH-08 | eh08_ctrl_no_build | B | binance_vision | `pass` | 0.05 | 6.5% | 269 | [doc](entries/EH-08-eh08_ctrl_no_build-setB-20260823-065.md) |
+| 20260823-066 | 2026-08-23 | EH-08 | eh08_trail_4 | B | binance_vision | `pass` | 0.01 | 6.1% | 182 | [doc](entries/EH-08-eh08_trail_4-setB-20260823-066.md) |
+| 20260823-067 | 2026-08-23 | EH-08 | eh08_long_only | B | binance_vision | `pass` | 0.05 | 5.1% | 105 | [doc](entries/EH-08-eh08_long_only-setB-20260823-067.md) |
+| 20260823-062 | 2026-08-23 | EH-01 | eh01_brk_192 | B | binance_vision | `pass` | 0.01 | 9.6% | 157 | [doc](entries/EH-01-eh01_brk_192-setB-20260823-062.md) |
+| 20260823-063 | 2026-08-23 | EH-01 | eh01_long_only | B | binance_vision | `pass` | 0.13 | 5.2% | 138 | [doc](entries/EH-01-eh01_long_only-setB-20260823-063.md) |
+| 20260823-064 | 2026-08-23 | EH-06 | eh06_win_10d | B | binance_vision | `pass` | 0.00 | 19.2% | 721 | [doc](entries/EH-06-eh06_win_10d-setB-20260823-064.md) |
 | 20260823-061 | 2026-08-23 | DB-31 | db_1h_wide_v1 | C | binance_vision | `fail` | -0.07 | 12.0% | 273 | [doc](entries/DB-31-db_1h_wide_v1-setC-20260823-061.md) |
 | 20260823-060 | 2026-08-23 | DB-41 | db_1h_band_tight_v1 | C | binance_vision | `fail` | -0.07 | 9.2% | 208 | [doc](entries/DB-41-db_1h_band_tight_v1-setC-20260823-060.md) |
 | 20260823-059 | 2026-08-23 | DB-42 | db_1h_band_wide_v1 | C | binance_vision | `fail` | -0.11 | 12.1% | 211 | [doc](entries/DB-42-db_1h_band_wide_v1-setC-20260823-059.md) |

@@ -6389,3 +6389,580 @@ runs:
   - ルールを1点だけ変更して再 eval
   notes: formal_eval lock=eval/locks/eval_v1.lock.yaml
   entry_doc: docs/research/entries/DB-31-db_1h_wide_v1-setC-20260823-061.md
+- run_id: 20260823-062
+  recorded_at: '2026-08-23T02:30:58Z'
+  status: pass
+  hypothesis:
+    id: EH-01
+    logic_id: eh01_brk_192
+    name: EH-01 突破48h
+    distortion_ids:
+    - E1
+    - E7
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 突破48h
+    family: oi_break
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 157
+    avg_trade_pnl: 0.010131134534648088
+    total_return_pct: -2.0603039593546035
+    monthly_return_pct_approx: -0.17298499333832096
+    max_drawdown_pct: 9.632754385199014
+    win_rate_pct: 30.573248407643312
+    payoff_ratio: 2.3100896185506476
+    total_fees: 15.574679404400317
+    long_trades: 97
+    short_trades: 60
+    final_equity: 293.8190881219362
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh01_brk_192
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh01_brk_192/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 頻度↓・質↑。 n=157 EV=0.010
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-01-eh01_brk_192-setB-20260823-062.md
+- run_id: 20260823-063
+  recorded_at: '2026-08-23T02:30:58Z'
+  status: pass
+  hypothesis:
+    id: EH-01
+    logic_id: eh01_long_only
+    name: EH-01 ロングのみ
+    distortion_ids:
+    - E1
+    - E7
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: ロングのみ
+    family: oi_break
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 138
+    avg_trade_pnl: 0.12615559234007814
+    total_return_pct: 3.526157247642625
+    monthly_return_pct_approx: 0.288616477408965
+    max_drawdown_pct: 5.196098559794714
+    win_rate_pct: 31.15942028985507
+    payoff_ratio: 2.7515267762995888
+    total_fees: 13.676629620163101
+    long_trades: 138
+    short_trades: 0
+    final_equity: 310.5784717429279
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh01_long_only
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh01_long_only/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: ショート側が足を引くかの切り分け。 n=138 EV=0.126
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-01-eh01_long_only-setB-20260823-063.md
+- run_id: 20260823-064
+  recorded_at: '2026-08-23T02:30:58Z'
+  status: pass
+  hypothesis:
+    id: EH-06
+    logic_id: eh06_win_10d
+    name: EH-06 基準窓10日
+    distortion_ids:
+    - E7
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 基準窓10日
+    family: ratio_divergence
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 721
+    avg_trade_pnl: 0.004368005258218792
+    total_return_pct: -10.83647705465256
+    monthly_return_pct_approx: -0.9493514852663809
+    max_drawdown_pct: 19.227140183619284
+    win_rate_pct: 46.463245492371705
+    payoff_ratio: 1.1605055963058186
+    total_fees: 71.33337826667346
+    long_trades: 390
+    short_trades: 331
+    final_equity: 267.4905688360423
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh06_win_10d
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh06_win_10d/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 短い基準。 n=721 EV=0.004
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-06-eh06_win_10d-setB-20260823-064.md
+- run_id: 20260823-065
+  recorded_at: '2026-08-23T02:30:59Z'
+  status: pass
+  hypothesis:
+    id: EH-08
+    logic_id: eh08_ctrl_no_build
+    name: 'EH-08 対照: OI増なし'
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: '対照: OI増なし'
+    family: quiet_oi_build
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 269
+    avg_trade_pnl: 0.04955093934094348
+    total_return_pct: 0.0045675609025686015
+    monthly_return_pct_approx: 0.0003798529532250683
+    max_drawdown_pct: 6.472069167342956
+    win_rate_pct: 32.71375464684015
+    payoff_ratio: 2.2719151164652476
+    total_fees: 26.661968303393454
+    long_trades: 143
+    short_trades: 126
+    final_equity: 300.01370268270773
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_ctrl_no_build
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_ctrl_no_build/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 圧縮だけのブレイク。差が出るか。 n=269 EV=0.050
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-08-eh08_ctrl_no_build-setB-20260823-065.md
+- run_id: 20260823-066
+  recorded_at: '2026-08-23T02:30:59Z'
+  status: pass
+  hypothesis:
+    id: EH-08
+    logic_id: eh08_trail_4
+    name: EH-08 トレール4ATR
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: トレール4ATR
+    family: quiet_oi_build
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 182
+    avg_trade_pnl: 0.006836834187924836
+    total_return_pct: -2.5882320592672703
+    monthly_return_pct_approx: -0.2178471240453339
+    max_drawdown_pct: 6.073947336811495
+    win_rate_pct: 27.472527472527474
+    payoff_ratio: 2.674648762829476
+    total_fees: 18.027295698317946
+    long_trades: 97
+    short_trades: 85
+    final_equity: 292.2353038221982
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_trail_4
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_trail_4/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 放れを伸ばす。 n=182 EV=0.007
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-08-eh08_trail_4-setB-20260823-066.md
+- run_id: 20260823-067
+  recorded_at: '2026-08-23T02:30:59Z'
+  status: pass
+  hypothesis:
+    id: EH-08
+    logic_id: eh08_long_only
+    name: EH-08 ロングのみ
+    distortion_ids:
+    - E1
+    - E6
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: ロングのみ
+    family: quiet_oi_build
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 105
+    avg_trade_pnl: 0.05391661496419764
+    total_return_pct: 0.15458152374612233
+    monthly_return_pct_approx: 0.012846661437282414
+    max_drawdown_pct: 5.054239476753076
+    win_rate_pct: 32.38095238095238
+    payoff_ratio: 2.3280473694593122
+    total_fees: 10.401907652971722
+    long_trades: 105
+    short_trades: 0
+    final_equity: 300.46374457123835
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_long_only
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh08_long_only/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 方向の切り分け。 n=105 EV=0.054
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-08-eh08_long_only-setB-20260823-067.md
+- run_id: 20260823-068
+  recorded_at: '2026-08-23T02:31:00Z'
+  status: pass
+  hypothesis:
+    id: EH-09
+    logic_id: eh09_base
+    name: EH-09 高値更新+成行買い減衰
+    distortion_ids:
+    - E1
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 高値更新+成行買い減衰
+    family: taker_absorb
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 311
+    avg_trade_pnl: 0.00994559049053271
+    total_return_pct: -4.095098244552997
+    monthly_return_pct_approx: -0.34713440116668215
+    max_drawdown_pct: 9.184708720898534
+    win_rate_pct: 44.69453376205787
+    payoff_ratio: 1.2600438229247684
+    total_fees: 30.78616816954011
+    long_trades: 120
+    short_trades: 191
+    final_equity: 287.714705266341
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_base
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_base/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 本命。吸収されている上昇を売る。 n=311 EV=0.010
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-09-eh09_base-setB-20260823-068.md
+- run_id: 20260823-069
+  recorded_at: '2026-08-23T02:31:00Z'
+  status: pass
+  hypothesis:
+    id: EH-09
+    logic_id: eh09_win_8
+    name: EH-09 成行計測2h
+    distortion_ids:
+    - E1
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 成行計測2h
+    family: taker_absorb
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 302
+    avg_trade_pnl: 0.03168307632980078
+    total_return_pct: -1.7935703161358507
+    monthly_return_pct_approx: -0.1504028176590233
+    max_drawdown_pct: 11.285365387032744
+    win_rate_pct: 44.70198675496689
+    payoff_ratio: 1.3106152431949638
+    total_fees: 29.898535224114685
+    long_trades: 126
+    short_trades: 176
+    final_equity: 294.61928905159243
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_win_8
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_win_8/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 短い傾き。 n=302 EV=0.032
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-09-eh09_win_8-setB-20260823-069.md
+- run_id: 20260823-070
+  recorded_at: '2026-08-23T02:31:00Z'
+  status: pass
+  hypothesis:
+    id: EH-09
+    logic_id: eh09_win_32
+    name: EH-09 成行計測8h
+    distortion_ids:
+    - E1
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 成行計測8h
+    family: taker_absorb
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 291
+    avg_trade_pnl: 0.0026538467715994524
+    total_return_pct: -4.54407686315702
+    monthly_return_pct_approx: -0.3860164126221921
+    max_drawdown_pct: 11.287067972759356
+    win_rate_pct: 43.29896907216495
+    payoff_ratio: 1.3159630927216077
+    total_fees: 28.80946109702873
+    long_trades: 104
+    short_trades: 187
+    final_equity: 286.3677694105289
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_win_32
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_win_32/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 長い傾き。 n=291 EV=0.003
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-09-eh09_win_32-setB-20260823-070.md
+- run_id: 20260823-071
+  recorded_at: '2026-08-23T02:31:01Z'
+  status: pass
+  hypothesis:
+    id: EH-09
+    logic_id: eh09_slope_0p05
+    name: EH-09 傾き閾値0.05
+    distortion_ids:
+    - E1
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: 傾き閾値0.05
+    family: taker_absorb
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 179
+    avg_trade_pnl: 0.10631617122744928
+    total_return_pct: 3.3954070911672574
+    monthly_return_pct_approx: 0.27807659927749917
+    max_drawdown_pct: 3.7283857497638238
+    win_rate_pct: 46.927374301675975
+    payoff_ratio: 1.3789711181520292
+    total_fees: 17.703976574742185
+    long_trades: 63
+    short_trades: 116
+    final_equity: 310.18622127350176
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_slope_0p05
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_slope_0p05/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 明確な減衰のみ。 n=179 EV=0.106
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-09-eh09_slope_0p05-setB-20260823-071.md
+- run_id: 20260823-072
+  recorded_at: '2026-08-23T02:31:01Z'
+  status: pass
+  hypothesis:
+    id: EH-09
+    logic_id: eh09_trail_2p5
+    name: EH-09 トレール併用
+    distortion_ids:
+    - E1
+    one_liner: Set B ゲート合格（100サイクル）
+  logic:
+    knob: トレール併用
+    family: taker_absorb
+    cycle_pack: edge_100
+  test:
+    set: B
+    eval_start: '2024-01-01'
+    eval_end: '2024-12-31'
+    bars: null
+    data_source: binance_vision
+    synthetic: false
+    config: configs/eval_v1.yaml
+    git_commit: 3d97c2b
+  results:
+    trades: 266
+    avg_trade_pnl: 0.020788968887950076
+    total_return_pct: -2.5403358840062173
+    monthly_return_pct_approx: -0.21376783327325954
+    max_drawdown_pct: 11.845477610001549
+    win_rate_pct: 31.203007518796994
+    payoff_ratio: 2.2885405528559826
+    total_fees: 26.327997238956822
+    long_trades: 97
+    short_trades: 169
+    final_equity: 292.37899234798135
+    gate_pass: true
+    gate_failures: []
+  artifacts:
+    dir: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_trail_2p5
+    metrics_json: /workspace/artifacts/evals/20260823T022755Z_edge100_setB/setB_eh09_trail_2p5/metrics.json
+  learnings:
+    one_liner: Set B ゲート合格（100サイクル）
+    summary: 退出を伸ばす。 n=266 EV=0.021
+    keep:
+    - 価格外データ（OI/funding/basis/成行）を条件に使う
+    discard:
+    - 対照との差を見ずに単体EVで採用すること
+  next_actions:
+  - Set C holdout
+  - 対照との差を確認
+  notes: edge_100 batch
+  entry_doc: docs/research/entries/EH-09-eh09_trail_2p5-setB-20260823-072.md

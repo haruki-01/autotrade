@@ -1,7 +1,7 @@
 schema_version: 1
 eval_version: eval_v1.1
-created_at: '2026-08-23T02:24:34Z'
-git_commit: 6446a68
+created_at: '2026-08-23T02:33:15Z'
+git_commit: 3d97c2b
 config_path: configs/eval_v1.yaml
 config_sha256: f9634b51b4482a8494fa7f03d2e45bfe9bbf07c9a9f15fda0d3cd1ad84fe43a3
 forbid_synthetic: true
@@ -41,5 +41,26 @@ datasets:
       data/cache/BTCUSDT_binance_um_funding_2023-05-26_2024-12-31.csv: 18595cb0f20846290747863d6f05260d41e9a2ff0249573949bc16849483ff9e
       data/cache/BTCUSDT_binance_um_premium_2023-05-26_2024-12-31.csv: a4c66840dfae0a241aa132f1664a392652f57bfe6aac6946e6a0611dc2190c52
       data/cache/BTCUSDT_binance_um_perp15m_2023-05-26_2024-12-31.csv: 456a9631379e84c9c82a172ecdbf993bb940862c91831d55fffd83aa57d0bc5d
+  C:
+    eval_window:
+      start: '2025-01-01'
+      end: '2026-08-22'
+    fetch_window:
+      start: '2024-05-26'
+      end: '2026-08-22'
+    data_source: binance_vision
+    bars:
+      1d: 819
+      4h: 4910
+      15m: 78559
+    files:
+      data/cache/BTCUSDT_binance_spot_1d_2024-05-26_2026-08-22.csv: 546b1326fc42d0d61d7b3900f82b8e9a42f234305bd53fb081baf24e708dc687
+      data/cache/BTCUSDT_binance_spot_4h_2024-05-26_2026-08-22.csv: 93775b2bb47f3a28ac1ccf2dbcfd221879090aadde7587f56505731060759edf
+      data/cache/BTCUSDT_binance_spot_15m_2024-05-26_2026-08-22.csv: 536bbc04b716bf3f2499b6b1f137dd3a75f688856f50b09e0efffeaad7776f88
+    derivatives:
+      data/cache/BTCUSDT_binance_um_metrics_2024-05-26_2026-08-22.csv: 875b1e2bdbec1a442a48c4903a1c78d603e0999e1220930ff4d86ff33706cf7c
+      data/cache/BTCUSDT_binance_um_funding_2024-05-26_2026-08-22.csv: 167abd406e8c99bcfe2270088f9cfc8952e28b53cfc819166526a508ea79ce90
+      data/cache/BTCUSDT_binance_um_premium_2024-05-26_2026-08-22.csv: 52f8b77ca5437f906b6d68a18480a853b39d7e2f47dcffad3207fb19ddf1f4dc
+      data/cache/BTCUSDT_binance_um_perp15m_2024-05-26_2026-08-22.csv: d71e646c63e20296915de6b578c3b13ebb7d7048f4a9afa5070028a97c9f82fa
 notes: Formal eval only. Re-run eval-prepare after changing config or refreshing data.
   If data_source is binance_vision, re-confirm on Bybit before any live decision.
