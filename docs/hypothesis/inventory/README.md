@@ -23,17 +23,19 @@
 
 | ID | status | 一言 |
 |----|--------|------|
-| EH-01 建玉裏付けの突破 | **機構あり** | 対照との差が両期間で同符号。次の軸 |
-| EH-06 個人vs上位の乖離 | **機構あり** | 差は小さくDDが重い |
-| EH-07 清算洗浄後の戻り | **機構あり** | 方向は正しいが入り方が下手 |
-| EH-09 成行買いの吸収 | **機構あり** | 順張り対照を両期間で上回る |
-| EH-02 現物先行 | 検証不能 | 効果量最大だが n=39/14 |
+| EH-01 建玉裏付けの突破 | **機構あり** | 退出の改良は打ち止め。次は入口条件 |
+| EH-06 個人vs上位の乖離 | **機構あり** | 未着手。差は小さくDDが重い |
+| EH-09 成行買いの吸収 | **機構あり** | 未着手。順張り対照を両期間で上回る |
+| EH-07 清算洗浄後の戻り | **希少エッジ** | 両期間プラスだが年60〜80回でゲート未達 |
 | EH-10 funding リセット | 検証不能 | n=7/0。ショート側は成立せず |
+| EH-02 現物先行 | **棄却** | n を増やして測り直したら消えた |
 | EH-03 / EH-04 / EH-05 / EH-08 | **棄却** | 再探索禁止 |
 
-Set B 11/100 PASS → Set C holdout 2/11 PASS → **採用なし**（EVがコストと同桁）。  
-正本: [../EDGE_HYPOTHESES.md](../EDGE_HYPOTHESES.md) / [../edge_hypotheses.yaml](../edge_hypotheses.yaml) ·
-postmortem: [../postmortems/2026-08-23-edge-100-cycles.md](../postmortems/2026-08-23-edge-100-cycles.md)
+100サイクル: Set B 11/100 → Set C 2/11。改良63本: EH-01R 3→0、EH-07R 0、EH-02R 0。
+**累計163本・採用なし。**
+
+正本: [../EDGE_HYPOTHESES.md](../EDGE_HYPOTHESES.md) / [../edge_hypotheses.yaml](../edge_hypotheses.yaml)  
+postmortem: [100サイクル](../postmortems/2026-08-23-edge-100-cycles.md) · [改良3フェーズ](../postmortems/2026-08-23-edge-refine-cycles.md)
 
 ## 作成の次
 
