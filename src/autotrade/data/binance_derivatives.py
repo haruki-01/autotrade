@@ -136,9 +136,16 @@ _KLINE_COLS = [
 
 
 def _parse_klines(parts: list[pd.DataFrame]) -> pd.DataFrame:
-    df = pd.concat(parts, ignore_index=True)
-    if not isinstance(df.columns[0], str) or df.columns[0] != "open_time":
-        df.columns = _KLINE_COLS[: len(df.columns)]
+    # The archive is not consistent: older months ship headerless CSVs while
+    # newer ones carry a header row. Normalise each part before concatenating,
+    # otherwise the two layouts stack side by side instead of end to end.
+    normalised = []
+    for part in parts:
+        if not (isinstance(part.columns[0], str) and part.columns[0] == "open_time"):
+            part = part.copy()
+            part.columns = _KLINE_COLS[: len(part.columns)]
+        normalised.append(part)
+    df = pd.concat(normalised, ignore_index=True)
     df["timestamp"] = pd.to_datetime(df["open_time"].astype("int64"), unit="ms", utc=True)
     return df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
 

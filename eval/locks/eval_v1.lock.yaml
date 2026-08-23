@@ -1,7 +1,7 @@
 schema_version: 1
 eval_version: eval_v1.1
-created_at: '2026-08-23T02:33:15Z'
-git_commit: 3d97c2b
+created_at: '2026-08-23T05:14:37Z'
+git_commit: '7014196'
 config_path: configs/eval_v1.yaml
 config_sha256: f9634b51b4482a8494fa7f03d2e45bfe9bbf07c9a9f15fda0d3cd1ad84fe43a3
 forbid_synthetic: true
@@ -20,6 +20,27 @@ gates:
   primary_gate_set: B
   holdout_set: C
 datasets:
+  A:
+    eval_window:
+      start: '2023-01-01'
+      end: '2023-12-31'
+    fetch_window:
+      start: '2022-05-26'
+      end: '2023-12-31'
+    data_source: binance_vision
+    bars:
+      1d: 585
+      4h: 3510
+      15m: 56155
+    files:
+      data/cache/BTCUSDT_binance_spot_1d_2022-05-26_2023-12-31.csv: 39d9937ea333c3889d633063270139994bb6805c7e512a5342ee9abda7201bcc
+      data/cache/BTCUSDT_binance_spot_4h_2022-05-26_2023-12-31.csv: 2e4226985033ece0925eeaf6e406bcb78a43745a1f7a796893271b18d157ca21
+      data/cache/BTCUSDT_binance_spot_15m_2022-05-26_2023-12-31.csv: 857e9788e9b8618158304da93520e5328cd1f54470be6038d9ca8fb5bf5941f4
+    derivatives:
+      data/cache/BTCUSDT_binance_um_metrics_2022-05-26_2023-12-31.csv: 5d6e330062aca817ed5544968ec1fd4e87143f225bb914eb8f93614caafd302e
+      data/cache/BTCUSDT_binance_um_funding_2022-05-26_2023-12-31.csv: 6e48a0a2e79635c3f06f7ec01644ea1c12d6d87f493bd49b1f3e56502f3d6a43
+      data/cache/BTCUSDT_binance_um_premium_2022-05-26_2023-12-31.csv: f91b56bc61c144993c127af6883050a494adcb25b12e66a145fe396c9ae74412
+      data/cache/BTCUSDT_binance_um_perp15m_2022-05-26_2023-12-31.csv: f6e980e5b2264f52879b294db27140d191277dc4a093a1ac4be46fb89c64debb
   B:
     eval_window:
       start: '2024-01-01'

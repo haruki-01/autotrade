@@ -183,6 +183,100 @@ def _lead_measure(f: pd.DataFrame, p: EdgeParams) -> pd.Series:
     return _zscore(raw, p.lead_z_window)
 
 
+def _persist(cond: pd.Series, bars: int) -> pd.Series:
+    """Condition must have held for ``bars`` consecutive bars."""
+    if bars <= 1:
+        return cond
+    held = cond.fillna(False).astype(float).rolling(bars, min_periods=bars).min() > 0
+    return held
+
+
+def _apply_cooldown(
+    long: pd.Series, short: pd.Series, bars: int
+) -> tuple[pd.Series, pd.Series]:
+    """Suppress signals for ``bars`` after any signal, to cut turnover."""
+    if bars <= 0:
+        return long, short
+    lo = long.fillna(False).to_numpy(dtype=bool).copy()
+    sh = short.fillna(False).to_numpy(dtype=bool).copy()
+    last = -10**9
+    for i in range(len(lo)):
+        if not (lo[i] or sh[i]):
+            continue
+        if i - last < bars:
+            lo[i] = sh[i] = False
+        else:
+            last = i
+    return pd.Series(lo, index=long.index), pd.Series(sh, index=short.index)
+
+
+# --------------------------------------------------------------- EH-06R
+
+
+def _sig_ratio_divergence_v2(f: pd.DataFrame, p: EdgeParams) -> tuple[pd.Series, pd.Series]:
+    """Retail-vs-top-trader divergence. The 100-cycle version traded far too often."""
+    tt = f["tt_ratio"] if p.ratio_source == "sum" else f["tt_count_ratio"]
+    z_acct = _zscore(f["acct_ratio"], p.div_window)
+    z_tt = _zscore(tt, p.div_window)
+    div = z_acct - z_tt
+
+    if p.div_mode == "follow_retail":
+        long_c, short_c = div > p.div_thr, div < -p.div_thr
+    else:
+        long_c, short_c = div < -p.div_thr, div > p.div_thr
+
+    if p.both_extreme:
+        # Not just a gap: each side has to be stretched on its own.
+        long_c = long_c & (z_acct < 0) & (z_tt > 0)
+        short_c = short_c & (z_acct > 0) & (z_tt < 0)
+
+    long_c = _persist(long_c, p.persist_bars)
+    short_c = _persist(short_c, p.persist_bars)
+
+    if p.gate_mode == "gate":
+        brk_up = f["close"] > _prior_high(f, p.gate_break_window)
+        brk_dn = f["close"] < _prior_low(f, p.gate_break_window)
+        long_sig = _new_event(brk_up & long_c)
+        short_sig = _new_event(brk_dn & short_c)
+    else:
+        long_sig, short_sig = _new_event(long_c), _new_event(short_c)
+
+    return _apply_cooldown(long_sig, short_sig, p.cooldown_bars)
+
+
+# --------------------------------------------------------------- EH-09R
+
+
+def _taker_ratio(f: pd.DataFrame, p: EdgeParams) -> pd.Series:
+    if p.taker_source == "perp_vol":
+        buy = f["perp_taker_buy"]
+        sell = (f["perp_volume"] - buy).clip(lower=1e-9)
+        return buy / sell
+    return f["taker_ratio"]
+
+
+def _sig_taker_absorb_v2(f: pd.DataFrame, p: EdgeParams) -> tuple[pd.Series, pd.Series]:
+    """New extreme in price while aggressive flow fades = absorption."""
+    tk = _taker_ratio(f, p).rolling(p.taker_window, min_periods=p.taker_window).mean()
+    slope = tk - tk.shift(p.taker_window)
+
+    pad = f["atr_h1"] * p.extend_atr
+    new_high = f["close"] > _prior_high(f, BARS_PER_DAY) + pad
+    new_low = f["close"] < _prior_low(f, BARS_PER_DAY) - pad
+
+    # Persistence applies to the flow condition only: a new price extreme is an
+    # instant, so requiring it to hold for N bars would never fire.
+    rising = _persist(slope > p.taker_slope_thr, p.persist_bars)
+    falling = _persist(slope < -p.taker_slope_thr, p.persist_bars)
+
+    if p.taker_mode == "confirm":
+        long_c, short_c = new_high & rising, new_low & falling
+    else:
+        long_c, short_c = new_low & rising, new_high & falling
+
+    return _apply_cooldown(_new_event(long_c), _new_event(short_c), p.cooldown_bars)
+
+
 def _sig_spot_lead_v2(f: pd.DataFrame, p: EdgeParams) -> tuple[pd.Series, pd.Series]:
     """Spot-lead as a scale-free gate on a frequent trigger, not as the trigger."""
     z = _lead_measure(f, p)
@@ -207,13 +301,21 @@ def _sig_spot_lead_v2(f: pd.DataFrame, p: EdgeParams) -> tuple[pd.Series, pd.Ser
 edge.SIGNAL_FNS["oi_break_v2"] = _sig_oi_break_v2
 edge.SIGNAL_FNS["oi_flush_v2"] = _sig_oi_flush_v2
 edge.SIGNAL_FNS["spot_lead_v2"] = _sig_spot_lead_v2
+edge.SIGNAL_FNS["ratio_divergence_v2"] = _sig_ratio_divergence_v2
+edge.SIGNAL_FNS["taker_absorb_v2"] = _sig_taker_absorb_v2
 
 edge.REQUIRED_COLS["oi_break_v2"] = ["oi"]
 edge.REQUIRED_COLS["oi_flush_v2"] = ["oi"]
 edge.REQUIRED_COLS["spot_lead_v2"] = ["perp_close"]
+edge.REQUIRED_COLS["ratio_divergence_v2"] = ["acct_ratio", "tt_ratio", "tt_count_ratio"]
+edge.REQUIRED_COLS["taker_absorb_v2"] = ["taker_ratio", "perp_taker_buy", "perp_volume"]
 
 edge.STRUCTURAL_EXIT.add("oi_break_v2")
 edge.STRUCTURAL_EXIT.add("spot_lead_v2")
+# Both v2 families can run either a target exit or a structural one; the knob
+# decides, so they must be eligible for structural exits.
+edge.STRUCTURAL_EXIT.add("ratio_divergence_v2")
+edge.STRUCTURAL_EXIT.add("taker_absorb_v2")
 
 
 # --------------------------------------------------------------- variant packs
@@ -251,6 +353,35 @@ _EH02R_BASE = EdgeParams(
     stop_atr_mult=1.5,
     tp_atr_mult=None,
     trail_atr_mult=2.5,
+    exit_window=BARS_PER_DAY // 2,
+)
+
+
+_EH06R_BASE = EdgeParams(
+    family="ratio_divergence_v2",
+    div_window=30 * BARS_PER_DAY,
+    div_thr=1.0,
+    ratio_source="sum",
+    div_mode="follow_top",
+    gate_mode="trigger",
+    gate_break_window=48,
+    stop_atr_mult=1.5,
+    tp_atr_mult=2.0,
+    trail_atr_mult=None,
+    use_structure_exit=False,
+    exit_window=BARS_PER_DAY // 2,
+)
+
+_EH09R_BASE = EdgeParams(
+    family="taker_absorb_v2",
+    taker_window=16,
+    taker_slope_thr=0.0,
+    taker_mode="absorb",
+    taker_source="metrics",
+    stop_atr_mult=1.5,
+    tp_atr_mult=2.0,
+    trail_atr_mult=None,
+    use_structure_exit=False,
     exit_window=BARS_PER_DAY // 2,
 )
 
@@ -378,6 +509,71 @@ CYCLE_EDGE_R.update(
             ("trigger_only", "ゲートでなく単独の引き金", "旧EH-02の形をzで測り直したもの。", {"gate_mode": "trigger"}),
             ("trail_4", "トレール4ATR", "伸ばす。", {"trail_atr_mult": 4.0}),
             ("long_only", "ロングのみ", "方向の切り分け。", {"long_only": True}),
+        ],
+    )
+)
+
+
+# --- Phase 4: EH-06R — cut turnover and drawdown
+# The 100-cycle base traded 809 (B) / 1187 (C) times with DD 31.6% / 51.0%.
+# The divergence itself replicated; the way it was traded did not survive.
+CYCLE_EDGE_R.update(
+    _pack(
+        "eh06r",
+        "EH-06R",
+        _EH06R_BASE,
+        [
+            ("base", "再掲: 乖離1.0σで即入り", "改良前の基準線。eh06_base と同一条件。", {}),
+            ("ctrl_follow_retail", "対照: 個人側に付く", "符号反転の対照を新しい退出で再掲。", {"div_mode": "follow_retail"}),
+            ("cool_96", "24hクールダウン", "同じ乖離で何度も撃たない。回転とDDの主因。", {"cooldown_bars": BARS_PER_DAY}),
+            ("cool_192", "48hクールダウン", "さらに絞る。", {"cooldown_bars": 2 * BARS_PER_DAY}),
+            ("cool_32", "8hクールダウン", "軽く絞る。", {"cooldown_bars": 32}),
+            ("persist_8", "乖離が2h続いてから", "一瞬の乖離を捨てる。", {"persist_bars": 8}),
+            ("persist_32", "乖離が8h続いてから", "より強い持続。", {"persist_bars": 32}),
+            ("both_extreme", "個人・上位の両方が偏っている", "差だけでなく各side自体の偏りを要求。", {"both_extreme": True}),
+            ("thr_2p0", "乖離2.0σ", "より極端のみ。", {"div_thr": 2.0}),
+            ("gate_break", "12h突破のゲートとして使う", "逆張りでなく順張りの条件にする。", {"gate_mode": "gate"}),
+            ("gate_break_ctrl", "対照: ゲートなしの突破", "ゲートの寄与を測る対照。", {"gate_mode": "gate", "div_thr": -99.0}),
+            ("gate_break_96", "24h突破のゲート", "引き金を長くする。", {"gate_mode": "gate", "gate_break_window": BARS_PER_DAY}),
+            ("struct_exit", "構造退出のみ（目標なし）", "前フェーズの学び: 目標/トレールで勝ちを切らない。", {"tp_atr_mult": None, "use_structure_exit": True}),
+            ("trail_4", "トレール4ATR", "同上。緩いトレール。", {"tp_atr_mult": None, "trail_atr_mult": 4.0}),
+            ("tp_4atr", "利確4ATR", "目標を遠くする。", {"tp_atr_mult": 4.0}),
+            ("stop_2p5", "損切2.5ATR", "浅い損切がDDを増やしていないか。", {"stop_atr_mult": 2.5}),
+            ("win_10d", "基準窓10日", "100サイクルで唯一PASSした窓を新しい枠で。", {"div_window": 10 * BARS_PER_DAY}),
+            ("count_ratio", "上位比=口座数版", "比率の取り方。", {"ratio_source": "count"}),
+            ("cool96_struct", "24hクールダウン+構造退出", "回転を絞って伸ばす組合せ。", {"cooldown_bars": BARS_PER_DAY, "tp_atr_mult": None, "use_structure_exit": True}),
+            ("cool96_thr2", "24hクールダウン+乖離2.0σ", "絞りを二重にする。", {"cooldown_bars": BARS_PER_DAY, "div_thr": 2.0}),
+        ],
+    )
+)
+
+# --- Phase 5: EH-09R — re-measure the aggressive flow, then fix the exit
+CYCLE_EDGE_R.update(
+    _pack(
+        "eh09r",
+        "EH-09R",
+        _EH09R_BASE,
+        [
+            ("base", "再掲: metrics成行比の傾き", "改良前の基準線。eh09_base と同一条件。", {}),
+            ("ctrl_confirm", "対照: 成行と同方向（順張り）", "符号反転の対照を再掲。", {"taker_mode": "confirm"}),
+            ("perp_vol", "先物出来高から成行比を作る", "metricsの集計値でなく約定出来高で測り直す。", {"taker_source": "perp_vol"}),
+            ("perp_vol_w32", "出来高版+計測8h", "測り直し版で窓を伸ばす。", {"taker_source": "perp_vol", "taker_window": 32}),
+            ("perp_vol_slope", "出来高版+傾き閾値0.05", "測り直し版に閾値。", {"taker_source": "perp_vol", "taker_slope_thr": 0.05}),
+            ("perp_vol_ctrl", "対照: 出来高版で順張り", "測り直し版の符号反転。", {"taker_source": "perp_vol", "taker_mode": "confirm"}),
+            ("slope_0p05", "傾き閾値0.05", "Set Bで最良だったノブを再掲。", {"taker_slope_thr": 0.05}),
+            ("struct_exit", "構造退出のみ（目標なし）", "前フェーズの学び。", {"tp_atr_mult": None, "use_structure_exit": True}),
+            ("trail_4", "トレール4ATR", "同上。", {"tp_atr_mult": None, "trail_atr_mult": 4.0}),
+            ("tp_4atr", "利確4ATR", "目標を遠くする。", {"tp_atr_mult": 4.0}),
+            ("stop_2p5", "損切2.5ATR", "踏まれ耐性。", {"stop_atr_mult": 2.5}),
+            ("extend_0p5", "高値を0.5ATR超えてから", "わずかな更新を捨てる。", {"extend_atr": 0.5}),
+            ("extend_1p0", "高値を1.0ATR超えてから", "より明確な更新のみ。", {"extend_atr": 1.0}),
+            ("cool_96", "24hクールダウン", "回転を落とす。", {"cooldown_bars": BARS_PER_DAY}),
+            ("cool_32", "8hクールダウン", "軽く落とす。", {"cooldown_bars": 32}),
+            ("persist_8", "減衰が2h続いてから", "一瞬の減衰を捨てる。", {"persist_bars": 8}),
+            ("short_only", "ショートのみ", "高値側だけ。", {"short_only": True}),
+            ("slope05_struct", "傾き0.05+構造退出", "最良ノブと新しい退出の組合せ。", {"taker_slope_thr": 0.05, "tp_atr_mult": None, "use_structure_exit": True}),
+            ("perpvol_struct", "出来高版+構造退出", "測り直しと新しい退出の組合せ。", {"taker_source": "perp_vol", "tp_atr_mult": None, "use_structure_exit": True}),
+            ("slope05_cool96", "傾き0.05+24hクールダウン", "最良ノブに回転制限。", {"taker_slope_thr": 0.05, "cooldown_bars": BARS_PER_DAY}),
         ],
     )
 )

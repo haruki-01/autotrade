@@ -107,6 +107,11 @@ class EdgeParams:
     lead_z_thr: float = 0.5
     gate_mode: str = "gate"  # gate | trigger
     gate_break_window: int = 48
+    persist_bars: int = 0
+    cooldown_bars: int = 0
+    both_extreme: bool = False
+    taker_source: str = "metrics"  # metrics | perp_vol
+    extend_atr: float = 0.0
 
     # --- exits / sizing
     atr_period: int = 14
