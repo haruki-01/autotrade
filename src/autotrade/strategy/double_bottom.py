@@ -20,7 +20,7 @@ BounceMode = Literal[
 ]
 BreakMode = Literal["close", "wick", "clean_atr"]
 StopMode = Literal["neck", "second_bottom", "atr"]
-StructTF = Literal["1h", "4h", "1d"]
+StructTF = Literal["15m", "1h", "4h", "1d"]
 HtfFilter = Literal["none", "up_only", "not_down"]
 
 
@@ -277,7 +277,10 @@ def prepare_frames(
     d = norm_ohlcv(daily)
     h = norm_ohlcv(h4)
 
-    if p.structure_tf == "1h":
+    if p.structure_tf == "15m":
+        struct = m
+        shift = pd.Timedelta(minutes=15)
+    elif p.structure_tf == "1h":
         struct = _resample_ohlcv(m, "1h")
         shift = pd.Timedelta(hours=1)
     elif p.structure_tf == "1d":
@@ -310,21 +313,29 @@ def prepare_frames(
         long_sig = long_sig & (hour >= 7) & (hour < 21)
 
     # Fire at most once per structure bar (first 15m of bucket)
-    if p.structure_tf == "1h":
+    if p.structure_tf == "15m":
+        bucket = merged.index.floor("15min")
+    elif p.structure_tf == "1h":
         bucket = merged.index.floor("1h")
     elif p.structure_tf == "1d":
         bucket = merged.index.floor("D")
     else:
         bucket = merged.index.floor("4h")
     first = ~pd.Series(bucket, index=merged.index).duplicated(keep="first")
-    long_sig = long_sig & first
+    # On 15m structure, signal already aligns to 15m — do not thin to first-of-bucket only
+    if p.structure_tf == "15m":
+        long_sig = long_sig
+    else:
+        long_sig = long_sig & first
 
     merged["long_signal"] = long_sig
     if p.enable_short_mirror and not p.long_only:
         short_raw = _detect_short_mirror(struct, p)
         short_df = pd.DataFrame({"short_signal_raw": short_raw}, index=struct.index)
         merged = merge_series_asof(merged, short_df, ["short_signal_raw"], shift=shift)
-        short_sig = merged["short_signal_raw"].fillna(False) & first
+        short_sig = merged["short_signal_raw"].fillna(False)
+        if p.structure_tf != "15m":
+            short_sig = short_sig & first
         if p.htf_filter == "up_only":
             short_sig = short_sig & (merged["daily_bias"] == "down")
         elif p.htf_filter == "not_down":
@@ -479,6 +490,63 @@ CYCLE_DB: dict[str, tuple[DoubleBottomParams, str, str]] = {
         "DB学習合成: 1H×上昇×鮮度48h×高値奪還",
     ),
 }
+
+# --- Batch-2: 30 cycles (DB-22..DB-51). Base = 1H; one knob each (stacking banned after DB-21). ---
+
+def _h1(**kwargs) -> DoubleBottomParams:
+    base = dict(structure_tf="1h", min_bars_between=8, max_bars_between=80)
+    base.update(kwargs)
+    return DoubleBottomParams(**base)
+
+
+def _m15(**kwargs) -> DoubleBottomParams:
+    base = dict(structure_tf="15m", min_bars_between=16, max_bars_between=192, pivot_left=2, pivot_right=2)
+    base.update(kwargs)
+    return DoubleBottomParams(**base)
+
+
+CYCLE_DB.update(
+    {
+        "db_1h_up_only_v1": (_h1(htf_filter="up_only"), "DB-22", "1H+上昇のみ"),
+        "db_1h_not_down_v1": (_h1(htf_filter="not_down"), "DB-23", "1H+下降以外"),
+        "db_1h_reclaim_v1": (_h1(bounce_mode="reclaim_extension"), "DB-24", "1H+高値奪還"),
+        "db_1h_fresh48_v1": (_h1(retest_max_bars_after_break=48), "DB-25", "1H+鮮度48h"),
+        "db_1h_fresh24_v1": (_h1(retest_max_bars_after_break=24), "DB-26", "1H+鮮度24h"),
+        "db_1h_fresh72_v1": (_h1(retest_max_bars_after_break=72), "DB-27", "1H+鮮度72h"),
+        "db_1h_trail_v1": (_h1(trail_atr_mult=2.5, stop_mode="atr"), "DB-28", "1H+ATRトレール"),
+        "db_1h_stop_bottom_v1": (_h1(stop_mode="second_bottom"), "DB-29", "1H+第2底損切"),
+        "db_1h_tight_v1": (_h1(bottom_tol_atr=0.35), "DB-30", "1H+厳しい2底"),
+        "db_1h_wide_v1": (_h1(bottom_tol_atr=1.0), "DB-31", "1H+緩い2底"),
+        "db_1h_wick_v1": (_h1(break_mode="wick"), "DB-32", "1H+ヒゲ突破"),
+        "db_1h_clean_v1": (_h1(break_mode="clean_atr"), "DB-33", "1H+きれいな突破"),
+        "db_1h_fixed_pct_v1": (_h1(bounce_mode="fixed_pct"), "DB-34", "1H+固定%反発"),
+        "db_1h_pct_height_v1": (_h1(bounce_mode="pct_of_height"), "DB-35", "1H+高%戻し"),
+        "db_1h_break_bh_v1": (_h1(bounce_mode="break_bounce_high"), "DB-36", "1H+反発高抜け"),
+        "db_1h_first_retest_v1": (_h1(first_retest_only=True), "DB-37", "1H+初回再テスト"),
+        "db_1h_session_v1": (_h1(session_lon_ny_only=True), "DB-38", "1H+Lon/NYのみ"),
+        "db_1h_pivot2_v1": (_h1(pivot_left=2, pivot_right=2), "DB-39", "1H+ピボット2"),
+        "db_1h_pivot5_v1": (_h1(pivot_left=5, pivot_right=5), "DB-40", "1H+ピボット5"),
+        "db_1h_band_tight_v1": (_h1(retest_band_atr=0.25), "DB-41", "1H+タッチ帯狭い"),
+        "db_1h_band_wide_v1": (_h1(retest_band_atr=1.0), "DB-42", "1H+タッチ帯広い"),
+        "db_1h_close_bottoms_v1": (_h1(min_bars_between=4, max_bars_between=80), "DB-43", "1H+底間隔短い"),
+        "db_1h_far_bottoms_v1": (_h1(min_bars_between=16, max_bars_between=80), "DB-44", "1H+底間隔長い"),
+        "db_15m_baseline_v1": (_m15(), "DB-45", "15m構造基準"),
+        "db_15m_up_only_v1": (_m15(htf_filter="up_only"), "DB-46", "15m+上昇のみ"),
+        "db_15m_reclaim_v1": (_m15(bounce_mode="reclaim_extension"), "DB-47", "15m+高値奪還"),
+        "db_15m_fresh48_v1": (_m15(retest_max_bars_after_break=48), "DB-48", "15m+鮮度48本"),
+        "db_4h_band_tight_v1": (
+            DoubleBottomParams(retest_band_atr=0.25),
+            "DB-49",
+            "4H+タッチ帯狭い",
+        ),
+        "db_4h_pivot2_v1": (
+            DoubleBottomParams(pivot_left=2, pivot_right=2),
+            "DB-50",
+            "4H+ピボット2",
+        ),
+        "db_1h_atr_stop_v1": (_h1(stop_mode="atr"), "DB-51", "1H+ATR損切のみ"),
+    }
+)
 
 
 def prepare_cycle_db(logic_id: str, daily, h4, m15) -> pd.DataFrame:
