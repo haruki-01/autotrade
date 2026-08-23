@@ -93,6 +93,21 @@ class EdgeParams:
     taker_slope_thr: float = 0.0
     taker_mode: str = "absorb"  # absorb | confirm
 
+    # --- refinement knobs (EH-01R / EH-07R / EH-02R families only)
+    entry_mode: str = "break"  # break | confirm | retest | delay
+    entry_delay: int = 0
+    retest_window: int = 48
+    retest_tol_atr: float = 0.5
+    use_structure_exit: bool = True
+    flush_trigger: str = "delay"  # delay | reclaim | oi_rebuild | stabilize
+    trigger_window: int = 48
+    oi_rebuild_thr: float = 0.003
+    lead_measure: str = "ret_diff"  # ret_diff | cum | spread
+    lead_z_window: int = 30 * BARS_PER_DAY
+    lead_z_thr: float = 0.5
+    gate_mode: str = "gate"  # gate | trigger
+    gate_break_window: int = 48
+
     # --- exits / sizing
     atr_period: int = 14
     stop_atr_mult: float = 1.5
@@ -359,7 +374,7 @@ def prepare_frames(
         float("nan") if params.trail_atr_mult is None else float(params.trail_atr_mult)
     )
 
-    if params.family in STRUCTURAL_EXIT:
+    if params.family in STRUCTURAL_EXIT and params.use_structure_exit:
         f["structure_exit_long"] = (f["close"] < _prior_low(f, params.exit_window)).fillna(False)
         f["structure_exit_short"] = (f["close"] > _prior_high(f, params.exit_window)).fillna(False)
     else:

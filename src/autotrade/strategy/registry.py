@@ -18,6 +18,7 @@ from autotrade.strategy import (
 from autotrade.strategy.donchian import DonchianParams
 from autotrade.strategy.double_bottom import CYCLE_DB, prepare_cycle_db
 from autotrade.strategy.edge import CYCLE_EDGE, prepare_cycle_edge
+from autotrade.strategy.edge_refine import CYCLE_EDGE_R, prepare_cycle_edge_r
 from autotrade.strategy.h4_spots import CYCLE_LOGICS, prepare_cycle_logic
 from autotrade.strategy.mom_vol import MomVolParams
 from autotrade.strategy.mtf_trend import StrategyParams
@@ -119,8 +120,20 @@ for _lid, (_p, _hid, _name, _knob, _why) in CYCLE_EDGE.items():
     }
 
 
+for _lid, (_p, _hid, _name, _knob, _why) in CYCLE_EDGE_R.items():
+    LOGIC_META[_lid] = {
+        "hypothesis_id": _hid,
+        "name": _name,
+        "distortion_ids": _EDGE_DISTORTIONS.get(_hid.removesuffix("R"), []),
+        "cycle_pack": "edge_refine",
+        "knob": _knob,
+        "why": _why,
+        "needs_derivatives": True,
+    }
+
+
 def needs_derivatives(logic_id: str) -> bool:
-    return logic_id in CYCLE_EDGE
+    return logic_id in CYCLE_EDGE or logic_id in CYCLE_EDGE_R
 
 
 def prepare_strategy(
@@ -132,13 +145,15 @@ def prepare_strategy(
     cfg: Any,
     deriv: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    if logic_id in CYCLE_EDGE:
+    if logic_id in CYCLE_EDGE or logic_id in CYCLE_EDGE_R:
         if deriv is None:
             raise RuntimeError(
                 f"{logic_id} needs derivative context (OI/funding/basis). "
                 "Run via formal eval, or pass deriv=."
             )
-        return prepare_cycle_edge(logic_id, m15, deriv)
+        if logic_id in CYCLE_EDGE:
+            return prepare_cycle_edge(logic_id, m15, deriv)
+        return prepare_cycle_edge_r(logic_id, m15, deriv)
 
     base = StrategyParams(
         daily_ema=cfg.daily_ema,

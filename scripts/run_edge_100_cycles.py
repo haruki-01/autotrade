@@ -34,8 +34,12 @@ from autotrade.eval import (  # noqa: E402
     validate_lock,
 )
 from autotrade.research.log import record_backtest_run  # noqa: E402
-from autotrade.strategy.edge import CYCLE_EDGE, prepare_frames  # noqa: E402
+from autotrade.strategy.edge import CYCLE_EDGE as _CYCLE_EDGE, prepare_frames  # noqa: E402
+from autotrade.strategy.edge_refine import CYCLE_EDGE_R as _CYCLE_EDGE_R  # noqa: E402
 from autotrade.strategy.registry import LOGIC_META  # noqa: E402
+
+# The original 100 plus the refinement packs; both use the same param object.
+CYCLE_EDGE = {**_CYCLE_EDGE, **_CYCLE_EDGE_R}
 
 CONFIG = ROOT / "configs" / "eval_v1.yaml"
 
@@ -212,7 +216,13 @@ def write_report(rows: list[dict], set_name: str, out_md: Path, source: str) -> 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--set", default="B", choices=["A", "B", "C"])
-    ap.add_argument("--logics", default=None, help="Comma-separated subset (default: all 100)")
+    ap.add_argument("--logics", default=None, help="Comma-separated subset")
+    ap.add_argument(
+        "--pack",
+        default="edge100",
+        choices=["edge100", "refine", "all"],
+        help="Which pre-declared pack to run when --logics is not given",
+    )
     ap.add_argument("--tag", default=None, help="Report filename tag")
     ap.add_argument("--no-research-log", action="store_true")
     args = ap.parse_args()
@@ -229,11 +239,14 @@ def main() -> int:
     deriv = load_locked_derivatives(lock, args.set, m15.index)
     print(f"set={args.set} source={source} bars={len(m15)} deriv={deriv.shape}", flush=True)
 
-    logic_ids = (
-        [x.strip() for x in args.logics.split(",") if x.strip()]
-        if args.logics
-        else list(CYCLE_EDGE.keys())
-    )
+    if args.logics:
+        logic_ids = [x.strip() for x in args.logics.split(",") if x.strip()]
+    elif args.pack == "refine":
+        logic_ids = list(_CYCLE_EDGE_R.keys())
+    elif args.pack == "all":
+        logic_ids = list(CYCLE_EDGE.keys())
+    else:
+        logic_ids = list(_CYCLE_EDGE.keys())
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     artifacts_root = ROOT / "artifacts" / "evals" / f"{stamp}_edge100_set{args.set}"
 
