@@ -8,6 +8,44 @@
 
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
+| 20260823-061 | 2026-08-23 | DB-31 | db_1h_wide_v1 | C | binance_vision | `fail` | -0.07 | 12.0% | 273 | [doc](entries/DB-31-db_1h_wide_v1-setC-20260823-061.md) |
+| 20260823-060 | 2026-08-23 | DB-41 | db_1h_band_tight_v1 | C | binance_vision | `fail` | -0.07 | 9.2% | 208 | [doc](entries/DB-41-db_1h_band_tight_v1-setC-20260823-060.md) |
+| 20260823-059 | 2026-08-23 | DB-42 | db_1h_band_wide_v1 | C | binance_vision | `fail` | -0.11 | 12.1% | 211 | [doc](entries/DB-42-db_1h_band_wide_v1-setC-20260823-059.md) |
+| 20260823-058 | 2026-08-23 | DB-29 | db_1h_stop_bottom_v1 | C | binance_vision | `fail` | -0.12 | 12.4% | 207 | [doc](entries/DB-29-db_1h_stop_bottom_v1-setC-20260823-058.md) |
+| 20260823-057 | 2026-08-23 | DB-33 | db_1h_clean_v1 | C | binance_vision | `fail` | -0.13 | 14.1% | 210 | [doc](entries/DB-33-db_1h_clean_v1-setC-20260823-057.md) |
+| 20260823-056 | 2026-08-23 | DB-27 | db_1h_fresh72_v1 | C | binance_vision | `fail` | -0.12 | 11.3% | 196 | [doc](entries/DB-27-db_1h_fresh72_v1-setC-20260823-056.md) |
+| 20260823-055 | 2026-08-23 | DB-43 | db_1h_close_bottoms_v1 | C | binance_vision | `fail` | -0.08 | 12.9% | 292 | [doc](entries/DB-43-db_1h_close_bottoms_v1-setC-20260823-055.md) |
+| 20260823-054 | 2026-08-23 | DB-25 | db_1h_fresh48_v1 | C | binance_vision | `fail` | -0.12 | 10.8% | 192 | [doc](entries/DB-25-db_1h_fresh48_v1-setC-20260823-054.md) |
+| 20260823-053 | 2026-08-23 | DB-51 | db_1h_atr_stop_v1 | B | binance_vision | `fail` | -0.03 | 7.6% | 109 | [doc](entries/DB-51-db_1h_atr_stop_v1-setB-20260823-053.md) |
+| 20260823-052 | 2026-08-23 | DB-50 | db_4h_pivot2_v1 | B | binance_vision | `fail` | 0.34 | 4.6% | 46 | [doc](entries/DB-50-db_4h_pivot2_v1-setB-20260823-052.md) |
+| 20260823-051 | 2026-08-23 | DB-49 | db_4h_band_tight_v1 | B | binance_vision | `fail` | 0.52 | 1.7% | 29 | [doc](entries/DB-49-db_4h_band_tight_v1-setB-20260823-051.md) |
+| 20260823-050 | 2026-08-23 | DB-48 | db_15m_fresh48_v1 | B | binance_vision | `fail` | -0.10 | 23.2% | 448 | [doc](entries/DB-48-db_15m_fresh48_v1-setB-20260823-050.md) |
+| 20260823-049 | 2026-08-23 | DB-47 | db_15m_reclaim_v1 | B | binance_vision | `fail` | -0.10 | 19.7% | 389 | [doc](entries/DB-47-db_15m_reclaim_v1-setB-20260823-049.md) |
+| 20260823-048 | 2026-08-23 | DB-46 | db_15m_up_only_v1 | B | binance_vision | `fail` | -0.17 | 12.2% | 167 | [doc](entries/DB-46-db_15m_up_only_v1-setB-20260823-048.md) |
+| 20260823-047 | 2026-08-23 | DB-45 | db_15m_baseline_v1 | B | binance_vision | `fail` | -0.12 | 27.2% | 486 | [doc](entries/DB-45-db_15m_baseline_v1-setB-20260823-047.md) |
+| 20260823-046 | 2026-08-23 | DB-44 | db_1h_far_bottoms_v1 | B | binance_vision | `fail` | -0.05 | 4.8% | 75 | [doc](entries/DB-44-db_1h_far_bottoms_v1-setB-20260823-046.md) |
+| 20260823-045 | 2026-08-23 | DB-43 | db_1h_close_bottoms_v1 | B | binance_vision | `pass` | 0.06 | 7.0% | 156 | [doc](entries/DB-43-db_1h_close_bottoms_v1-setB-20260823-045.md) |
+| 20260823-044 | 2026-08-23 | DB-42 | db_1h_band_wide_v1 | B | binance_vision | `pass` | 0.02 | 7.5% | 110 | [doc](entries/DB-42-db_1h_band_wide_v1-setB-20260823-044.md) |
+| 20260823-043 | 2026-08-23 | DB-41 | db_1h_band_tight_v1 | B | binance_vision | `pass` | 0.01 | 5.3% | 110 | [doc](entries/DB-41-db_1h_band_tight_v1-setB-20260823-043.md) |
+| 20260823-042 | 2026-08-23 | DB-40 | db_1h_pivot5_v1 | B | binance_vision | `fail` | -0.01 | 4.2% | 77 | [doc](entries/DB-40-db_1h_pivot5_v1-setB-20260823-042.md) |
+| 20260823-041 | 2026-08-23 | DB-39 | db_1h_pivot2_v1 | B | binance_vision | `fail` | -0.01 | 7.3% | 149 | [doc](entries/DB-39-db_1h_pivot2_v1-setB-20260823-041.md) |
+| 20260823-040 | 2026-08-23 | DB-38 | db_1h_session_v1 | B | binance_vision | `fail` | 0.03 | 4.2% | 75 | [doc](entries/DB-38-db_1h_session_v1-setB-20260823-040.md) |
+| 20260823-039 | 2026-08-23 | DB-37 | db_1h_first_retest_v1 | B | binance_vision | `fail` | -0.02 | 6.8% | 92 | [doc](entries/DB-37-db_1h_first_retest_v1-setB-20260823-039.md) |
+| 20260823-038 | 2026-08-23 | DB-36 | db_1h_break_bh_v1 | B | binance_vision | `fail` | -0.00 | 4.2% | 61 | [doc](entries/DB-36-db_1h_break_bh_v1-setB-20260823-038.md) |
+| 20260823-037 | 2026-08-23 | DB-35 | db_1h_pct_height_v1 | B | binance_vision | `fail` | -0.07 | 5.6% | 71 | [doc](entries/DB-35-db_1h_pct_height_v1-setB-20260823-037.md) |
+| 20260823-036 | 2026-08-23 | DB-34 | db_1h_fixed_pct_v1 | B | binance_vision | `fail` | -0.04 | 6.6% | 108 | [doc](entries/DB-34-db_1h_fixed_pct_v1-setB-20260823-036.md) |
+| 20260823-035 | 2026-08-23 | DB-33 | db_1h_clean_v1 | B | binance_vision | `pass` | 0.02 | 5.1% | 103 | [doc](entries/DB-33-db_1h_clean_v1-setB-20260823-035.md) |
+| 20260823-034 | 2026-08-23 | DB-32 | db_1h_wick_v1 | B | binance_vision | `fail` | -0.01 | 6.6% | 105 | [doc](entries/DB-32-db_1h_wick_v1-setB-20260823-034.md) |
+| 20260823-033 | 2026-08-23 | DB-31 | db_1h_wide_v1 | B | binance_vision | `pass` | 0.01 | 6.6% | 138 | [doc](entries/DB-31-db_1h_wide_v1-setB-20260823-033.md) |
+| 20260823-032 | 2026-08-23 | DB-30 | db_1h_tight_v1 | B | binance_vision | `fail` | 0.03 | 3.5% | 75 | [doc](entries/DB-30-db_1h_tight_v1-setB-20260823-032.md) |
+| 20260823-031 | 2026-08-23 | DB-29 | db_1h_stop_bottom_v1 | B | binance_vision | `pass` | 0.02 | 6.6% | 105 | [doc](entries/DB-29-db_1h_stop_bottom_v1-setB-20260823-031.md) |
+| 20260823-030 | 2026-08-23 | DB-28 | db_1h_trail_v1 | B | binance_vision | `fail` | -0.08 | 8.6% | 111 | [doc](entries/DB-28-db_1h_trail_v1-setB-20260823-030.md) |
+| 20260823-029 | 2026-08-23 | DB-27 | db_1h_fresh72_v1 | B | binance_vision | `pass` | 0.06 | 4.1% | 106 | [doc](entries/DB-27-db_1h_fresh72_v1-setB-20260823-029.md) |
+| 20260823-028 | 2026-08-23 | DB-26 | db_1h_fresh24_v1 | B | binance_vision | `fail` | 0.05 | 3.9% | 99 | [doc](entries/DB-26-db_1h_fresh24_v1-setB-20260823-028.md) |
+| 20260823-027 | 2026-08-23 | DB-25 | db_1h_fresh48_v1 | B | binance_vision | `pass` | 0.08 | 3.6% | 103 | [doc](entries/DB-25-db_1h_fresh48_v1-setB-20260823-027.md) |
+| 20260823-026 | 2026-08-23 | DB-24 | db_1h_reclaim_v1 | B | binance_vision | `fail` | -0.08 | 7.1% | 94 | [doc](entries/DB-24-db_1h_reclaim_v1-setB-20260823-026.md) |
+| 20260823-025 | 2026-08-23 | DB-23 | db_1h_not_down_v1 | B | binance_vision | `fail` | 0.04 | 5.3% | 79 | [doc](entries/DB-23-db_1h_not_down_v1-setB-20260823-025.md) |
+| 20260823-024 | 2026-08-23 | DB-22 | db_1h_up_only_v1 | B | binance_vision | `fail` | -0.32 | 5.5% | 37 | [doc](entries/DB-22-db_1h_up_only_v1-setB-20260823-024.md) |
 | 20260823-023 | 2026-08-23 | DB-21 | db_1h_up_fresh_reclaim_v1 | B | binance_vision | `fail` | -0.31 | 4.1% | 27 | [doc](entries/DB-21-db_1h_up_fresh_reclaim_v1-setB-20260823-023.md) |
 | 20260823-022 | 2026-08-23 | DB-10 | db_struct_1h_v1 | C | binance_vision | `fail` | -0.10 | 11.1% | 209 | [doc](entries/DB-10-db_struct_1h_v1-setC-20260823-022.md) |
 | 20260823-021 | 2026-08-23 | DB-20 | db_1h_up_pct_height_v1 | B | binance_vision | `fail` | -0.48 | 4.2% | 23 | [doc](entries/DB-20-db_1h_up_pct_height_v1-setB-20260823-021.md) |
