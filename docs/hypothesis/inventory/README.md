@@ -19,10 +19,21 @@
 
 \* formal: EV+/DD良・n不足。
 
-## 次に検証する10本（価格外データ）
+## 価格外データの10仮説（EH-01〜EH-10）— 100サイクル検証済み
 
-価格のみの族（ダブルボトム51本・4H系41本）は全滅したため、次は建玉・資金調達・現物先物のズレを使う。  
-正本: [../EDGE_HYPOTHESES.md](../EDGE_HYPOTHESES.md) / [../edge_hypotheses.yaml](../edge_hypotheses.yaml)
+| ID | status | 一言 |
+|----|--------|------|
+| EH-01 建玉裏付けの突破 | **機構あり** | 対照との差が両期間で同符号。次の軸 |
+| EH-06 個人vs上位の乖離 | **機構あり** | 差は小さくDDが重い |
+| EH-07 清算洗浄後の戻り | **機構あり** | 方向は正しいが入り方が下手 |
+| EH-09 成行買いの吸収 | **機構あり** | 順張り対照を両期間で上回る |
+| EH-02 現物先行 | 検証不能 | 効果量最大だが n=39/14 |
+| EH-10 funding リセット | 検証不能 | n=7/0。ショート側は成立せず |
+| EH-03 / EH-04 / EH-05 / EH-08 | **棄却** | 再探索禁止 |
+
+Set B 11/100 PASS → Set C holdout 2/11 PASS → **採用なし**（EVがコストと同桁）。  
+正本: [../EDGE_HYPOTHESES.md](../EDGE_HYPOTHESES.md) / [../edge_hypotheses.yaml](../edge_hypotheses.yaml) ·
+postmortem: [../postmortems/2026-08-23-edge-100-cycles.md](../postmortems/2026-08-23-edge-100-cycles.md)
 
 ## 作成の次
 

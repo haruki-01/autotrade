@@ -113,6 +113,25 @@ Formal 一括: [eval/reports/20260822-formal-eval-batch-setB.md](../../eval/repo
 L-BREAK-2: [eval/reports/20260823-formal-eval-L-BREAK-2-setB.md](../../eval/reports/20260823-formal-eval-L-BREAK-2-setB.md)  
 合成バッチ要約: [docs/workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md](../workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md)
 
+### 価格外データへの転換（2026-08-23）
+
+価格のみの族は全滅した（ダブルボトム51本 / 4H系41本 / 上記5本）。
+建玉(OI)・資金調達・先物プレミアム・成行比率を条件に使う10仮説（EH-01〜EH-10）を
+**100サイクル**検証した。
+
+| 結果 | 値 |
+|------|-----|
+| Set B PASS | 11 / 100 |
+| Set C holdout PASS | 2 / 11 |
+| 採用 | **なし**（EVがコストと同桁） |
+| 機構が両期間で再現 | **EH-01 / EH-06 / EH-07 / EH-09** |
+
+判定は単体EVではなく「本命と対照のEV差が両期間で同符号か」で行う方式に変えた。
+バックテストは **funding を実費計上**するようになった（高回転ロジックは Set C で証拠金を割り込む）。
+
+正本: [docs/hypothesis/EDGE_HYPOTHESES.md](../hypothesis/EDGE_HYPOTHESES.md) ·
+postmortem: [docs/hypothesis/postmortems/2026-08-23-edge-100-cycles.md](../hypothesis/postmortems/2026-08-23-edge-100-cycles.md)
+
 ### Step B — 執行レイヤ（demo）
 
 目的: バックテストと同じシグナルで、testnet に実注文を出す。
