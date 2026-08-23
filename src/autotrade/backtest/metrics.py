@@ -56,6 +56,17 @@ def compute_metrics(
         monthly = 0.0
 
     pnls = [t.pnl for t in trades]
+    # The expectancy gate reads the mean of these pnls while the drawdown gate
+    # reads the equity curve. If the two disagree, one gate is being decided on
+    # a number the other does not recognise — which is exactly how an entry fee
+    # went missing from expectancy for 217 evaluations.
+    realised = result.final_equity - result.initial_equity
+    drift = abs(sum(pnls) - realised)
+    if drift > max(1e-6, abs(result.initial_equity) * 1e-9):
+        raise AssertionError(
+            f"trade pnl does not reconcile with equity: sum(pnl)={sum(pnls):.6f} "
+            f"vs equity change={realised:.6f} (drift {drift:.6f})"
+        )
     avg = sum(pnls) / n if n else 0.0
     wins = [p for p in pnls if p > 0]
     losses = [p for p in pnls if p <= 0]
