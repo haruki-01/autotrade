@@ -1,0 +1,16 @@
+---
+description: 仮説は三層。スポット①→ロジック②→検証③。衛生ルールは発想の代替ではない
+alwaysApply: true
+---
+
+# 仮説の三層
+
+正: `docs/hypothesis/craft/THREE_LAYER_MODEL.md`
+
+1. **トレードスポット仮説**（場面）→ `docs/hypothesis/spots/` · `TRADE_SPOT_HYPOTHESIS.md`
+2. **実装ロジック**（実証①②）→ inventory + CREATION_FLOW
+3. **検証** → VALIDATION_FLOW + eval
+
+- 「勝てる仮説を考えよう」→ ①スポットを増やす（チャート構造）。衛生A〜Nだけやらない
+- 「検証」→ ready な②のみ
+- 旧「ストック技法」= 研究衛生（`RESEARCH_HYGIENE.md`）。発想法ではない

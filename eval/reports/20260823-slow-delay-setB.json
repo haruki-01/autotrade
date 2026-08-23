@@ -1,0 +1,149 @@
+[
+  {
+    "logic_id": "sh01_delay_1h",
+    "hypothesis_id": "SH-01",
+    "name": "SH-01 \u53cd\u8a3c: \u30b7\u30b0\u30ca\u30eb\u30921\u6642\u9593\u9045\u3089\u305b\u308b",
+    "knob": "\u53cd\u8a3c: \u30b7\u30b0\u30ca\u30eb\u30921\u6642\u9593\u9045\u3089\u305b\u308b",
+    "why": "\u9045\u3089\u305b\u3066\u3082\u6b8b\u308b\u306a\u3089\u5148\u8aad\u307f\u3067\u306f\u306a\u3044\u3002\u65e5\u8db3\u898f\u6a21\u306e\u30a8\u30c3\u30b8\u304c1\u6642\u9593\u3067\u6d88\u3048\u308b\u306f\u305a\u304c\u306a\u3044\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT",
+      "BNBUSDT",
+      "XRPUSDT",
+      "DOGEUSDT"
+    ],
+    "trades_per_symbol": {
+      "BTCUSDT": 18,
+      "ETHUSDT": 15,
+      "SOLUSDT": 15,
+      "BNBUSDT": 16,
+      "XRPUSDT": 14,
+      "DOGEUSDT": 15
+    },
+    "trades": 93,
+    "avg_trade_pnl": 2.9148948501131433,
+    "total_return_pct": 90.36174035350746,
+    "max_drawdown_pct": 27.100634342517733,
+    "win_rate_pct": 22.58064516129032,
+    "payoff_ratio": 8.471704744970909,
+    "total_fees": 4.954461541018816,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "drawdown"
+    ],
+    "artifacts_dir": "artifacts/evals/20260823T064712Z_slow_setB/setB_sh01_delay_1h"
+  },
+  {
+    "logic_id": "sh01_delay_1d",
+    "hypothesis_id": "SH-01",
+    "name": "SH-01 \u53cd\u8a3c: \u30b7\u30b0\u30ca\u30eb\u30921\u65e5\u9045\u3089\u305b\u308b",
+    "knob": "\u53cd\u8a3c: \u30b7\u30b0\u30ca\u30eb\u30921\u65e5\u9045\u3089\u305b\u308b",
+    "why": "\u540c\u4e0a\u3002\u3053\u3053\u307e\u3067\u9045\u3089\u305b\u3066\u6b8b\u308b\u304b\u306f\u3001\u30a8\u30c3\u30b8\u306e\u6301\u7d9a\u6642\u9593\u305d\u306e\u3082\u306e\u306e\u6e2c\u5b9a\u3067\u3082\u3042\u308b\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT",
+      "BNBUSDT",
+      "XRPUSDT",
+      "DOGEUSDT"
+    ],
+    "trades_per_symbol": {
+      "BTCUSDT": 16,
+      "ETHUSDT": 13,
+      "SOLUSDT": 14,
+      "BNBUSDT": 15,
+      "XRPUSDT": 14,
+      "DOGEUSDT": 13
+    },
+    "trades": 85,
+    "avg_trade_pnl": 3.1999801742081195,
+    "total_return_pct": 90.66610493589671,
+    "max_drawdown_pct": 16.882173576026158,
+    "win_rate_pct": 29.411764705882355,
+    "payoff_ratio": 7.005769607812536,
+    "total_fees": 4.316219296965887,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260823T064712Z_slow_setB/setB_sh01_delay_1d"
+  },
+  {
+    "logic_id": "sh01_tp4_delay_1h",
+    "hypothesis_id": "SH-01",
+    "name": "SH-01 \u53cd\u8a3c: 3\u671f\u9593PASS\u7248\u30921\u6642\u9593\u9045\u3089\u305b\u308b",
+    "knob": "\u53cd\u8a3c: 3\u671f\u9593PASS\u7248\u30921\u6642\u9593\u9045\u3089\u305b\u308b",
+    "why": "\u552f\u4e003\u671f\u9593\u30b2\u30fc\u30c8\u3092\u901a\u3063\u305f\u8a2d\u5b9a\u3092\u3001\u540c\u3058\u3084\u308a\u65b9\u3067\u7591\u3046\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT",
+      "BNBUSDT",
+      "XRPUSDT",
+      "DOGEUSDT"
+    ],
+    "trades_per_symbol": {
+      "BTCUSDT": 30,
+      "ETHUSDT": 22,
+      "SOLUSDT": 17,
+      "BNBUSDT": 22,
+      "XRPUSDT": 26,
+      "DOGEUSDT": 26
+    },
+    "trades": 143,
+    "avg_trade_pnl": 0.2557378345031797,
+    "total_return_pct": 12.190170111318244,
+    "max_drawdown_pct": 22.344277290247447,
+    "win_rate_pct": 30.76923076923077,
+    "payoff_ratio": 2.5609451704465362,
+    "total_fees": 7.2179344807064405,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "drawdown"
+    ],
+    "artifacts_dir": "artifacts/evals/20260823T064712Z_slow_setB/setB_sh01_tp4_delay_1h"
+  },
+  {
+    "logic_id": "sh01_tp4_delay_1d",
+    "hypothesis_id": "SH-01",
+    "name": "SH-01 \u53cd\u8a3c: 3\u671f\u9593PASS\u7248\u30921\u65e5\u9045\u3089\u305b\u308b",
+    "knob": "\u53cd\u8a3c: 3\u671f\u9593PASS\u7248\u30921\u65e5\u9045\u3089\u305b\u308b",
+    "why": "\u540c\u4e0a\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT",
+      "BNBUSDT",
+      "XRPUSDT",
+      "DOGEUSDT"
+    ],
+    "trades_per_symbol": {
+      "BTCUSDT": 26,
+      "ETHUSDT": 23,
+      "SOLUSDT": 17,
+      "BNBUSDT": 24,
+      "XRPUSDT": 27,
+      "DOGEUSDT": 25
+    },
+    "trades": 142,
+    "avg_trade_pnl": 0.9305482525665477,
+    "total_return_pct": 44.045950621483286,
+    "max_drawdown_pct": 17.22932742465093,
+    "win_rate_pct": 38.732394366197184,
+    "payoff_ratio": 2.5040424326261523,
+    "total_fees": 6.700076820948171,
+    "total_funding": 0.0,
+    "gate_pass": true,
+    "gate_failures": [],
+    "artifacts_dir": "artifacts/evals/20260823T064712Z_slow_setB/setB_sh01_tp4_delay_1d"
+  }
+]

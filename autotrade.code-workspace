@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "name": "autotrade",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "workbench.sideBar.location": "left",
+    "workbench.activityBar.location": "default",
+    "workbench.panel.defaultLocation": "bottom",
+    "explorer.autoReveal": true
+  }
+}
