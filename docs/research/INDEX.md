@@ -8,6 +8,7 @@
 
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
+| 20260823-001 | 2026-08-23 | L-BREAK-2 | donchian_h4_20_10_v1 | B | binance_vision | `fail` | 0.85 | 3.8% | 58 | [doc](entries/L-BREAK-2-donchian_h4_20_10_v1-setB-20260823-001.md) |
 | 20260822-062 | 2026-08-22 | HYP-043 | d_near_high_break_v1 | B | binance_vision | `fail` | 7.63 | 1.0% | 5 | [doc](entries/HYP-043-d_near_high_break_v1-setB-20260822-062.md) |
 | 20260822-061 | 2026-08-22 | HYP-036 | d_comp_break_v1 | B | binance_vision | `fail` | 22.05 | 0.0% | 1 | [doc](entries/HYP-036-d_comp_break_v1-setB-20260822-061.md) |
 | 20260822-060 | 2026-08-22 | HYP-035 | d_exp_break_v1 | B | binance_vision | `fail` | -0.85 | 1.0% | 2 | [doc](entries/HYP-035-d_exp_break_v1-setB-20260822-060.md) |

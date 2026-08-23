@@ -23,7 +23,7 @@
 | 研究ログ基盤 | **完了** | `docs/research/` — 仮説・ロジック・結果・知見の蓄積 |
 | 戦略実装（5本） | **完了・formal FAIL** | H01 / L-COST / L-MOM-VOL / L-BREAK / H21。詳細は formal batch レポート |
 | Formal eval 環境 | **完了** | `configs/eval_v1.yaml` + `eval/locks/` + `autotrade eval`。実データのみ |
-| L-BREAK-2 | **実装中** | 4H Donchian（サンプル確保の1点変更） |
+| L-BREAK-2 | **formal FAIL** | 4H Donchian。n=58（改善も ≥100 未達）。EV/DDは良好 |
 | デモ注文（testnet） | **未着手** | |
 | 本番執行 | **未着手** | |
 | Dashboard / UI | **対象外（後回し）** | |
@@ -103,11 +103,14 @@ v1 FAIL の主因仮説: 固定利確がトレンドの大勝ちを切り、緩�
 
 次の実装バッチ:
 
-1. **L-COST** 費用ゲート（取引しない優位）→ **実装済・合成 smoke 済。次は実データ**
-2. **L-MOM-VOL** ボラ調整トレンド・トレール利確（固定%廃止）→ **実装済・合成 smoke 済。次は実データ**
-3. **L-BREAK** Donchian系（押し目を捨てる別ファミリー）→ **実装済・合成 smoke 済。次は実データ**
-4. **H21** Donchian long only（比較軸）→ **実装済・合成 smoke 済**
+1. **L-COST** 費用ゲート → **formal FAIL**（H01より悪化。現行棄却）
+2. **L-MOM-VOL** ボラ調整トレンド・トレール → **formal FAIL**（最悪。現行棄却）
+3. **L-BREAK** Donchian 日足 → **formal FAIL**（EV/DDは良いが n=13）
+4. **H21** Donchian long only → **formal FAIL**（n=8）
+5. **L-BREAK-2** Donchian **4H**（窓同一）→ **formal FAIL**（n=58。EV/DDは良い）
 
+Formal 一括: [eval/reports/20260822-formal-eval-batch-setB.md](../../eval/reports/20260822-formal-eval-batch-setB.md)  
+L-BREAK-2: [eval/reports/20260823-formal-eval-L-BREAK-2-setB.md](../../eval/reports/20260823-formal-eval-L-BREAK-2-setB.md)  
 合成バッチ要約: [docs/workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md](../workstreams/_batch-notes/2026-08-22-synthetic-smoke-5.md)
 
 ### Step B — 執行レイヤ（demo）

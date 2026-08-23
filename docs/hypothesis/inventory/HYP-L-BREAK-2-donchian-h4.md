@@ -1,10 +1,10 @@
 ---
 id: L-BREAK-2
 title: "Donchian 20/10 on 4H（サンプル確保）"
-status: ready
+status: fail
 primary_distortion: E1
 created: 2026-08-22
-updated: 2026-08-22
+updated: 2026-08-23
 ---
 
 # Donchian 20/10 on 4H
@@ -45,6 +45,6 @@ updated: 2026-08-22
 
 ## 7. 結果（後で追記）
 
-- run_id:
-- gate:
-- 学び:
+- run_id: 研究ログ INDEX 参照（L-BREAK-2 / donchian_h4_20_10_v1）
+- gate: **FAIL**（期待値・DDはクリア、トレード 58 < 100）
+- 学び: 4H でも単ポジ構造退出では年間100回に届きにくい。EV方向は残すが現行は採用しない

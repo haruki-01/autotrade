@@ -15,4 +15,7 @@
 
 ## 次アクション
 
-サンプル確保のための変更を **1点だけ**（執行頻度）→ 再 formal eval。H21 と比較継続。
+サンプル確保のため **L-BREAK-2**（`donchian_h4_20_10_v1`）へ。  
+変更点は1点のみ: シグナル足を日足 → 4H（窓20/10は同一）。
+
+→ [../L-BREAK-2-donchian-h4/README.md](../L-BREAK-2-donchian-h4/README.md)
