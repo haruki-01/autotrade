@@ -103,7 +103,6 @@ def run_backtest(
             if qty * fill > max_notional:
                 qty = max_notional / fill
             fee = qty * fill * fee_rate
-            equity -= fee
             if pending["side"] == "long":
                 stop = fill * (1 - stop_pct)
                 tp = (
@@ -237,7 +236,10 @@ def run_backtest(
                 else:
                     raw = (position["entry_price"] - exit_fill) * position["qty"]
                 funding_paid = position.get("funding_paid", 0.0)
-                pnl = raw - fee - funding_paid
+                # Both sides of the round trip belong to the trade's own result.
+                # Charging entry fee to equity separately made per-trade pnl look
+                # better than the equity curve by one entry fee.
+                pnl = raw - fee - position["entry_fee"] - funding_paid
                 equity += pnl
                 ret = pnl / initial_equity * 100.0
                 trades.append(
@@ -291,7 +293,7 @@ def run_backtest(
         else:
             raw = (position["entry_price"] - exit_fill) * position["qty"]
         funding_paid = position.get("funding_paid", 0.0)
-        pnl = raw - fee - funding_paid
+        pnl = raw - fee - position["entry_fee"] - funding_paid
         equity += pnl
         trades.append(
             Trade(

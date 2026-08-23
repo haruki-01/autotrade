@@ -579,6 +579,37 @@ CYCLE_EDGE_R.update(
 )
 
 
+# --- Phase 6: EH-06N — is `cool96_thr2` a plateau or a spike?
+# Neither knob helps on its own in any of the three periods, only the pair does.
+# That is the shape of an overfit interaction, so map the neighbourhood: a real
+# effect degrades smoothly around the setting, a fluke collapses next to it.
+_EH06N_BASE = replace(_EH06R_BASE, cooldown_bars=BARS_PER_DAY, div_thr=2.0)
+
+CYCLE_EDGE_R.update(
+    _pack(
+        "eh06n",
+        "EH-06N",
+        _EH06N_BASE,
+        [
+            ("center", "中心: 乖離2.0σ + 24hクールダウン", "3期間PASSした設定そのもの。", {}),
+            ("thr_1p5", "乖離1.5σ", "閾値を下げた隣。", {"div_thr": 1.5}),
+            ("thr_1p75", "乖離1.75σ", "すぐ隣。", {"div_thr": 1.75}),
+            ("thr_2p25", "乖離2.25σ", "すぐ隣。", {"div_thr": 2.25}),
+            ("thr_2p5", "乖離2.5σ", "閾値を上げた隣。", {"div_thr": 2.5}),
+            ("cool_48", "12hクールダウン", "間引きを弱めた隣。", {"cooldown_bars": 48}),
+            ("cool_64", "16hクールダウン", "すぐ隣。", {"cooldown_bars": 64}),
+            ("cool_128", "32hクールダウン", "すぐ隣。", {"cooldown_bars": 128}),
+            ("cool_192", "48hクールダウン", "間引きを強めた隣。", {"cooldown_bars": 192}),
+            ("win_20d", "基準窓20日", "σの測り方の隣。", {"div_window": 20 * BARS_PER_DAY}),
+            ("win_45d", "基準窓45日", "σの測り方の隣。", {"div_window": 45 * BARS_PER_DAY}),
+            ("stop_2p0", "損切2.0ATR", "退出の隣。", {"stop_atr_mult": 2.0}),
+            ("tp_3atr", "利確3ATR", "退出の隣。", {"tp_atr_mult": 3.0}),
+            ("ctrl_follow_retail", "対照: 個人側に付く", "この設定でも符号が効くか。", {"div_mode": "follow_retail"}),
+        ],
+    )
+)
+
+
 def prepare_cycle_edge_r(logic_id: str, m15: pd.DataFrame, deriv: pd.DataFrame) -> pd.DataFrame:
     params, *_ = CYCLE_EDGE_R[logic_id]
     return edge.prepare_frames(m15, deriv, params)
