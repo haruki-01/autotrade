@@ -14,11 +14,17 @@ import pandas as pd
 import yaml
 
 from autotrade.config import BacktestConfig, load_config
+from autotrade.data.binance_derivatives import (
+    KINDS as DERIV_KINDS,
+    align_to_15m,
+    cache_path as deriv_cache_path,
+    ensure_derivative,
+)
 from autotrade.data.binance_vision import BinanceVisionClient, ensure_binance_data
 from autotrade.data.bybit import BybitPublicClient, ensure_data, load_ohlcv
 from autotrade.backtest.engine import run_backtest, trades_to_frame
 from autotrade.backtest.metrics import compute_metrics, metrics_to_dict, monthly_returns
-from autotrade.strategy.registry import LOGIC_META, prepare_strategy
+from autotrade.strategy.registry import LOGIC_META, needs_derivatives, prepare_strategy
 from autotrade.research.log import record_backtest_run
 
 LOCK_PATH = Path("eval/locks/eval_v1.lock.yaml")
@@ -177,6 +183,66 @@ def fetch_real_frames(
     return frames, "binance_vision", file_hashes
 
 
+def fetch_derivative_files(
+    cfg: BacktestConfig,
+    set_name: str,
+    *,
+    force: bool = False,
+    cache_dir: Path | None = None,
+) -> dict[str, str]:
+    """Fetch the non-price feeds for one set and return path → sha256.
+
+    These are Binance USDⓈ-M futures archives (OI / funding / basis / taker
+    flow). Kept in a separate lock section so OHLCV loading stays unambiguous.
+    """
+    cache_dir = cache_dir or Path("data/cache")
+    start, end = _set_bounds(cfg, set_name)
+    hashes: dict[str, str] = {}
+    for kind in DERIV_KINDS:
+        ensure_derivative(
+            symbol=cfg.symbol,
+            kind=kind,
+            start=start,
+            end=end,
+            cache_dir=cache_dir,
+            force=force,
+        )
+        path = deriv_cache_path(cache_dir, cfg.symbol, kind, start, end)
+        hashes[str(path.as_posix())] = _sha256_file(path)
+    return hashes
+
+
+def load_locked_derivatives(
+    lock: dict[str, Any],
+    set_name: str,
+    m15_index: pd.DatetimeIndex,
+) -> pd.DataFrame:
+    ds = lock["datasets"][set_name]
+    files = ds.get("derivatives") or {}
+    if not files:
+        raise RuntimeError(
+            f"lock has no derivative files for set {set_name}. Run: autotrade eval-prepare"
+        )
+    loaded: dict[str, pd.DataFrame] = {}
+    for path_str in files:
+        path = Path(path_str)
+        kind = next((k for k in DERIV_KINDS if f"_{k}_" in path.name), None)
+        if kind is None:
+            continue
+        df = pd.read_csv(path, parse_dates=["timestamp"])
+        loaded[kind] = df.set_index("timestamp").sort_index()
+    missing = [k for k in DERIV_KINDS if k not in loaded]
+    if missing:
+        raise RuntimeError(f"derivative lock incomplete for set {set_name}: {missing}")
+    return align_to_15m(
+        m15_index,
+        metrics=loaded["metrics"],
+        funding=loaded["funding"],
+        premium=loaded["premium"],
+        perp=loaded["perp15m"],
+    )
+
+
 def prepare_eval_lock(
     config_path: str | Path,
     *,
@@ -195,12 +261,14 @@ def prepare_eval_lock(
             continue
         frames, source, hashes = fetch_real_frames(cfg, policy, name, force=force)
         start, end = _set_bounds(cfg, name)
+        deriv_hashes = fetch_derivative_files(cfg, name, force=force)
         datasets[name] = {
             "eval_window": {"start": cfg.sets[name].start, "end": cfg.sets[name].end},
             "fetch_window": {"start": start, "end": end},
             "data_source": source,
             "bars": {k: len(v) for k, v in frames.items()},
             "files": hashes,
+            "derivatives": deriv_hashes,
         }
 
     lock = {
@@ -271,6 +339,13 @@ def validate_lock(
         actual = _sha256_file(path)
         if actual != expected:
             errors.append(f"hash mismatch for {path_str}: re-fetch or update lock")
+    for path_str, expected in (ds.get("derivatives") or {}).items():
+        path = Path(path_str)
+        if not path.exists():
+            errors.append(f"missing derivative file: {path_str}")
+            continue
+        if _sha256_file(path) != expected:
+            errors.append(f"hash mismatch for {path_str}: re-fetch or update lock")
     return errors
 
 
@@ -322,7 +397,13 @@ def run_formal_eval(
     if source == "synthetic" or (policy.forbid_synthetic and source not in policy.allowed_data_sources):
         raise RuntimeError(f"Refusing eval on data_source={source}")
 
-    prepared = prepare_strategy(logic_id, frames["1d"], frames["4h"], frames["15m"], cfg=cfg)
+    deriv = None
+    if needs_derivatives(logic_id):
+        deriv = load_locked_derivatives(lock, set_name, frames["15m"].index)
+
+    prepared = prepare_strategy(
+        logic_id, frames["1d"], frames["4h"], frames["15m"], cfg=cfg, deriv=deriv
+    )
     set_start = pd.Timestamp(cfg.sets[set_name].start, tz="UTC")
     set_end = pd.Timestamp(cfg.sets[set_name].end, tz="UTC") + pd.Timedelta(days=1)
     prepared = prepared[(prepared.index >= set_start) & (prepared.index < set_end)]
@@ -461,6 +542,7 @@ def _format_report(payload: dict[str, Any], out_dir: Path) -> str:
             f"| Max DD % | {m.get('max_drawdown_pct')} |",
             f"| Win rate % | {m.get('win_rate_pct')} |",
             f"| Fees | {m.get('total_fees')} |",
+            f"| Funding paid | {m.get('total_funding')} |",
             "",
             "## Gate checks",
             "",

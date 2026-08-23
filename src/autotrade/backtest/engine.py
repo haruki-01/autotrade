@@ -29,6 +29,7 @@ class Trade:
     fee: float
     reason: str
     return_pct: float
+    funding: float = 0.0
 
 
 @dataclass
@@ -127,6 +128,7 @@ def run_backtest(
                 "entry_fee": fee,
                 "trail_atr_mult": pending.get("trail_atr_mult"),
                 "initial_stop": stop,
+                "funding_paid": 0.0,
             }
             pending = None
 
@@ -137,6 +139,13 @@ def run_backtest(
             close = float(row["close"])
             exit_price = None
             reason = None
+
+            # Perp funding: charged on notional at each settlement bar.
+            # Only frames that supply funding_pay_rate are affected.
+            rate = _row_float(row, "funding_pay_rate", 0.0)
+            if rate:
+                cost = position["qty"] * close * rate
+                position["funding_paid"] += cost if side == "long" else -cost
 
             # Trailing stop (ATR) — ratchet only
             trail_mult = position.get("trail_atr_mult")
@@ -227,7 +236,8 @@ def run_backtest(
                     raw = (exit_fill - position["entry_price"]) * position["qty"]
                 else:
                     raw = (position["entry_price"] - exit_fill) * position["qty"]
-                pnl = raw - fee
+                funding_paid = position.get("funding_paid", 0.0)
+                pnl = raw - fee - funding_paid
                 equity += pnl
                 ret = pnl / initial_equity * 100.0
                 trades.append(
@@ -242,6 +252,7 @@ def run_backtest(
                         fee=position["entry_fee"] + fee,
                         reason=reason,
                         return_pct=ret,
+                        funding=funding_paid,
                     )
                 )
                 position = None
@@ -279,7 +290,8 @@ def run_backtest(
             raw = (exit_fill - position["entry_price"]) * position["qty"]
         else:
             raw = (position["entry_price"] - exit_fill) * position["qty"]
-        pnl = raw - fee
+        funding_paid = position.get("funding_paid", 0.0)
+        pnl = raw - fee - funding_paid
         equity += pnl
         trades.append(
             Trade(
@@ -293,6 +305,7 @@ def run_backtest(
                 fee=position["entry_fee"] + fee,
                 reason=ExitReason.END.value,
                 return_pct=pnl / initial_equity * 100.0,
+                funding=funding_paid,
             )
         )
 
@@ -319,6 +332,7 @@ def trades_to_frame(trades: list[Trade]) -> pd.DataFrame:
                 "fee",
                 "reason",
                 "return_pct",
+                "funding",
             ]
         )
     return pd.DataFrame([asdict(t) for t in trades])

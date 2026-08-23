@@ -18,6 +18,7 @@ class Metrics:
     max_drawdown_pct: float
     payoff_ratio: float | None
     total_fees: float
+    total_funding: float
     long_trades: int
     short_trades: int
     gate_min_trades_ok: bool
@@ -60,6 +61,7 @@ def compute_metrics(
     avg_loss = abs(sum(losses) / len(losses)) if losses else 0.0
     payoff = (avg_win / avg_loss) if avg_loss > 0 else None
     fees = sum(t.fee for t in trades)
+    funding = sum(getattr(t, "funding", 0.0) for t in trades)
     dd = abs(max_drawdown_pct(result.equity_curve))
 
     gate_trades = n >= min_trades
@@ -76,6 +78,7 @@ def compute_metrics(
         max_drawdown_pct=dd,
         payoff_ratio=payoff,
         total_fees=fees,
+        total_funding=funding,
         long_trades=sum(1 for t in trades if t.side == "long"),
         short_trades=sum(1 for t in trades if t.side == "short"),
         gate_min_trades_ok=gate_trades,
