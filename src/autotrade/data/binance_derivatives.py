@@ -16,6 +16,7 @@ closed. See ``align_to_15m``.
 from __future__ import annotations
 
 import io
+import time
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -46,30 +47,69 @@ def _monthrange(start: str, end: str) -> list[pd.Timestamp]:
     return list(pd.date_range(start=first, end=last, freq="MS", tz="UTC"))
 
 
+_ATTEMPTS = 4
+
+
 def _get_zip_csv(client: httpx.Client, url: str) -> pd.DataFrame | None:
-    """Download one archive zip and return its single CSV, or None on 404."""
-    resp = client.get(url)
-    if resp.status_code == 404:
-        return None
-    resp.raise_for_status()
-    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
-        name = zf.namelist()[0]
-        with zf.open(name) as fh:
-            raw = fh.read()
-    text = raw.decode("utf-8")
-    first = text.split("\n", 1)[0].split(",")[0].strip()
-    has_header = not (first.isdigit() or first.replace("-", "").replace(":", "").replace(" ", "").isdigit())
-    return pd.read_csv(io.StringIO(text), header=0 if has_header else None)
+    """Download one archive zip and return its single CSV, or None if absent.
+
+    A 404 is retried rather than believed on the first answer. Under load the
+    archive host sometimes reports 404 for a file that exists, and a day
+    dropped that way is indistinguishable from a day the exchange never
+    published — the frame just comes back quietly shorter.
+    """
+    last_error: Exception | None = None
+    for attempt in range(_ATTEMPTS):
+        if attempt:
+            time.sleep(2.0**attempt)
+        try:
+            resp = client.get(url)
+        except httpx.HTTPError as exc:
+            last_error = exc
+            continue
+        if resp.status_code == 404:
+            last_error = None
+            continue
+        if resp.status_code == 429 or resp.status_code >= 500:
+            last_error = httpx.HTTPStatusError(
+                f"{resp.status_code} for {url}", request=resp.request, response=resp
+            )
+            continue
+        resp.raise_for_status()
+        with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+            name = zf.namelist()[0]
+            with zf.open(name) as fh:
+                raw = fh.read()
+        text = raw.decode("utf-8")
+        first = text.split("\n", 1)[0].split(",")[0].strip()
+        has_header = not (
+            first.isdigit() or first.replace("-", "").replace(":", "").replace(" ", "").isdigit()
+        )
+        return pd.read_csv(io.StringIO(text), header=0 if has_header else None)
+
+    if last_error is not None:
+        raise RuntimeError(f"could not download {url}") from last_error
+    return None
 
 
-def _fetch_many(urls: list[str], *, workers: int = 12, timeout: float = 60.0) -> list[pd.DataFrame]:
+def _fetch_many(
+    urls: list[str], *, workers: int = 12, timeout: float = 60.0
+) -> tuple[list[pd.DataFrame], list[str]]:
+    """Return the archives that downloaded, and the URLs that were not there.
+
+    The misses are handed back instead of swallowed so the caller can say how
+    much of the requested span it actually got.
+    """
     out: list[pd.DataFrame] = []
+    missing: list[str] = []
     with httpx.Client(timeout=timeout, follow_redirects=True) as client:
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            for df in pool.map(lambda u: _get_zip_csv(client, u), urls):
-                if df is not None and not df.empty:
+            for url, df in zip(urls, pool.map(lambda u: _get_zip_csv(client, u), urls)):
+                if df is None or df.empty:
+                    missing.append(url)
+                else:
                     out.append(df)
-    return out
+    return out, missing
 
 
 # ---------------------------------------------------------------- metrics
@@ -80,7 +120,7 @@ def fetch_metrics(symbol: str, start: str, end: str) -> pd.DataFrame:
         f"{ARCHIVE_BASE}/futures/um/daily/metrics/{symbol}/{symbol}-metrics-{d:%Y-%m-%d}.zip"
         for d in _daterange(start, end)
     ]
-    parts = _fetch_many(urls)
+    parts, missing = _fetch_many(urls)
     if not parts:
         return pd.DataFrame(columns=METRIC_COLUMNS)
     df = pd.concat(parts, ignore_index=True)
@@ -96,7 +136,9 @@ def fetch_metrics(symbol: str, start: str, end: str) -> pd.DataFrame:
         }
     )
     df = df[["timestamp", *METRIC_COLUMNS]].astype({c: float for c in METRIC_COLUMNS})
-    return df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
+    out = df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
+    out.attrs["missing_sources"] = missing
+    return out
 
 
 # ---------------------------------------------------------------- funding
@@ -107,14 +149,16 @@ def fetch_funding(symbol: str, start: str, end: str) -> pd.DataFrame:
         f"{ARCHIVE_BASE}/futures/um/monthly/fundingRate/{symbol}/{symbol}-fundingRate-{m:%Y-%m}.zip"
         for m in _monthrange(start, end)
     ]
-    parts = _fetch_many(urls, workers=6)
+    parts, missing = _fetch_many(urls, workers=6)
     if not parts:
         return pd.DataFrame(columns=["funding_rate"])
     df = pd.concat(parts, ignore_index=True)
     df["timestamp"] = pd.to_datetime(df["calc_time"].astype("int64"), unit="ms", utc=True)
     df["funding_rate"] = df["last_funding_rate"].astype(float)
     df = df[["timestamp", "funding_rate"]]
-    return df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
+    out = df.drop_duplicates(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
+    out.attrs["missing_sources"] = missing
+    return out
 
 
 # ---------------------------------------------------------------- premium index
@@ -156,11 +200,12 @@ def fetch_premium_index(symbol: str, start: str, end: str, interval: str = "1h")
         f"{symbol}-{interval}-{m:%Y-%m}.zip"
         for m in _monthrange(start, end)
     ]
-    parts = _fetch_many(urls, workers=6)
+    parts, missing = _fetch_many(urls, workers=6)
     if not parts:
         return pd.DataFrame(columns=["premium"])
     df = _parse_klines(parts)
     out = pd.DataFrame({"premium": df["close"].astype(float)})
+    out.attrs["missing_sources"] = missing
     return out
 
 
@@ -173,7 +218,7 @@ def fetch_perp_klines(symbol: str, start: str, end: str, interval: str = "15m") 
         f"{symbol}-{interval}-{m:%Y-%m}.zip"
         for m in _monthrange(start, end)
     ]
-    parts = _fetch_many(urls, workers=6)
+    parts, missing = _fetch_many(urls, workers=6)
     if not parts:
         return pd.DataFrame(columns=["perp_close", "perp_volume", "perp_taker_buy"])
     df = _parse_klines(parts)
@@ -184,6 +229,7 @@ def fetch_perp_klines(symbol: str, start: str, end: str, interval: str = "15m") 
             "perp_taker_buy": df["taker_buy_volume"].astype(float),
         }
     )
+    out.attrs["missing_sources"] = missing
     return out
 
 
@@ -226,6 +272,18 @@ def ensure_derivative(
 
     if df.empty:
         raise RuntimeError(f"no {kind} data fetched for {symbol} {start}..{end}")
+
+    # Archives the exchange never published are a fact of the data; the point of
+    # naming them is that a rerun which quietly loses more of them cannot pass
+    # itself off as the same dataset.
+    missing = df.attrs.get("missing_sources") or []
+    if missing:
+        print(
+            f"    {kind} {symbol}: {len(missing)} archive(s) absent, "
+            f"first={missing[0].rsplit('/', 1)[-1]}",
+            flush=True,
+        )
+
     df.index.name = "timestamp"
     df.to_csv(path)
     return df
