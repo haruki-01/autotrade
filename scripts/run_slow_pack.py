@@ -57,13 +57,29 @@ def env_fingerprint() -> dict[str, str]:
 
 
 def portfolio_metrics(
-    trades: list[dict], *, initial_equity: float, min_trades: int, max_dd_limit: float
+    trades: list[dict],
+    *,
+    initial_equity: float,
+    min_trades: int,
+    max_dd_limit: float,
+    months: float,
+    min_per_month: float = 0.0,
 ) -> dict:
-    """Metrics on the merged book rather than on any single symbol."""
+    """Metrics on the merged book rather than on any single symbol.
+
+    ``min_trades`` and ``min_per_month`` answer different questions and both
+    have to be reported. The first is a sample-size floor -- below it the
+    expectancy cannot be measured, so the verdict is "cannot tell" rather than
+    "fails". The second is a requirement on the strategy itself: capital that
+    sits idle for weeks is not being put to work, however good the few trades
+    it does take turn out to be.
+    """
     n = len(trades)
     if n == 0:
         return {
             "trades": 0,
+            "trades_per_month": 0.0,
+            "months_meeting_rate_pct": 0.0,
             "avg_trade_pnl": 0.0,
             "total_return_pct": 0.0,
             "max_drawdown_pct": 0.0,
@@ -72,7 +88,7 @@ def portfolio_metrics(
             "total_fees": 0.0,
             "total_funding": 0.0,
             "gate_pass": False,
-            "gate_failures": ["min_trades", "expectancy"],
+            "gate_failures": ["min_trades", "expectancy", "trade_rate"],
         }
 
     df = pd.DataFrame(trades).sort_values("exit_time")
@@ -88,6 +104,15 @@ def portfolio_metrics(
         float(wins.mean() / abs(losses.mean())) if len(wins) and len(losses) and losses.mean() else None
     )
 
+    per_month = n / months if months > 0 else 0.0
+    # The average can hide a strategy that fires in bursts, so count the months
+    # that actually clear the rate rather than trusting the mean.
+    entry_months = pd.DatetimeIndex(df["entry_time"]).to_period("M")
+    counts = entry_months.value_counts()
+    n_months = int(round(months))
+    meeting = int((counts >= min_per_month).sum()) if min_per_month > 0 else 0
+    meeting_pct = 100.0 * meeting / n_months if n_months else 0.0
+
     failures = []
     if n < min_trades:
         failures.append("min_trades")
@@ -95,9 +120,13 @@ def portfolio_metrics(
         failures.append("expectancy")
     if dd > max_dd_limit:
         failures.append("drawdown")
+    if min_per_month > 0 and per_month < min_per_month:
+        failures.append("trade_rate")
 
     return {
         "trades": n,
+        "trades_per_month": per_month,
+        "months_meeting_rate_pct": meeting_pct,
         "avg_trade_pnl": avg,
         "total_return_pct": float(equity.iloc[-1] / initial_equity - 1.0) * 100.0,
         "max_drawdown_pct": float(dd),
@@ -154,6 +183,7 @@ def main() -> None:
 
     set_start = pd.Timestamp(cfg.sets[set_name].start, tz="UTC")
     set_end = pd.Timestamp(cfg.sets[set_name].end, tz="UTC") + pd.Timedelta(days=1)
+    set_months = (set_end - set_start).days / 30.4375
 
     print(f"set={set_name} symbols={len(symbols)} logics={len(logic_ids)}", flush=True)
     # Only the EH-06 veto variants read derivatives, and their history starts
@@ -213,6 +243,8 @@ def main() -> None:
             initial_equity=cfg.initial_equity,
             min_trades=min_trades,
             max_dd_limit=cfg.max_drawdown_pct,
+            months=set_months,
+            min_per_month=cfg.min_trades_per_month,
         )
         row = {
             "logic_id": logic_id,
@@ -240,7 +272,8 @@ def main() -> None:
         flag = "PASS" if m["gate_pass"] else "FAIL"
         print(
             f"[{i:3d}/{len(logic_ids)}] {logic_id:22s} {flag} "
-            f"n={m['trades']:4d} EV={m['avg_trade_pnl']:+.3f} "
+            f"n={m['trades']:4d} ({m['trades_per_month']:5.1f}/月) "
+            f"EV={m['avg_trade_pnl']:+.3f} "
             f"DD={m['max_drawdown_pct']:.1f}% ret={m['total_return_pct']:+.1f}%",
             flush=True,
         )
@@ -257,18 +290,25 @@ def main() -> None:
         f"min_trades={min_trades}（全銘柄合計）"
         + ("（★上書き、既定 %d）" % cfg.min_trades if min_trades != cfg.min_trades else "")
         + f", max_dd={cfg.max_drawdown_pct}%, risk={risk_usdt} USDT/trade"
+        + (
+            f", 最低 {cfg.min_trades_per_month:.0f} エントリー/月"
+            if cfg.min_trades_per_month
+            else ""
+        )
         + ("（★上書き）" if risk_usdt != cfg.risk_per_trade_usdt else ""),
         "",
         "実行環境: " + " / ".join(f"{k} {v}" for k, v in env.items()),
         "",
-        "| logic | ノブ | n | EV | 勝率 | DD | 総リターン | 判定 |",
-        "|-------|------|---|----|------|----|-----------|------|",
+        "| logic | ノブ | n | 月あたり | EV | 勝率 | DD | 総リターン | 判定 | 落ちた条件 |",
+        "|-------|------|---|---------|----|------|----|-----------|------|-----------|",
     ]
     for r in rows:
         md.append(
-            f"| `{r['logic_id']}` | {r['knob']} | {r['trades']} | {r['avg_trade_pnl']:+.3f} "
+            f"| `{r['logic_id']}` | {r['knob']} | {r['trades']} "
+            f"| {r['trades_per_month']:.1f} | {r['avg_trade_pnl']:+.3f} "
             f"| {r['win_rate_pct']:.1f}% | {r['max_drawdown_pct']:.1f}% "
-            f"| {r['total_return_pct']:+.1f}% | {'PASS' if r['gate_pass'] else 'FAIL'} |"
+            f"| {r['total_return_pct']:+.1f}% | {'PASS' if r['gate_pass'] else 'FAIL'} "
+            f"| {', '.join(r['gate_failures']) or '—'} |"
         )
     base.with_suffix(".md").write_text("\n".join(md) + "\n", "utf-8")
 

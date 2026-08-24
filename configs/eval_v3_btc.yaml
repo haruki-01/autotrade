@@ -72,9 +72,23 @@ sets:
     start: "2024-01-01"
     end: "2026-08-22"
 
-# 据え置き。1銘柄では期間ごとに到達できないことを承知の上で下げない。
+# --- 測定可能性の床（PROJECT_PLAN の初期ガードレール）
+# 「100回未満は判定保留（サンプル不足）」が出自。取引頻度の要件ではない。
+# 1銘柄では期間ごとに到達できないが、下げない。
+# 必要 n はばらつきから逆算して報告する（scripts/pooled_significance.py）。
 min_trades: 100
 max_drawdown_pct: 20.0
+
+# --- 運用要件（2026-08-24 追加）
+# min_trades とは別の軸。あちらは「測れるか」、こちらは「回す価値があるか」。
+# 正しくても月2回しか撃たないロジックは、元本を遊ばせているのと同じ。
+#
+# 入口判断は 1分〜15分足で行い、月50エントリー以上。
+# 月50 = 年600回。往復コスト 0.135 USDT/回 なので年81 USDT = 元本300の27%を
+# コストに払う。ここを踏まえて純EVが必要な水準は
+#   docs/hypothesis/postmortems/2026-08-24-trade-rate-requirement.md に導出。
+min_trades_per_month: 50
+max_entry_timeframe: "15m"
 
 forbid_synthetic: true
 primary_gate_set: B

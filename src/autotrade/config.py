@@ -37,6 +37,11 @@ class BacktestConfig:
     sizing_mode: SizingMode = "equity_pct"
     margin_per_trade: float = 30.0
     risk_per_trade_usdt: float = 3.0
+    # Trading-frequency requirement, separate from the sample-size floor.
+    # min_trades asks "can this be measured"; these ask "is it worth running".
+    # A logic that is right but fires twice a month leaves the capital idle.
+    min_trades_per_month: float = 0.0
+    max_entry_timeframe: str = ""
 
     @staticmethod
     def from_dict(data: dict[str, Any]) -> "BacktestConfig":
@@ -74,6 +79,8 @@ class BacktestConfig:
                     "risk_per_trade_usdt", data.get("risk_per_trade_usdt", 3.0)
                 )
             ),
+            min_trades_per_month=float(data.get("min_trades_per_month", 0.0) or 0.0),
+            max_entry_timeframe=str(data.get("max_entry_timeframe", "") or ""),
         )
 
 
