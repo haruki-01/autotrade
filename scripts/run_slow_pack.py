@@ -100,9 +100,26 @@ def main() -> None:
     ap.add_argument("--logics", default="")
     ap.add_argument("--tag", default="slow-pack")
     ap.add_argument("--lock", default=str(MULTI_LOCK_PATH))
+    ap.add_argument(
+        "--risk-usdt",
+        type=float,
+        default=None,
+        help="risk_per_trade_usdt を上書きする。建玉の大きさだけを変えたいとき用。",
+    )
+    ap.add_argument(
+        "--min-trades",
+        type=int,
+        default=None,
+        help=(
+            "ゲートの min_trades を上書きする。銘柄数が eval_v2 と違うときだけ使う。"
+            "使ったらレポートに明記される。"
+        ),
+    )
     args = ap.parse_args()
 
     cfg, _, raw = load_eval_config(args.config)
+    risk_usdt = args.risk_usdt if args.risk_usdt is not None else cfg.risk_per_trade_usdt
+    min_trades = args.min_trades if args.min_trades is not None else cfg.min_trades
     lock = yaml.safe_load(Path(args.lock).read_text(encoding="utf-8"))
     set_name = args.set_name
 
@@ -156,7 +173,7 @@ def main() -> None:
                 slippage_pct=cfg.slippage_pct_per_side,
                 sizing_mode=cfg.sizing_mode,
                 margin_per_trade=cfg.margin_per_trade,
-                risk_per_trade_usdt=cfg.risk_per_trade_usdt,
+                risk_per_trade_usdt=risk_usdt,
             )
             per_symbol[symbol] = len(result.trades)
             for t in result.trades:
@@ -167,7 +184,7 @@ def main() -> None:
         m = portfolio_metrics(
             all_trades,
             initial_equity=cfg.initial_equity,
-            min_trades=cfg.min_trades,
+            min_trades=min_trades,
             max_dd_limit=cfg.max_drawdown_pct,
         )
         row = {
@@ -178,6 +195,8 @@ def main() -> None:
             "why": why,
             "set": set_name,
             "symbols": symbols,
+            "risk_per_trade_usdt": risk_usdt,
+            "min_trades_used": min_trades,
             "trades_per_symbol": per_symbol,
             **m,
         }
@@ -207,7 +226,10 @@ def main() -> None:
         f"# SH-01 slow pack — Set {set_name}",
         "",
         f"銘柄: {', '.join(symbols)}  ／  ロジック {len(rows)} 本  ／  "
-        f"min_trades={cfg.min_trades}（全銘柄合計）, max_dd={cfg.max_drawdown_pct}%",
+        f"min_trades={min_trades}（全銘柄合計）"
+        + ("（★上書き、既定 %d）" % cfg.min_trades if min_trades != cfg.min_trades else "")
+        + f", max_dd={cfg.max_drawdown_pct}%, risk={risk_usdt} USDT/trade"
+        + ("（★上書き）" if risk_usdt != cfg.risk_per_trade_usdt else ""),
         "",
         "| logic | ノブ | n | EV | 勝率 | DD | 総リターン | 判定 |",
         "|-------|------|---|----|------|----|-----------|------|",

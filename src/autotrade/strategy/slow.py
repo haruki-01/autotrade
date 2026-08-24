@@ -277,6 +277,35 @@ CYCLE_SLOW: dict[str, tuple[SlowParams, str, str, str, str]] = {
     for name, knob, why, over in _VARIANTS
 }
 
+# --- SH-01N: is tp_4atr a plateau or the one setting the gate happened to like?
+# It was the only variant to clear all three periods, yet it has the lowest
+# expectancy in the family. Map around it before trusting it.
+_TP4 = replace(_BASE, tp_atr_mult=4.0)
+
+_NEIGHBOURS: list[tuple[str, str, str, dict[str, Any]]] = [
+    ("center", "中心: 利確4ATR", "3期間ゲートを通った設定そのもの。", {}),
+    ("tp_2", "利確2ATR", "利確距離。近すぎると勝ちを切る。", {"tp_atr_mult": 2.0}),
+    ("tp_3", "利確3ATR", "利確距離。", {"tp_atr_mult": 3.0}),
+    ("tp_5", "利確5ATR", "利確距離。", {"tp_atr_mult": 5.0}),
+    ("tp_6", "利確6ATR", "利確距離。", {"tp_atr_mult": 6.0}),
+    ("tp_8", "利確8ATR", "利確距離。遠いほど利確なしに近づく。", {"tp_atr_mult": 8.0}),
+    ("entry_15d", "入口15日", "引き金の長さ。", {"entry_days": 15}),
+    ("entry_25d", "入口25日", "引き金の長さ。", {"entry_days": 25}),
+    ("entry_30d", "入口30日", "引き金の長さ。", {"entry_days": 30}),
+    ("exit_7d", "退出7日", "退出距離。", {"exit_days": 7}),
+    ("exit_15d", "退出15日", "退出距離。", {"exit_days": 15}),
+    ("stop_1p25", "損切1.25日足ATR", "リスク距離。", {"stop_atr_mult": 1.25}),
+    ("stop_1p75", "損切1.75日足ATR", "リスク距離。", {"stop_atr_mult": 1.75}),
+    ("stop_2p0", "損切2.0日足ATR", "リスク距離。", {"stop_atr_mult": 2.0}),
+]
+
+CYCLE_SLOW.update(
+    {
+        f"sh01n_{name}": (replace(_TP4, **over), "SH-01N", f"SH-01N {knob}", knob, why)
+        for name, knob, why, over in _NEIGHBOURS
+    }
+)
+
 NEEDS_DERIVATIVES = {lid for lid, (p, *_) in CYCLE_SLOW.items() if p.veto_mode != "off"}
 
 
