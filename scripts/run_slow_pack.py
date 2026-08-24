@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from dataclasses import asdict
@@ -37,6 +38,22 @@ from autotrade.strategy.slow import CYCLE_SLOW, NEEDS_DERIVATIVES, prepare_slow 
 
 REPORTS_DIR = Path("eval/reports")
 ARTIFACTS_ROOT = Path("artifacts/evals")
+
+
+def env_fingerprint() -> dict[str, str]:
+    """Versions of the libraries that turn the locked bytes into trades.
+
+    The lock pins the input data. It does not pin the arithmetic, and a rebuilt
+    VM was enough to move eleven of twenty-three variants on identical input,
+    so the reader of a report needs to know which arithmetic produced it.
+    """
+    import numpy
+
+    return {
+        "python": sys.version.split()[0],
+        "pandas": pd.__version__,
+        "numpy": numpy.__version__,
+    }
 
 
 def portfolio_metrics(
@@ -120,7 +137,8 @@ def main() -> None:
     cfg, _, raw = load_eval_config(args.config)
     risk_usdt = args.risk_usdt if args.risk_usdt is not None else cfg.risk_per_trade_usdt
     min_trades = args.min_trades if args.min_trades is not None else cfg.min_trades
-    lock = yaml.safe_load(Path(args.lock).read_text(encoding="utf-8"))
+    lock_bytes = Path(args.lock).read_bytes()
+    lock = yaml.safe_load(lock_bytes.decode("utf-8"))
     set_name = args.set_name
 
     errors = validate_multi_lock(lock, set_name)
@@ -145,6 +163,10 @@ def main() -> None:
         deriv = load_multi_derivatives(lock, set_name, symbol, m15.index)
         data[symbol] = (m15, deriv)
         print(f"  {symbol}: {len(m15)} bars", flush=True)
+
+    env = env_fingerprint()
+    env["lock"] = f"{Path(args.lock).name}@{hashlib.sha256(lock_bytes).hexdigest()[:12]}"
+    print("env: " + ", ".join(f"{k} {v}" for k, v in env.items()), flush=True)
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     artifacts_root = ARTIFACTS_ROOT / f"{stamp}_slow_set{set_name}"
@@ -197,6 +219,7 @@ def main() -> None:
             "symbols": symbols,
             "risk_per_trade_usdt": risk_usdt,
             "min_trades_used": min_trades,
+            "env": env,
             "trades_per_symbol": per_symbol,
             **m,
         }
@@ -230,6 +253,8 @@ def main() -> None:
         + ("（★上書き、既定 %d）" % cfg.min_trades if min_trades != cfg.min_trades else "")
         + f", max_dd={cfg.max_drawdown_pct}%, risk={risk_usdt} USDT/trade"
         + ("（★上書き）" if risk_usdt != cfg.risk_per_trade_usdt else ""),
+        "",
+        "実行環境: " + " / ".join(f"{k} {v}" for k, v in env.items()),
         "",
         "| logic | ノブ | n | EV | 勝率 | DD | 総リターン | 判定 |",
         "|-------|------|---|----|------|----|-----------|------|",
