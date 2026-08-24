@@ -1,0 +1,494 @@
+[
+  {
+    "logic_id": "sh01n_center",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u4e2d\u5fc3: \u5229\u78ba4ATR",
+    "knob": "\u4e2d\u5fc3: \u5229\u78ba4ATR",
+    "why": "3\u671f\u9593\u30b2\u30fc\u30c8\u3092\u901a\u3063\u305f\u8a2d\u5b9a\u305d\u306e\u3082\u306e\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 26
+    },
+    "trades": 26,
+    "avg_trade_pnl": 0.4495295654255882,
+    "total_return_pct": 3.8959229003550977,
+    "max_drawdown_pct": 5.520178586573993,
+    "win_rate_pct": 34.61538461538461,
+    "payoff_ratio": 2.382219689744082,
+    "total_fees": 1.5817062556420614,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_center"
+  },
+  {
+    "logic_id": "sh01n_tp_2",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba2ATR",
+    "knob": "\u5229\u78ba2ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002\u8fd1\u3059\u304e\u308b\u3068\u52dd\u3061\u3092\u5207\u308b\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 33
+    },
+    "trades": 33,
+    "avg_trade_pnl": 0.11262093513637572,
+    "total_return_pct": 1.2388302865001366,
+    "max_drawdown_pct": 4.923427675788153,
+    "win_rate_pct": 45.45454545454545,
+    "payoff_ratio": 1.2871266409204212,
+    "total_fees": 2.041189155487096,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_tp_2"
+  },
+  {
+    "logic_id": "sh01n_tp_3",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba3ATR",
+    "knob": "\u5229\u78ba3ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 28
+    },
+    "trades": 28,
+    "avg_trade_pnl": 0.5596486550488987,
+    "total_return_pct": 5.223387447123051,
+    "max_drawdown_pct": 5.9726503546014955,
+    "win_rate_pct": 42.857142857142854,
+    "payoff_ratio": 1.8024519726199315,
+    "total_fees": 1.7271808969347746,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_tp_3"
+  },
+  {
+    "logic_id": "sh01n_tp_5",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba5ATR",
+    "knob": "\u5229\u78ba5ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 26
+    },
+    "trades": 26,
+    "avg_trade_pnl": -0.10946744060831232,
+    "total_return_pct": -0.9487178186053824,
+    "max_drawdown_pct": 7.562897759921515,
+    "win_rate_pct": 26.923076923076923,
+    "payoff_ratio": 2.5697230292337028,
+    "total_fees": 1.5550568772858089,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "expectancy"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_tp_5"
+  },
+  {
+    "logic_id": "sh01n_tp_6",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba6ATR",
+    "knob": "\u5229\u78ba6ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 25
+    },
+    "trades": 25,
+    "avg_trade_pnl": 0.4088711482284858,
+    "total_return_pct": 3.4072595685707086,
+    "max_drawdown_pct": 5.855784229393706,
+    "win_rate_pct": 28.000000000000004,
+    "payoff_ratio": 3.0932948899691883,
+    "total_fees": 1.497320874526049,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_tp_6"
+  },
+  {
+    "logic_id": "sh01n_tp_8",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba8ATR",
+    "knob": "\u5229\u78ba8ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002\u9060\u3044\u307b\u3069\u5229\u78ba\u306a\u3057\u306b\u8fd1\u3065\u304f\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 22
+    },
+    "trades": 22,
+    "avg_trade_pnl": 0.563105436816553,
+    "total_return_pct": 4.129439869988061,
+    "max_drawdown_pct": 6.8942167550354245,
+    "win_rate_pct": 27.27272727272727,
+    "payoff_ratio": 3.4649834745776524,
+    "total_fees": 1.3184102417397936,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_tp_8"
+  },
+  {
+    "logic_id": "sh01n_entry_15d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e315\u65e5",
+    "knob": "\u5165\u53e315\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 27
+    },
+    "trades": 27,
+    "avg_trade_pnl": 0.3594726273929954,
+    "total_return_pct": 3.235253646536962,
+    "max_drawdown_pct": 5.520178586573993,
+    "win_rate_pct": 33.33333333333333,
+    "payoff_ratio": 2.40832912892769,
+    "total_fees": 1.6412696445741446,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_entry_15d"
+  },
+  {
+    "logic_id": "sh01n_entry_25d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e325\u65e5",
+    "knob": "\u5165\u53e325\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 21
+    },
+    "trades": 21,
+    "avg_trade_pnl": 0.4000893821276234,
+    "total_return_pct": 2.8006256748933644,
+    "max_drawdown_pct": 6.003949086274984,
+    "win_rate_pct": 28.57142857142857,
+    "payoff_ratio": 3.0380068211565745,
+    "total_fees": 1.2824237251975372,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_entry_25d"
+  },
+  {
+    "logic_id": "sh01n_entry_30d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e330\u65e5",
+    "knob": "\u5165\u53e330\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 20
+    },
+    "trades": 20,
+    "avg_trade_pnl": -0.12257961777657586,
+    "total_return_pct": -0.817197451843843,
+    "max_drawdown_pct": 7.1227293131880005,
+    "win_rate_pct": 25.0,
+    "payoff_ratio": 2.8248865400645347,
+    "total_fees": 1.193311436104714,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "expectancy"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_entry_30d"
+  },
+  {
+    "logic_id": "sh01n_exit_7d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u9000\u51fa7\u65e5",
+    "knob": "\u9000\u51fa7\u65e5",
+    "why": "\u9000\u51fa\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 27
+    },
+    "trades": 27,
+    "avg_trade_pnl": 0.016085504326496497,
+    "total_return_pct": 0.14476953893847178,
+    "max_drawdown_pct": 6.724449705595544,
+    "win_rate_pct": 33.33333333333333,
+    "payoff_ratio": 2.019104491088396,
+    "total_fees": 1.6639172601323036,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_exit_7d"
+  },
+  {
+    "logic_id": "sh01n_exit_15d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u9000\u51fa15\u65e5",
+    "knob": "\u9000\u51fa15\u65e5",
+    "why": "\u9000\u51fa\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 26
+    },
+    "trades": 26,
+    "avg_trade_pnl": 0.2655969489378942,
+    "total_return_pct": 2.3018402241284264,
+    "max_drawdown_pct": 5.827927872523585,
+    "win_rate_pct": 30.76923076923077,
+    "payoff_ratio": 2.5693939588756827,
+    "total_fees": 1.5799028944876783,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_exit_15d"
+  },
+  {
+    "logic_id": "sh01n_stop_1p25",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52071.25\u65e5\u8db3ATR",
+    "knob": "\u640d\u52071.25\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 26
+    },
+    "trades": 26,
+    "avg_trade_pnl": 0.8259682494709014,
+    "total_return_pct": 7.158391495414462,
+    "max_drawdown_pct": 5.387661794703746,
+    "win_rate_pct": 34.61538461538461,
+    "payoff_ratio": 2.76792487919842,
+    "total_fees": 1.8954665125031862,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_stop_1p25"
+  },
+  {
+    "logic_id": "sh01n_stop_1p75",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52071.75\u65e5\u8db3ATR",
+    "knob": "\u640d\u52071.75\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 25
+    },
+    "trades": 25,
+    "avg_trade_pnl": 0.3527649667390811,
+    "total_return_pct": 2.939708056158996,
+    "max_drawdown_pct": 4.3365667516629784,
+    "win_rate_pct": 36.0,
+    "payoff_ratio": 2.174131418720559,
+    "total_fees": 1.3112865954352215,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_stop_1p75"
+  },
+  {
+    "logic_id": "sh01n_stop_2p0",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52072.0\u65e5\u8db3ATR",
+    "knob": "\u640d\u52072.0\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "BTCUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "env": {
+      "python": "3.12.3",
+      "pandas": "2.2.3",
+      "numpy": "2.4.4",
+      "lock": "eval_v2_btc.lock.yaml@7061c93598f3"
+    },
+    "trades_per_symbol": {
+      "BTCUSDT": 24
+    },
+    "trades": 24,
+    "avg_trade_pnl": 0.5507531098180078,
+    "total_return_pct": 4.406024878544068,
+    "max_drawdown_pct": 3.5357468023220804,
+    "win_rate_pct": 41.66666666666667,
+    "payoff_ratio": 1.9280410090291966,
+    "total_fees": 1.0936853417135435,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T225116Z_slow_setB/setB_sh01n_stop_2p0"
+  }
+]

@@ -1,0 +1,82 @@
+schema_version: 1
+eval_version: eval_v2_btc
+created_at: '2026-08-24T22:50:02Z'
+git_commit: 59913d5
+config_path: configs/eval_v2_btc.yaml
+config_sha256: cab453ee2ec9f553773bcbc73fc6a8e19ebc2e2543113ea404b58f178cd5437e
+forbid_synthetic: true
+symbols:
+- BTCUSDT
+costs:
+  fee_rate_per_side: 0.00055
+  slippage_pct_per_side: 0.0002
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+  leverage: 3.0
+  initial_equity: 300.0
+gates:
+  min_trades: 100
+  max_drawdown_pct: 20.0
+  min_trades_scope: portfolio total across symbols, per set
+datasets:
+  A:
+    eval_window:
+      start: '2023-01-01'
+      end: '2023-12-31'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: c6ade6a76d8f0a72afc7738fbef6975c9ba775fbc57f96fa1884f32490fd5f0b
+          data/cache/BTCUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: bc6dd6623b15d06489ab525f509543e1d7d498f1e7e67c133ae83bbe97de07a0
+          data/cache/BTCUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 17d2ec88647f7fdad31816d08fe4455a99c41adc02942c3f5c25e2f7ae58e114
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 0384b8c1c772925b99df601897bcd72a877902c3f470f53a405d83ada332761f
+          data/cache/BTCUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 9a960af139b4037a454bf9225affc501de3d3a3262e82db14e8fb22bd22df3bb
+          data/cache/BTCUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: f732bbd2e004b59dce50df436d73f0d38f7fb29099d8a3bf51f22280b7a3af1c
+          data/cache/BTCUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: dd887681d73c50a576d36f668230db21aa28fa9ca8c6804a871cbff9f960c90f
+  B:
+    eval_window:
+      start: '2024-01-01'
+      end: '2024-12-31'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: f37d2ac4cf95a6f7357bd1e850c4a73182d5b9f257c7d0860b41c1d4e47ab3f4
+          data/cache/BTCUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 1458794232afad57c29ef125767e6f2f20def7dcc9ab2eea7a0a3da28847cdb3
+          data/cache/BTCUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: cf197568d976ef382040403140c45bc5fa480c67109b7e060607900adafa9bdd
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: d1b22378e756c2d633d05305eaa9d7f1b507e9cf16c44ac607c032d76f3a7e34
+          data/cache/BTCUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 070af164f462e4dec03af92960944685c63ec53bbbacd1b9648ac8c1af5c9077
+          data/cache/BTCUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: 6df63d9e8eaf5477c4aca324cbd2f85acd70d088f67e05a35b827d6fba915a08
+          data/cache/BTCUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 702b6495d061398eb4f43fe32c45d2a962056aec5efbc204c5d921bf6f7d8731
+  C:
+    eval_window:
+      start: '2025-01-01'
+      end: '2026-08-22'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: f07580696df59365e92cf5ae6f087e1f440c61516cb95180d4afce68fc37856c
+          data/cache/BTCUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 237495f9fb172c0a1e52f86803e9a6e8e0571290bec21eefe3e19ec868d035ab
+          data/cache/BTCUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: ddba66310b771fb70c26b04a95f5735be748b11ec7d7bf0a3755bbf8a2682b56
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 016c67b4b939c93b96185e8c65d30e2e7f35644182cac073d0849f260bc8dc94
+          data/cache/BTCUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 0a183cbf59269fa72080ea33b8269fa4146b87904427d8211d38936f016872cd
+          data/cache/BTCUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: be2e2abb924248360959c810392c9d0236b7bc554f288d4aa271b78a5294f58c
+          data/cache/BTCUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 1d79f4c2ff2a69433dab5f68e5e44d35980abbc585b9978b2318542f155014a8
+notes: Multi-symbol formal eval. Trades from every symbol merge into one equity curve;
+  fixed_margin sizing makes the per-symbol runs independent.

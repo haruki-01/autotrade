@@ -78,18 +78,42 @@ def main() -> None:
             "|" + "|".join(["---"] * (len(per) + 1)) + "|",
             "| " + " | ".join(f"{v:+.1f}%" for v in per.values()) + f" | **{ew:+.1f}%** |",
             "",
-            "| logic | 戦略リターン | 買い持ち | 差 | 戦略DD | 買い持ちDD | n |",
-            "|-------|-------------|----------|-----|--------|-----------|---|",
+            "生リターンの比較は投下資本が違う分だけ戦略に不利になる"
+            f"（`fixed_margin` は1銘柄あたり証拠金 {cfg.margin_per_trade:.0f} / 元本 "
+            f"{cfg.initial_equity:.0f} しか使わない）。"
+            "`fixed_margin` ではリスク額を k 倍するとリターンもDDもほぼ k 倍になるので、"
+            "**リターン ÷ DD** が資本量に依らない比較になる。",
+            "",
+            "| logic | 戦略リターン | 買い持ち | 差 | 戦略DD | 買い持ちDD "
+            "| 戦略 ret/DD | 買い持ち ret/DD | n |",
+            "|-------|-------------|----------|-----|--------|-----------|---|---|---|",
         ]
+        bh_ratio = ew / bh["max_dd_pct"] if bh["max_dd_pct"] else float("nan")
         for r in sorted(rows, key=lambda x: -x["total_return_pct"]):
             diff = r["total_return_pct"] - ew
+            ratio = (
+                r["total_return_pct"] / r["max_drawdown_pct"]
+                if r["max_drawdown_pct"]
+                else float("nan")
+            )
             lines.append(
                 f"| `{r['logic_id']}` | {r['total_return_pct']:+.1f}% | {ew:+.1f}% "
                 f"| {diff:+.1f}pt | {r['max_drawdown_pct']:.1f}% | {bh['max_dd_pct']:.1f}% "
-                f"| {r['trades']} |"
+                f"| **{ratio:+.2f}** | {bh_ratio:+.2f} | {r['trades']} |"
             )
         beat = sum(1 for r in rows if r["total_return_pct"] > ew)
-        lines += ["", f"買い持ちを上回った変種: **{beat} / {len(rows)}**", ""]
+        beat_ratio = sum(
+            1
+            for r in rows
+            if r["max_drawdown_pct"] and r["total_return_pct"] / r["max_drawdown_pct"] > bh_ratio
+        )
+        lines += [
+            "",
+            f"生リターンで買い持ちを上回った変種: **{beat} / {len(rows)}**",
+            "",
+            f"リターン÷DD で買い持ちを上回った変種: **{beat_ratio} / {len(rows)}**",
+            "",
+        ]
 
     Path(args.out).write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))

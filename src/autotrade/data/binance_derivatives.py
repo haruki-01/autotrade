@@ -47,19 +47,20 @@ def _monthrange(start: str, end: str) -> list[pd.Timestamp]:
     return list(pd.date_range(start=first, end=last, freq="MS", tz="UTC"))
 
 
-_ATTEMPTS = 4
+_TRANSIENT_ATTEMPTS = 4
+_MISSING_PASSES = 2
 
 
 def _get_zip_csv(client: httpx.Client, url: str) -> pd.DataFrame | None:
-    """Download one archive zip and return its single CSV, or None if absent.
+    """Download one archive zip and return its single CSV, or None on 404.
 
-    A 404 is retried rather than believed on the first answer. Under load the
-    archive host sometimes reports 404 for a file that exists, and a day
-    dropped that way is indistinguishable from a day the exchange never
-    published — the frame just comes back quietly shorter.
+    Transient answers -- a dropped connection, 429, 5xx -- are retried with
+    backoff. A 404 is returned as-is; deciding whether to believe it is
+    :func:`_fetch_many`'s job, because that decision depends on how many other
+    days came back 404 at the same time.
     """
     last_error: Exception | None = None
-    for attempt in range(_ATTEMPTS):
+    for attempt in range(_TRANSIENT_ATTEMPTS):
         if attempt:
             time.sleep(2.0**attempt)
         try:
@@ -68,8 +69,7 @@ def _get_zip_csv(client: httpx.Client, url: str) -> pd.DataFrame | None:
             last_error = exc
             continue
         if resp.status_code == 404:
-            last_error = None
-            continue
+            return None
         if resp.status_code == 429 or resp.status_code >= 500:
             last_error = httpx.HTTPStatusError(
                 f"{resp.status_code} for {url}", request=resp.request, response=resp
@@ -87,9 +87,7 @@ def _get_zip_csv(client: httpx.Client, url: str) -> pd.DataFrame | None:
         )
         return pd.read_csv(io.StringIO(text), header=0 if has_header else None)
 
-    if last_error is not None:
-        raise RuntimeError(f"could not download {url}") from last_error
-    return None
+    raise RuntimeError(f"could not download {url}") from last_error
 
 
 def _fetch_many(
@@ -97,19 +95,28 @@ def _fetch_many(
 ) -> tuple[list[pd.DataFrame], list[str]]:
     """Return the archives that downloaded, and the URLs that were not there.
 
-    The misses are handed back instead of swallowed so the caller can say how
-    much of the requested span it actually got.
+    404s get a second pass. Under load the host occasionally reports 404 for a
+    file that is there, and a day dropped that way is indistinguishable from a
+    day the exchange never published -- the frame just comes back quietly
+    shorter. One extra sweep of the misses is enough to tell the two apart, and
+    unlike retrying each 404 in place it stays cheap when the whole requested
+    span predates the archive.
     """
     out: list[pd.DataFrame] = []
-    missing: list[str] = []
+    pending = list(urls)
     with httpx.Client(timeout=timeout, follow_redirects=True) as client:
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            for url, df in zip(urls, pool.map(lambda u: _get_zip_csv(client, u), urls)):
-                if df is None or df.empty:
-                    missing.append(url)
-                else:
-                    out.append(df)
-    return out, missing
+            for _ in range(_MISSING_PASSES):
+                if not pending:
+                    break
+                still: list[str] = []
+                for url, df in zip(pending, pool.map(lambda u: _get_zip_csv(client, u), pending)):
+                    if df is None or df.empty:
+                        still.append(url)
+                    else:
+                        out.append(df)
+                pending = still
+    return out, pending
 
 
 # ---------------------------------------------------------------- metrics

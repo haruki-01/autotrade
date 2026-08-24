@@ -156,11 +156,16 @@ def main() -> None:
     set_end = pd.Timestamp(cfg.sets[set_name].end, tz="UTC") + pd.Timedelta(days=1)
 
     print(f"set={set_name} symbols={len(symbols)} logics={len(logic_ids)}", flush=True)
+    # Only the EH-06 veto variants read derivatives, and their history starts
+    # years after the price history does. Loading them anyway would bar a
+    # long-history run from testing the variants that never needed them.
+    any_deriv = any(lid in NEEDS_DERIVATIVES for lid in logic_ids)
+
     data: dict[str, tuple[pd.DataFrame, pd.DataFrame | None]] = {}
     for symbol in symbols:
         frames = load_multi_frames(lock, set_name, symbol)
         m15 = frames["15m"]
-        deriv = load_multi_derivatives(lock, set_name, symbol, m15.index)
+        deriv = load_multi_derivatives(lock, set_name, symbol, m15.index) if any_deriv else None
         data[symbol] = (m15, deriv)
         print(f"  {symbol}: {len(m15)} bars", flush=True)
 
