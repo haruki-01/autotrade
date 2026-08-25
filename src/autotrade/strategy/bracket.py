@@ -280,6 +280,102 @@ def sig_gap_follow(df: pd.DataFrame, p: dict) -> Signals:
     )
 
 
+def _col(df: pd.DataFrame, name: str) -> pd.Series | None:
+    return df[name] if name in df.columns else None
+
+
+def sig_funding_side(df: pd.DataFrame, p: dict) -> Signals:
+    """funding が安い方向に乗る / 高い方向を逆張り。"""
+    fr = _col(df, "funding_rate")
+    if fr is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    thr = float(p.get("thr", 0.0001))
+    mode = str(p.get("mode", "cheap"))
+    if mode == "cheap":
+        # 負の funding = ショートが払っている = ロングが安い。安い側に乗る。
+        return Signals(np.where(fr < -thr, 1, np.where(fr > thr, -1, 0)).astype(np.int8))
+    # crowded: 混み合った側に乗る（cheap の対照）
+    return Signals(np.where(fr > thr, 1, np.where(fr < -thr, -1, 0)).astype(np.int8))
+
+
+def sig_oi_follow(df: pd.DataFrame, p: dict) -> Signals:
+    """OI が増えている方向に乗る。価格が上がりつつ OI 増 = ロング積み。"""
+    oi = _col(df, "oi")
+    if oi is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    n = int(p.get("n", 16))
+    thr = float(p.get("thr", 0.005))
+    chg = oi.pct_change(n, fill_method=None)
+    up = df["close"] > df["close"].shift(n)
+    build = chg > thr
+    return Signals(np.where(build & up, 1, np.where(build & ~up, -1, 0)).astype(np.int8))
+
+
+def sig_oi_fade(df: pd.DataFrame, p: dict) -> Signals:
+    """OI 急増の逆張り。混み合いの解消を狙う。"""
+    oi = _col(df, "oi")
+    if oi is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    n = int(p.get("n", 16))
+    thr = float(p.get("thr", 0.01))
+    chg = oi.pct_change(n, fill_method=None)
+    up = df["close"] > df["close"].shift(n)
+    crowded = chg > thr
+    return Signals(np.where(crowded & up, -1, np.where(crowded & ~up, 1, 0)).astype(np.int8))
+
+
+def sig_taker_follow(df: pd.DataFrame, p: dict) -> Signals:
+    """taker が買い優勢ならロング。"""
+    tr = _col(df, "taker_ratio")
+    if tr is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    look = int(p.get("look", 96))
+    q = float(p.get("q", 0.8))
+    hi = tr.rolling(look).quantile(q)
+    lo = tr.rolling(look).quantile(1 - q)
+    return Signals(np.where(tr > hi, 1, np.where(tr < lo, -1, 0)).astype(np.int8))
+
+
+def sig_taker_fade(df: pd.DataFrame, p: dict) -> Signals:
+    tr = _col(df, "taker_ratio")
+    if tr is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    look = int(p.get("look", 96))
+    q = float(p.get("q", 0.8))
+    hi = tr.rolling(look).quantile(q)
+    lo = tr.rolling(look).quantile(1 - q)
+    return Signals(np.where(tr > hi, -1, np.where(tr < lo, 1, 0)).astype(np.int8))
+
+
+def sig_runs_funding(df: pd.DataFrame, p: dict) -> Signals:
+    """連続足の継続を、funding が安い側だけに残す。br_runs_5 への one-point。"""
+    base = sig_runs(df, p).values
+    fr = _col(df, "funding_rate")
+    if fr is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    thr = float(p.get("thr", 0.0001))
+    cheap_long = fr.to_numpy() < -thr
+    cheap_short = fr.to_numpy() > thr
+    out = np.zeros(len(df), dtype=np.int8)
+    out[(base == 1) & cheap_long] = 1
+    out[(base == -1) & cheap_short] = -1
+    return Signals(out)
+
+
+def sig_basis_fade(df: pd.DataFrame, p: dict) -> Signals:
+    """プレミアムが極端なら逆張り。"""
+    prem = _col(df, "premium")
+    if prem is None:
+        prem = _col(df, "close_premium")
+    if prem is None:
+        return Signals(np.zeros(len(df), dtype=np.int8))
+    look = int(p.get("look", 96 * 30))
+    q = float(p.get("q", 0.9))
+    hi = prem.rolling(look).quantile(q)
+    lo = prem.rolling(look).quantile(1 - q)
+    return Signals(np.where(prem > hi, -1, np.where(prem < lo, 1, 0)).astype(np.int8))
+
+
 SIGNALS: dict[str, SignalFn] = {
     "random": sig_random,
     "ema_cross": sig_ema_cross,
@@ -295,6 +391,13 @@ SIGNALS: dict[str, SignalFn] = {
     "session": sig_session,
     "gap_revert": sig_gap_revert,
     "gap_follow": sig_gap_follow,
+    "funding_side": sig_funding_side,
+    "oi_follow": sig_oi_follow,
+    "oi_fade": sig_oi_fade,
+    "taker_follow": sig_taker_follow,
+    "taker_fade": sig_taker_fade,
+    "basis_fade": sig_basis_fade,
+    "runs_funding": sig_runs_funding,
 }
 
 # 1条件 = 1エントリー定義。値幅も保有上限も共通なので、比較は入口だけの差になる。
@@ -326,6 +429,38 @@ CYCLE_BRACKET: dict[str, dict] = {
     "br_gap_revert_lg": {"signal": "gap_revert", "params": {"k": 24, "thr": 0.02}, "why": "6時間急変の逆張り"},
     "br_gap_follow": {"signal": "gap_follow", "params": {"k": 8, "thr": 0.008}, "why": "2時間急変の順張り"},
     "br_gap_follow_lg": {"signal": "gap_follow", "params": {"k": 24, "thr": 0.02}, "why": "6時間急変の順張り"},
+    "br_fund_cheap": {
+        "signal": "funding_side", "params": {"mode": "cheap", "thr": 0.0001},
+        "why": "funding が安い方向に乗る", "needs_deriv": True,
+    },
+    "br_fund_fade": {
+        "signal": "funding_side", "params": {"mode": "crowded", "thr": 0.0001},
+        "why": "funding が高い（混み合い）方向に乗る", "needs_deriv": True,
+    },
+    "br_oi_follow": {
+        "signal": "oi_follow", "params": {"n": 16, "thr": 0.005},
+        "why": "OI増加の方向に乗る", "needs_deriv": True,
+    },
+    "br_oi_fade": {
+        "signal": "oi_fade", "params": {"n": 16, "thr": 0.01},
+        "why": "OI急増の逆張り", "needs_deriv": True,
+    },
+    "br_taker_follow": {
+        "signal": "taker_follow", "params": {"q": 0.8},
+        "why": "taker 優勢の方向に乗る", "needs_deriv": True,
+    },
+    "br_taker_fade": {
+        "signal": "taker_fade", "params": {"q": 0.8},
+        "why": "taker 優勢の逆張り", "needs_deriv": True,
+    },
+    "br_basis_fade": {
+        "signal": "basis_fade", "params": {"q": 0.9},
+        "why": "プレミアム極端の逆張り", "needs_deriv": True,
+    },
+    "br_runs5_fund": {
+        "signal": "runs_funding", "params": {"k": 5, "thr": 0.0001},
+        "why": "5連続継続 × funding安い側（one-point）", "needs_deriv": True,
+    },
 }
 
 

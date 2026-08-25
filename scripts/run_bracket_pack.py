@@ -31,7 +31,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from autotrade.eval import load_eval_config  # noqa: E402
-from autotrade.eval.multi import load_multi_frames  # noqa: E402
+from autotrade.eval.multi import load_multi_derivatives, load_multi_frames  # noqa: E402
 from autotrade.strategy.bracket import (  # noqa: E402
     BARS_PER_HOUR,
     CYCLE_BRACKET,
@@ -183,6 +183,29 @@ def main() -> None:
     df = df.loc[(df.index >= lo) & (df.index <= hi)]
     months = (hi - lo).days / 30.4375
 
+    ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(CYCLE_BRACKET)
+    needs_deriv = any(CYCLE_BRACKET.get(i, {}).get("needs_deriv") for i in ids)
+    if needs_deriv:
+        deriv = None
+        try:
+            deriv = load_multi_derivatives(lock, args.set, "BTCUSDT", df.index)
+        except (RuntimeError, KeyError, TypeError):
+            from autotrade.data.binance_derivatives import load_context
+
+            ctx = load_context(
+                df.index,
+                symbol="BTCUSDT",
+                start=cfg.sets[args.set].start,
+                end=cfg.sets[args.set].end,
+            )
+            deriv = ctx.frame
+        if deriv is not None and not deriv.empty:
+            df = df.join(deriv, how="left", rsuffix="_d")
+            print(f"derivatives joined: {list(deriv.columns)}")
+        else:
+            ids = [i for i in ids if not CYCLE_BRACKET.get(i, {}).get("needs_deriv")]
+            print("derivatives unavailable — skipping needs_deriv logics")
+
     stop_pct = args.stop if args.stop is not None else STOP_PCT
     rr = args.rr if args.rr is not None else RR
     notional = cfg.margin_per_trade * cfg.leverage
@@ -200,7 +223,6 @@ def main() -> None:
     cost_r = cost_rate / stop_pct
     be_win = (1.0 + cost_r) / (1.0 + rr)
 
-    ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(CYCLE_BRACKET)
     rows = []
     for k, logic_id in enumerate(ids, 1):
         sig = build_signals(logic_id, df)

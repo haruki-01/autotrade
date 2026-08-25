@@ -1,9 +1,9 @@
 schema_version: 1
 eval_version: eval_v3_btc
-created_at: '2026-08-24T23:05:12Z'
-git_commit: 59913d5
+created_at: '2026-08-24T23:20:29Z'
+git_commit: 41546f6
 config_path: configs/eval_v3_btc.yaml
-config_sha256: 33876b4f3a195a1ee6876313d573a57149f084e81c5951b064b19f3b4866d83f
+config_sha256: b513f6fcacae0c9b7bfcbb1d5242ad72d8b92eab61b9b680c23188490e054fca
 forbid_synthetic: true
 symbols:
 - BTCUSDT
