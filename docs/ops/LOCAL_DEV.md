@@ -16,33 +16,28 @@
 
 Cloud Agent はサーバ上で動くため、手元でコードを触る・ターミナルで Bybit に繋ぐには **ローカルの Cursor ウィンドウ** が必要です。
 
-### 手順
+### 手順（プロジェクトを IDE で開く）
 
-1. GitHub でリポジトリをクローン（未取得の場合）
+1. パソコンにリポジトリが無いときだけ clone
    ```bash
    git clone https://github.com/haruki-01/autotrade.git
    cd autotrade
    ```
-2. 作業ブランチを取得
+2. いまの作業ブランチを取る
    ```bash
    git fetch origin
-   git checkout cursor/secrets-folder-and-planning-d77f
+   git checkout cursor/slow-oos-validation-d77f
+   git pull origin cursor/slow-oos-validation-d77f
    ```
-3. Cursor で **別ウィンドウ** を開く
-   - メニュー: `File` → `New Window`
-   - そのウィンドウで `File` → `Open Folder…` → クローンした `autotrade` を選択
-   - またはターミナルから:
-     ```bash
-     cursor -n /path/to/autotrade
-     ```
-4. レイアウトは `.vscode/settings.json` で自動（左フォルダ / 中央レビュー / 右チャット）。左がチャットなら右上で **Editor** に切替
-5. ローカルで依存関係を入れて実データ検証
+3. Cursor でフォルダを開く（どれか1つ）
+   - メニュー: **File → Open Folder…** → `autotrade` を選ぶ
+   - または Terminal: `cursor -n /path/to/autotrade`
+4. 左がチャットだけのときは、右上で **Editor** に切替。成功すると左にフォルダ一覧が出る
+5. （任意）依存関係を入れて検証
    ```bash
    python3 -m venv .venv && source .venv/bin/activate
-   pip install -r requirements.lock.txt   # 記録済みの数値を再現するならこちら
+   pip install -r requirements.lock.txt
    pip install -e . --no-deps
-   autotrade fetch-data --set B
-   autotrade backtest --set B
    ```
 
 ---

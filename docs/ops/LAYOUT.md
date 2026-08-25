@@ -14,19 +14,34 @@ Cursor では `workbench.sideBar.location = left` が **Editor レイアウト**
 
 ## あなたがやること（これだけ）
 
-手元のターミナルで:
+### A. すでにパソコンに `autotrade` フォルダがある
+
+1. Cursor を開く
+2. メニュー **File → Open Folder…**（Mac なら **Open…**）
+3. `autotrade` フォルダを選んで Open
+4. 画面がチャット中心なら、右上で **Editor** に切り替える
+5. 左にフォルダ一覧が出たら成功
+
+最新のキー用ファイルを取るなら、Cursor の下の Terminal で:
+
+```bash
+git fetch origin
+git checkout cursor/slow-oos-validation-d77f
+git pull origin cursor/slow-oos-validation-d77f
+```
+
+### B. まだフォルダがない（初回）
+
+手元の Terminal（または Cursor の Terminal）で:
 
 ```bash
 git clone https://github.com/haruki-01/autotrade.git
 cd autotrade
-git fetch origin
-git checkout cursor/secrets-folder-and-planning-d77f
-cursor -n autotrade.code-workspace
+git checkout cursor/slow-oos-validation-d77f
+cursor -n .
 ```
 
-または Cursor で `File` → `Open Workspace from File…` → `autotrade.code-workspace` を選ぶ。
-
-左にチャットが出ていたら、右上で **Editor** に切り替える。
+`cursor` コマンドが無いときは、Cursor で **File → Open Folder…** → 今作った `autotrade` を選ぶ。
 
 ## うまくいかないとき
 
