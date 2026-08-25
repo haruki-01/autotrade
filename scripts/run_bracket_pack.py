@@ -167,6 +167,8 @@ def main() -> None:
     ap.add_argument("--set", required=True)
     ap.add_argument("--logics", default="")
     ap.add_argument("--maker-entry", action="store_true", help="入口をメイカーとして計算")
+    ap.add_argument("--stop", type=float, default=None, help="損切り幅（既定は bracket.py の値）")
+    ap.add_argument("--rr", type=float, default=None, help="リスクリワード比")
     ap.add_argument("--tag", default="bracket")
     args = ap.parse_args()
 
@@ -181,14 +183,22 @@ def main() -> None:
     df = df.loc[(df.index >= lo) & (df.index <= hi)]
     months = (hi - lo).days / 30.4375
 
+    stop_pct = args.stop if args.stop is not None else STOP_PCT
+    rr = args.rr if args.rr is not None else RR
     notional = cfg.margin_per_trade * cfg.leverage
     if args.maker_entry:
-        cost_rate = 0.0002 + cfg.fee_rate_per_side + cfg.slippage_pct_per_side
+        # 入口は指値でメイカー。出口は利確だけメイカーで、損切りは成行に
+        # せざるを得ない（指値だと急落で約定しない）。スリッページも
+        # テイカー側の脚にだけ乗せる。
+        maker, taker = 0.0002, cfg.fee_rate_per_side
+        slip = cfg.slippage_pct_per_side
+        w0 = 1.0 / (1.0 + rr)
+        cost_rate = maker + w0 * maker + (1 - w0) * (taker + slip)
     else:
         cost_rate = (cfg.fee_rate_per_side + cfg.slippage_pct_per_side) * 2
     max_bars = int(round(MAX_HOURS * BARS_PER_HOUR))
-    cost_r = cost_rate / STOP_PCT
-    be_win = (1.0 + cost_r) / (1.0 + RR)
+    cost_r = cost_rate / stop_pct
+    be_win = (1.0 + cost_r) / (1.0 + rr)
 
     ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(CYCLE_BRACKET)
     rows = []
@@ -196,7 +206,7 @@ def main() -> None:
         sig = build_signals(logic_id, df)
         r = run_bracket(
             df, sig,
-            stop_pct=STOP_PCT, rr=RR, max_bars=max_bars,
+            stop_pct=stop_pct, rr=rr, max_bars=max_bars,
             cost_rate=cost_rate, notional=notional,
         )
         if not r.get("trades"):
@@ -206,7 +216,7 @@ def main() -> None:
         r["why"] = CYCLE_BRACKET[logic_id]["why"]
         r["set"] = args.set
         r["per_month"] = r["trades"] / months
-        r["beats_null"] = r["win_rate_resolved"] > 1.0 / (1.0 + RR)
+        r["beats_null"] = r["win_rate_resolved"] > 1.0 / (1.0 + rr)
         r["profitable"] = r["ev_usdt"] > 0
         rows.append(r)
         print(
@@ -226,18 +236,18 @@ def main() -> None:
     L = [
         f"# 固定ブラケット検証 — Set {args.set}",
         "",
-        f"BTCUSDT 15分足 ／ 損切り **{STOP_PCT*100:.2f}%** ／ 利確 "
-        f"**{STOP_PCT*RR*100:.2f}%**（1:{RR:.0f}）／ 保有上限 **{MAX_HOURS:.0f}時間** ／ "
+        f"BTCUSDT 15分足 ／ 損切り **{stop_pct*100:.2f}%** ／ 利確 "
+        f"**{stop_pct*rr*100:.2f}%**（1:{rr:.1f}）／ 保有上限 **{MAX_HOURS:.0f}時間** ／ "
         f"同時建玉 1",
         f"期間: {cfg.sets[args.set].start} 〜 {cfg.sets[args.set].end}（{months:.1f}ヶ月）",
         f"手数料前提: {fee_label}（往復 {cost_rate*100:.3f}% = 許容損失の {cost_r*100:.1f}%）",
         "",
         "## 判定の2本の線",
         "",
-        f"- **帰無仮説 {100/(1+RR):.1f}%** — ドリフトのない価格での 1:{RR:.0f} ブラケット当たり率。"
+        f"- **帰無仮説 {100/(1+rr):.1f}%** — ドリフトのない価格での 1:{rr:.1f} ブラケット当たり率。"
         "これ以下なら情報ゼロ",
         f"- **損益分岐 {be_win*100:.1f}%** — 費用を引いて黒字になる勝率",
-        f"- 差は **{(be_win-1/(1+RR))*100:.1f} ポイント**。ここを超える条件を探している",
+        f"- 差は **{(be_win-1/(1+rr))*100:.1f} ポイント**。ここを超える条件を探している",
         "",
         "## 結果（勝率の上振れ順）",
         "",
@@ -247,7 +257,7 @@ def main() -> None:
     for _, r in res.iterrows():
         if r["ev_usdt"] > 0:
             verdict = "黒字"
-        elif r["win_rate_resolved"] > 1.0 / (1.0 + RR):
+        elif r["win_rate_resolved"] > 1.0 / (1.0 + rr):
             verdict = "情報あり/赤字"
         else:
             verdict = "情報なし"
@@ -268,17 +278,17 @@ def main() -> None:
     for _, r in ctrl.iterrows():
         L.append(
             f"- `{r['logic_id']}`: 勝率 {r['win_rate_resolved']*100:.1f}%"
-            f"（理論 {100/(1+RR):.1f}%、z={r['z_vs_null']:+.2f}）、n={r['trades']}"
+            f"（理論 {100/(1+rr):.1f}%、z={r['z_vs_null']:+.2f}）、n={r['trades']}"
         )
 
-    beats = res[res["win_rate_resolved"] > 1.0 / (1.0 + RR)]
+    beats = res[res["win_rate_resolved"] > 1.0 / (1.0 + rr)]
     profit = res[res["ev_usdt"] > 0]
     L += [
         "",
         "## まとめ",
         "",
         f"- 検証した条件: **{len(res)}**",
-        f"- 帰無仮説（{100/(1+RR):.1f}%）を上回った: **{len(beats)}**",
+        f"- 帰無仮説（{100/(1+rr):.1f}%）を上回った: **{len(beats)}**",
         f"- z ≥ 2（偶然では説明しにくい）: **{int((res['z_vs_null'] >= 2).sum())}**",
         f"- 費用後に黒字: **{len(profit)}**",
         f"- 月50回以上撃てた: **{int((res['per_month'] >= 50).sum())}**",

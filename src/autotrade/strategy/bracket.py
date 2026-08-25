@@ -21,11 +21,94 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-# calibrate_bracket.py の実測で決めた値。ここを動かすときは再測定する。
-STOP_PCT = 0.0035
-RR = 2.0
+# scripts/optimize_bracket.py の総当たりで選んだ枠。ここを動かすときは再測定する。
+#
+# 必要上振れ = (往復コスト率 / 損切り幅) / (1 + RR) なので、幅を広げるほど下がる。
+# さらに必要シグナル強度は θ ≥ 2c/(s²·RR) で**幅の2乗**に反比例するため、
+# RR を上げるより幅を広げるほうが効く。ただし6時間の値動きの標準偏差
+# （15分足ATR × √24 ≈ 1.35%）を損切り+利確の合計が超えると障壁に届かず、
+# 「1:RR のブラケット」ではなく「6時間で成行決済」になる。
+#
+#   損切り × (1 + RR) ≲ 1.35%
+#
+# この制約下で決済率70%以上を保つ最良が 1:1.5 / 0.70%（決済率70%、+4.2pt）。
+# 旧枠は 1:2 / 0.35%（決済率90%、両側テイカーで +14.3pt）。
+STOP_PCT = 0.007
+RR = 1.5
 MAX_HOURS = 6.0
 BARS_PER_HOUR = 4
+
+
+def scan_bracket(
+    high: np.ndarray,
+    low: np.ndarray,
+    close: np.ndarray,
+    entries: np.ndarray,
+    *,
+    direction: int,
+    stop_pct: float,
+    rr: float,
+    max_bars: int,
+) -> dict[str, float]:
+    """与えたエントリー点について、損切り/利確のどちらが先に触るかを前進走査する。
+
+    同じ足で両方に触った場合は**損切り優先**。足の中の順序は15分足からは
+    分からないので悲観側に寄せる。値幅の実測と総当たりで共用する。
+    """
+    n = len(close)
+    wins = losses = timeouts = 0
+    bars: list[int] = []
+    timeout_r: list[float] = []
+
+    for i in entries:
+        entry = close[i]
+        if direction > 0:
+            stop_px, tp_px = entry * (1 - stop_pct), entry * (1 + stop_pct * rr)
+        else:
+            stop_px, tp_px = entry * (1 + stop_pct), entry * (1 - stop_pct * rr)
+
+        end = min(i + max_bars, n - 1)
+        hit = None
+        for j in range(i + 1, end + 1):
+            if direction > 0:
+                hit_stop = low[j] <= stop_px
+                hit_tp = high[j] >= tp_px
+            else:
+                hit_stop = high[j] >= stop_px
+                hit_tp = low[j] <= tp_px
+            if hit_stop:
+                hit = ("loss", j)
+                break
+            if hit_tp:
+                hit = ("win", j)
+                break
+
+        if hit is None:
+            timeouts += 1
+            bars.append(end - i)
+            timeout_r.append((close[end] - entry) / entry * direction / stop_pct)
+        else:
+            kind, j = hit
+            bars.append(j - i)
+            if kind == "win":
+                wins += 1
+            else:
+                losses += 1
+
+    total = wins + losses + timeouts
+    if total == 0:
+        return {}
+    resolved = wins + losses
+    ev_r = (wins * rr - losses + float(np.sum(timeout_r))) / total
+    return {
+        "n": float(total),
+        "resolve_rate": resolved / total,
+        "win_rate_resolved": wins / resolved if resolved else float("nan"),
+        "timeout_rate": timeouts / total,
+        "ev_r": ev_r,
+        "mean_bars": float(np.mean(bars)) if bars else float("nan"),
+        "median_bars": float(np.median(bars)) if bars else float("nan"),
+    }
 
 
 def _ema(s: pd.Series, n: int) -> pd.Series:
