@@ -303,18 +303,18 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 
 次の手は枠の外に出ることになる。候補と実測:
 
-1. **保有を12hにして幅を1.00%へ** — 決済率70%を保ったまま必要上振れ +4.2pt → **+2.9pt**。
-   1枠の捨て率は 48% → 50% でほぼ増えない。16h はさらに +2.4pt まで下がるが伸びは小さい。
-2. **1分足で入口** — 1〜5分の遅れは勝率差 0pt。遅延より未完成足・欠測・取得側の追加が本体。
-3. **複数建玉** — サブ口座なしでは独立チケットは不可（Bybit はネット1本、hedge でも long+short の2本まで）。
-   重なりの 87% は同方向なので hedge は効かない。同方向に足すと捨て率は 8% まで落ちるが、
-   清算・平均単価・Partial TP/SL のレースが残る。**枠が黒字になるまでやらない。**
+1. **保有を12hにして幅を1.00%へ（採用）** — 1枠のまま。必要上振れ +4.2pt → **+2.9pt**。
+   入口は1分足。時間窓は15分足と同じ（バー数×15）。
+   **直近1年（Set Y）で先に検証し、黒字の条件だけ8年へ進む。**
+2. 複数建玉は枠が黒字になってから。
 
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
-`eval/reports/20260825-hold-and-overlap.md` · `eval/reports/20260825-1m-delay.md`
+workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·
+config: `configs/eval_v4_btc_1m.yaml`
 
 計算: `scripts/optimize_bracket.py` · `scripts/limit_fill_risk.py` ·
 `scripts/hold_and_overlap.py` · `scripts/measure_1m_delay.py` ·
+`scripts/prepare_btc_1m.py` · `scripts/run_bracket_pack.py --interval 1m` ·
 レポート: `eval/reports/20260825-bracket15-summary.md`
 
 ### 目標からの逆算モデル（2026-08-24）

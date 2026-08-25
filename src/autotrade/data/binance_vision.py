@@ -12,6 +12,7 @@ from autotrade.data.bybit import COLUMNS, load_ohlcv, save_ohlcv
 # Used as a research fallback when Bybit public API is blocked.
 # Prices are BTCUSDT; not identical to Bybit linear, but usable for hypothesis screening.
 INTERVAL_MAP = {
+    "1m": "1m",
     "15m": "15m",
     "4h": "4h",
     "1d": "1d",
@@ -115,5 +116,79 @@ def ensure_binance_data(
         * 1000
     )
     df = client.fetch_klines(symbol, interval, start_ms=start_ms, end_ms=end_ms)
+    save_ohlcv(df, cache_path)
+    return df
+
+
+ARCHIVE_BASE = "https://data.binance.vision/data"
+
+
+def _klines_zip_to_ohlcv(raw: pd.DataFrame) -> pd.DataFrame:
+    """Binance Vision kline zip: open_time, open, high, low, close, volume, ..., quote_volume."""
+    col0 = raw.columns[0]
+    if raw[col0].dtype == object:
+        raw = raw.copy()
+        raw[col0] = pd.to_numeric(raw[col0], errors="coerce")
+    start_ms = raw.iloc[:, 0].astype("int64")
+    df = pd.DataFrame(
+        {
+            "start_ms": start_ms,
+            "open": pd.to_numeric(raw.iloc[:, 1], errors="coerce"),
+            "high": pd.to_numeric(raw.iloc[:, 2], errors="coerce"),
+            "low": pd.to_numeric(raw.iloc[:, 3], errors="coerce"),
+            "close": pd.to_numeric(raw.iloc[:, 4], errors="coerce"),
+            "volume": pd.to_numeric(raw.iloc[:, 5], errors="coerce"),
+            "turnover": pd.to_numeric(raw.iloc[:, 7], errors="coerce")
+            if raw.shape[1] > 7
+            else pd.to_numeric(raw.iloc[:, 5], errors="coerce"),
+        }
+    )
+    df["timestamp"] = pd.to_datetime(df["start_ms"], unit="ms", utc=True)
+    return df.set_index("timestamp").sort_index()[COLUMNS]
+
+
+def ensure_spot_1m_archive(
+    *,
+    symbol: str,
+    start: str,
+    end: str,
+    cache_dir: str | Path,
+    force: bool = False,
+) -> pd.DataFrame:
+    """1分足を data.binance.vision の月次/日次 zip から取る（API ページングより速い）。"""
+    from autotrade.data.binance_derivatives import _daterange, _fetch_many, _monthrange
+
+    cache_dir = Path(cache_dir)
+    cache_path = cache_dir / f"{symbol}_binance_spot_1m_{start}_{end}.csv"
+    if cache_path.exists() and not force:
+        return load_ohlcv(cache_path)
+
+    parts: list[pd.DataFrame] = []
+    for month in _monthrange(start, end):
+        monthly_url = (
+            f"{ARCHIVE_BASE}/spot/monthly/klines/{symbol}/1m/"
+            f"{symbol}-1m-{month:%Y-%m}.zip"
+        )
+        monthly, _ = _fetch_many([monthly_url], workers=4)
+        if monthly:
+            parts.extend(_klines_zip_to_ohlcv(raw) for raw in monthly)
+            continue
+        m0 = month if month.tzinfo else month.tz_localize("UTC")
+        day_lo = max(pd.Timestamp(start, tz="UTC"), m0)
+        day_hi = min(pd.Timestamp(end, tz="UTC"), m0 + pd.offsets.MonthEnd(0))
+        urls = [
+            f"{ARCHIVE_BASE}/spot/daily/klines/{symbol}/1m/{symbol}-1m-{d:%Y-%m-%d}.zip"
+            for d in _daterange(day_lo.strftime("%Y-%m-%d"), day_hi.strftime("%Y-%m-%d"))
+        ]
+        daily, missing = _fetch_many(urls, workers=8)
+        if not daily:
+            raise RuntimeError(f"no 1m archive for {symbol} {m0:%Y-%m} (miss {len(missing)})")
+        parts.extend(_klines_zip_to_ohlcv(raw) for raw in daily)
+
+    df = pd.concat(parts).sort_index()
+    df = df[~df.index.duplicated(keep="last")]
+    lo = pd.Timestamp(start, tz="UTC")
+    hi = pd.Timestamp(end, tz="UTC") + pd.Timedelta(days=1) - pd.Timedelta(milliseconds=1)
+    df = df.loc[(df.index >= lo) & (df.index <= hi)]
     save_ohlcv(df, cache_path)
     return df

@@ -21,22 +21,18 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-# scripts/optimize_bracket.py の総当たりで選んだ枠。ここを動かすときは再測定する。
+# 現行枠（2026-08-25）: 保有12時間 / 損切り1.00% / RR 1:1.5 / 同時1枠。
+# 入口は1分足。15分足で測った「同じ時間の窓」になるよう、バー数は×15する。
 #
-# 必要上振れ = (往復コスト率 / 損切り幅) / (1 + RR) なので、幅を広げるほど下がる。
-# さらに必要シグナル強度は θ ≥ 2c/(s²·RR) で**幅の2乗**に反比例するため、
-# RR を上げるより幅を広げるほうが効く。ただし6時間の値動きの標準偏差
-# （15分足ATR × √24 ≈ 1.35%）を損切り+利確の合計が超えると障壁に届かず、
-# 「1:RR のブラケット」ではなく「6時間で成行決済」になる。
-#
-#   損切り × (1 + RR) ≲ 1.35%
-#
-# この制約下で決済率70%以上を保つ最良が 1:1.5 / 0.70%（決済率70%、+4.2pt）。
-# 旧枠は 1:2 / 0.35%（決済率90%、両側テイカーで +14.3pt）。
-STOP_PCT = 0.007
+# 必要上振れ = (往復コスト率 / 損切り幅) / (1 + RR)
+# 12時間で決済率70%を満たす最大幅が 1.00%（必要 +2.9pt）。
+# 旧6時間枠は 0.70%（必要 +4.2pt）。
+STOP_PCT = 0.010
 RR = 1.5
-MAX_HOURS = 6.0
-BARS_PER_HOUR = 4
+MAX_HOURS = 12.0
+BARS_PER_HOUR = 4  # 15分足。1分足は BARS_PER_HOUR_1M
+BARS_PER_HOUR_1M = 60
+M15_TO_1M = 15
 
 
 def scan_bracket(
@@ -464,6 +460,40 @@ CYCLE_BRACKET: dict[str, dict] = {
 }
 
 
-def build_signals(logic_id: str, df: pd.DataFrame) -> np.ndarray:
-    spec = CYCLE_BRACKET[logic_id]
+def build_signals(logic_id: str, df: pd.DataFrame, cycle: dict | None = None) -> np.ndarray:
+    spec = (cycle or CYCLE_BRACKET)[logic_id]
     return SIGNALS[spec["signal"]](df, spec.get("params") or {}).values
+
+
+_BAR_COUNT_KEYS = ("fast", "slow", "window", "n", "look", "k", "rsi")
+
+
+def cycle_bracket_1m() -> dict[str, dict]:
+    """15分足と同じ時間窓になるよう、バー数を ×15 した OHLCV 条件。
+
+    派生データは15分グリッド前提なので、1分足の最初の検証からは外す。
+    """
+    out: dict[str, dict] = {}
+    for logic_id, spec in CYCLE_BRACKET.items():
+        if spec.get("needs_deriv"):
+            continue
+        params = dict(spec.get("params") or {})
+        signal = spec["signal"]
+        if signal == "rsi_revert":
+            params.setdefault("n", 14)
+        elif signal == "trend_pullback":
+            params.setdefault("slow", 192)
+            params.setdefault("fast", 12)
+            params.setdefault("rsi", 14)
+        elif signal == "squeeze_break":
+            params.setdefault("n", 14)
+            params.setdefault("look", 96)
+            params.setdefault("window", 12)
+        elif signal in ("vol_spike", "vol_spike_fade"):
+            params.setdefault("look", 96)
+        scaled = {
+            key: (value * M15_TO_1M if key in _BAR_COUNT_KEYS and isinstance(value, int) else value)
+            for key, value in params.items()
+        }
+        out[logic_id] = {**spec, "params": scaled}
+    return out

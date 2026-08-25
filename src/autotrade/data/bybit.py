@@ -8,6 +8,7 @@ import pandas as pd
 
 # Bybit interval codes
 INTERVAL_MAP = {
+    "1m": "1",
     "15m": "15",
     "4h": "240",
     "1d": "D",

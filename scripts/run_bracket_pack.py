@@ -34,11 +34,13 @@ from autotrade.eval import load_eval_config  # noqa: E402
 from autotrade.eval.multi import load_multi_derivatives, load_multi_frames  # noqa: E402
 from autotrade.strategy.bracket import (  # noqa: E402
     BARS_PER_HOUR,
+    BARS_PER_HOUR_1M,
     CYCLE_BRACKET,
     MAX_HOURS,
     RR,
     STOP_PCT,
     build_signals,
+    cycle_bracket_1m,
 )
 
 
@@ -166,6 +168,8 @@ def main() -> None:
     ap.add_argument("--lock", default="eval/locks/eval_v3_btc.lock.yaml")
     ap.add_argument("--set", required=True)
     ap.add_argument("--logics", default="")
+    ap.add_argument("--interval", default="15m", choices=("15m", "1m"))
+    ap.add_argument("--ohlcv-only", action="store_true", help="派生データ条件を外す")
     ap.add_argument("--maker-entry", action="store_true", help="入口をメイカーとして計算")
     ap.add_argument("--stop", type=float, default=None, help="損切り幅（既定は bracket.py の値）")
     ap.add_argument("--rr", type=float, default=None, help="リスクリワード比")
@@ -176,15 +180,29 @@ def main() -> None:
     with open(args.lock, encoding="utf-8") as f:
         lock = yaml.safe_load(f)
 
-    frames = load_multi_frames(lock, args.set, "BTCUSDT")
-    df = frames["15m"]
+    if args.interval == "1m":
+        entry = lock["datasets"][args.set]["symbols"]["BTCUSDT"]
+        path_str = next(iter(entry["files"]))
+        from autotrade.data.bybit import load_ohlcv
+
+        df = load_ohlcv(Path(path_str))
+        cycle = cycle_bracket_1m()
+        bars_per_hour = BARS_PER_HOUR_1M
+    else:
+        frames = load_multi_frames(lock, args.set, "BTCUSDT")
+        df = frames["15m"]
+        cycle = CYCLE_BRACKET
+        bars_per_hour = BARS_PER_HOUR
+
     lo = pd.Timestamp(cfg.sets[args.set].start, tz="UTC")
     hi = pd.Timestamp(cfg.sets[args.set].end, tz="UTC") + pd.Timedelta(days=1)
     df = df.loc[(df.index >= lo) & (df.index <= hi)]
     months = (hi - lo).days / 30.4375
 
-    ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(CYCLE_BRACKET)
-    needs_deriv = any(CYCLE_BRACKET.get(i, {}).get("needs_deriv") for i in ids)
+    ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(cycle)
+    if args.ohlcv_only or args.interval == "1m":
+        ids = [i for i in ids if not cycle.get(i, {}).get("needs_deriv")]
+    needs_deriv = any(cycle.get(i, {}).get("needs_deriv") for i in ids)
     if needs_deriv:
         deriv = None
         try:
@@ -203,7 +221,7 @@ def main() -> None:
             df = df.join(deriv, how="left", rsuffix="_d")
             print(f"derivatives joined: {list(deriv.columns)}")
         else:
-            ids = [i for i in ids if not CYCLE_BRACKET.get(i, {}).get("needs_deriv")]
+            ids = [i for i in ids if not cycle.get(i, {}).get("needs_deriv")]
             print("derivatives unavailable — skipping needs_deriv logics")
 
     stop_pct = args.stop if args.stop is not None else STOP_PCT
@@ -219,13 +237,13 @@ def main() -> None:
         cost_rate = maker + w0 * maker + (1 - w0) * (taker + slip)
     else:
         cost_rate = (cfg.fee_rate_per_side + cfg.slippage_pct_per_side) * 2
-    max_bars = int(round(MAX_HOURS * BARS_PER_HOUR))
+    max_bars = int(round(MAX_HOURS * bars_per_hour))
     cost_r = cost_rate / stop_pct
     be_win = (1.0 + cost_r) / (1.0 + rr)
 
     rows = []
     for k, logic_id in enumerate(ids, 1):
-        sig = build_signals(logic_id, df)
+        sig = build_signals(logic_id, df, cycle=cycle)
         r = run_bracket(
             df, sig,
             stop_pct=stop_pct, rr=rr, max_bars=max_bars,
@@ -235,7 +253,7 @@ def main() -> None:
             print(f"[{k:3d}/{len(ids)}] {logic_id:22s} シグナルなし")
             continue
         r["logic_id"] = logic_id
-        r["why"] = CYCLE_BRACKET[logic_id]["why"]
+        r["why"] = cycle[logic_id]["why"]
         r["set"] = args.set
         r["per_month"] = r["trades"] / months
         r["beats_null"] = r["win_rate_resolved"] > 1.0 / (1.0 + rr)
@@ -258,7 +276,7 @@ def main() -> None:
     L = [
         f"# 固定ブラケット検証 — Set {args.set}",
         "",
-        f"BTCUSDT 15分足 ／ 損切り **{stop_pct*100:.2f}%** ／ 利確 "
+        f"BTCUSDT {args.interval} ／ 損切り **{stop_pct*100:.2f}%** ／ 利確 "
         f"**{stop_pct*rr*100:.2f}%**（1:{rr:.1f}）／ 保有上限 **{MAX_HOURS:.0f}時間** ／ "
         f"同時建玉 1",
         f"期間: {cfg.sets[args.set].start} 〜 {cfg.sets[args.set].end}（{months:.1f}ヶ月）",
