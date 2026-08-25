@@ -3,6 +3,7 @@
 仮説・売買ロジック・検証結果の蓄積。詳細は各エントリと `registry.yaml` を参照。
 
 運用: バックテスト実行後に自動追記。手動追記は `_template.md` と `registry.yaml` を参照。
+合否の読み方は [master/CURRENT.md](../master/CURRENT.md)。この表はランのログ。
 
 ## サマリー表
 
