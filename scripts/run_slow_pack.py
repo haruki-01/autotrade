@@ -130,11 +130,8 @@ def portfolio_metrics(
     if min_per_month > 0 and per_month < min_per_month:
         yaml_failures.append("trade_rate")
 
-    if apply_trade_rate_gate:
-        failures = yaml_failures
-    else:
-        failures = ev_dd_fail
     ev_dd_fail = [f for f in yaml_failures if f in ("expectancy", "drawdown")]
+    failures = yaml_failures if apply_trade_rate_gate else ev_dd_fail
 
     return {
         "trades": n,
