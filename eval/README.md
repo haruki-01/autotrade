@@ -1,5 +1,8 @@
 # 検証・評価環境（Formal Eval）
 
+**合否の読み方は [docs/master/CURRENT.md](../docs/master/CURRENT.md)。**  
+SH-01 の現行環境は `configs/eval_v3_btc.yaml`。下の eval_v1 は初期15m族の記録用。
+
 ## 合成データ smoke とは何か
 
 | 用語 | 意味 | 合否に使えるか |

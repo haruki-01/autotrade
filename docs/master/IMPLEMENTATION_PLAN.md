@@ -1,6 +1,10 @@
-# 実装プラン（現状 → 次にやること）
+# 実装プラン（経緯ログ）
+
+**いまの正本は [CURRENT.md](./CURRENT.md)。** 理想状態・合否・今の論点・次ステップはそこにだけ書く。
+このファイルは日付順の探索メモ。矛盾したら CURRENT を直す。
 
 最終更新: 2026-08-25
+
 
 ## 1. いまどこまでできているか
 
@@ -248,12 +252,11 @@ postmortem: [BTC単独](../hypothesis/postmortems/2026-08-24-btc-only.md)
 
 同じ12hブラケットで入口を探し続けるのは止める。情報が出た側（遅い値幅・固定1.5%利確なし＝SH-01系）に枠を合わせる。
 
-**いまやること:** `configs/eval_v3_btc.yaml` + `eval/locks/eval_v3_btc.lock.yaml` で
-`sh01n_center`（必要なら `sh01_base`）を Set A/B/C 再測定。`--campaign ev-dd`。
-買い持ち Return/DD は報告する（Set C で負けうる。棄却条件に既にある）。
+**いまの論点は採用判断。** [CURRENT.md](./CURRENT.md) の論点A。再測定は完了している。
 
 正本: [SLOW_HYPOTHESES.md](../hypothesis/SLOW_HYPOTHESES.md) ·
-workstream: [SH-01-daily-trend](../workstreams/SH-01-daily-trend/)
+workstream: [SH-01-daily-trend](../workstreams/SH-01-daily-trend/) ·
+レポート: `eval/reports/20260825-slow-evdd.md`
 
 ### 記録: 月50エントリーをゲートにしていた期間（2026-08-24）
 

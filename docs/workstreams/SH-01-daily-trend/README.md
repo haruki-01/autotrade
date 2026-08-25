@@ -23,9 +23,9 @@
 
 ## 次アクション
 
-1. 上昇期に BTC 保有の方が Return/DD で勝つことを受け入れるか（春希さん）
-2. 受け入れるなら demo。12hブラケット入口は再開しない
-3. live 前は Bybit 再確認（lock は binance_vision）
+1. 春希さんの論点A: SH-01 を DD 売りとして demo に出すか（正本 [CURRENT.md](../../master/CURRENT.md)）
+2. 「Set C で買い持ちに負けるのが嫌」なら論点Bだけ（既存 `regime` 1点）。入口は増やさない
+3. 採用するなら論点C（Bybit / demo）。live 前に Vision データを再確認
 
 ## メモ置き場
 

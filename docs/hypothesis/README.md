@@ -16,6 +16,7 @@ docs/hypothesis/
 
 ## 読む順
 
+0. プロジェクトの「いま」→ [../master/CURRENT.md](../master/CURRENT.md)
 1. [FLOW.md](./FLOW.md) · [craft/THREE_LAYER_MODEL.md](./craft/THREE_LAYER_MODEL.md)
 2. **[craft/TRADE_SPOT_HYPOTHESIS.md](./craft/TRADE_SPOT_HYPOTHESIS.md)** — トレードスポット仮説の考え方
 3. [spots/](./spots/) — ①のストック

@@ -1,13 +1,21 @@
 # 検証・評価プロトコル（Formal Eval）
 
-**合否の正本。** 合成 smoke は対象外。
+**合否の正本は [CURRENT.md](./CURRENT.md)。** 合成 smoke は対象外。
 
 ## 1. 環境
 
+現行の SH-01 経路:
+
 | 要素 | 場所 |
 |------|------|
-| 固定数値（コスト・期間・ゲート） | `configs/eval_v1.yaml` |
-| データ指紋 | `eval/locks/eval_v1.lock.yaml` |
+| 固定数値 | `configs/eval_v3_btc.yaml` |
+| データ指紋 | `eval/locks/eval_v3_btc.lock.yaml` |
+| ランナー | `scripts/run_slow_pack.py --campaign ev-dd` |
+
+初期の 15m 族（H01 など）は `configs/eval_v1.yaml` のまま記録用。新しい合否に使わない。
+
+| 共通 | 場所 |
+|------|------|
 | 手順 | `eval/README.md` |
 | エージェント技能 | `.cursor/skills/backtest-eval/SKILL.md` |
 
@@ -20,12 +28,9 @@
 
 ## 3. 数値の一致
 
-実装・検証で同じ値を使う（`configs/eval_v1.yaml` / eval_v1.1）:
+コスト・口座は v1 から変えない（fee 5.5bps/side、slip 2bps/side、lev 3、証拠金 30、元本 300）。
 
-- fee 5.5bps/side、slip 2bps/side、lev 3
-- サイジング: 証拠金 $30 / リスク $3（fixed_margin）、初期資金 $300
-- Set B = 本検証、Set C = holdout
-- ゲート: 期待値>0 / トレード≥100 / DD≤20%
+合否の読み方は CURRENT: 費用後EV>0 と DD≤20%。n<100 は判定保留。月50は非ゲート。
 
 手順の精緻版: [../hypothesis/craft/VALIDATION_FLOW.md](../hypothesis/craft/VALIDATION_FLOW.md)
 

@@ -9,23 +9,29 @@ description: >-
 
 # Formal Backtest Eval（検証・評価）
 
+合否の読み方: `docs/master/CURRENT.md`。合成 smoke は対象外。
+
+現行（SH-01）: `configs/eval_v3_btc.yaml` + `eval/locks/eval_v3_btc.lock.yaml` + `--campaign ev-dd`。  
+初期15m族の記録用が `eval_v1`。新しい合否に eval_v1 のゲート文言だけを使わない。
+
 ## 用語（必ず区別する）
 
 | 用語 | 意味 | 合否 |
 |------|------|------|
 | **synthetic smoke** | 乱数の偽足。コード動作確認のみ | **使わない** |
-| **formal eval** | 実市場の過去データ + `configs/eval_v1.yaml` の固定数値 | **唯一の合否** |
+| **formal eval** | 実市場の過去データ + 現行 lock の固定数値 | **唯一の合否** |
 
 ユーザーが「検証」「評価」と言ったら **formal eval のみ**。`--synthetic` は禁止。
 
 ## 環境の正本
 
-1. 数値: `configs/eval_v1.yaml`（fee / slip / lev / equity / 期間 / ゲート）
-2. データ指紋: `eval/locks/eval_v1.lock.yaml`
-3. 手順: `eval/README.md`
-4. 設計: `docs/master/BACKTEST_DESIGN.md`
+SH-01（現行）:
 
-実装時と **同じコスト・資金・レバ・ゲート** を使う。勝手に変えない。変えるなら `eval_version` を上げて lock 再生成。
+1. 数値: `configs/eval_v3_btc.yaml`
+2. データ指紋: `eval/locks/eval_v3_btc.lock.yaml`
+3. 読み方: `docs/master/CURRENT.md`
+
+コスト・資金・レバを変えるなら `eval_version` を上げて lock 再生成。合否の解釈だけ変えるときは CURRENT を先に直す。
 
 ## 必須ワークフロー
 

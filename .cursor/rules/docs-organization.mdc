@@ -26,9 +26,11 @@ alwaysApply: true
 
 作業開始時:
 
-1. `docs/master/IMPLEMENTATION_PLAN.md` — いま何をするか
+1. `docs/master/CURRENT.md` — 理想状態・合否・いまの論点
 2. 対象の `docs/workstreams/<id>/README.md` — その要素の現状
 3. 必要なら `docs/master/MARKET_EDGE_MAP.md` と `docs/research/INDEX.md`
+
+`IMPLEMENTATION_PLAN.md` は日付順の探索ログ。CURRENT と矛盾したら CURRENT を直す。
 
 全体方針と矛盾する提案は、先に master の該当箇所を直してから workstream を進める。
 
