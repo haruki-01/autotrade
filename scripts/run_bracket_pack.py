@@ -180,6 +180,12 @@ def main() -> None:
     ap.add_argument("--start", default="", help="評価開始日 YYYY-MM-DD（省略時は config の set）")
     ap.add_argument("--end", default="", help="評価終了日 YYYY-MM-DD（省略時は config の set）")
     ap.add_argument("--logics", default="")
+    ap.add_argument(
+        "--pack",
+        default="",
+        choices=("", "htf"),
+        help="htf: 対照 + 上位足場面×1分トリガーだけ",
+    )
     ap.add_argument("--interval", default="15m", choices=("15m", "1m"))
     ap.add_argument("--ohlcv-only", action="store_true", help="派生データ条件を外す")
     ap.add_argument("--maker-entry", action="store_true", help="入口をメイカーとして計算")
@@ -213,7 +219,23 @@ def main() -> None:
     df = df.loc[(df.index >= lo) & (df.index <= hi)]
     months = (hi - lo).days / 30.4375
 
-    ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(cycle)
+    if args.pack == "htf" and args.interval != "1m":
+        raise SystemExit("--pack htf は --interval 1m 専用です")
+    PACK_HTF = [
+        "br_random",
+        "br_random_b",
+        "br_htf15_bull_pb",
+        "br_htf15_bull_brk",
+        "br_htf1h_bull_pb",
+        "br_htf15_ema_pb",
+        "br_htf1h_ema_pb",
+        "br_htf15_bull_sqz",
+        "br_htf15_bull_runs",
+    ]
+    if args.pack == "htf":
+        ids = [i for i in PACK_HTF if i in cycle]
+    else:
+        ids = [s.strip() for s in args.logics.split(",") if s.strip()] or list(cycle)
     if args.ohlcv_only or args.interval == "1m":
         ids = [i for i in ids if not cycle.get(i, {}).get("needs_deriv")]
     needs_deriv = any(cycle.get(i, {}).get("needs_deriv") for i in ids)

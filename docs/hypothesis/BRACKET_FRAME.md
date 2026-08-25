@@ -267,6 +267,18 @@ OHLCV の最良（+3.9pt）にも届かない。
 
 レポート: `eval/reports/20260825-bracket1m-setY.md`
 
+## 案2 — 上位足の場面 × 1分のトリガー
+
+春希さん採用。枠（12h / 1.00% / 1:1.5 / 1枠 / メイカー）は変えない。
+15分・1時間は確定してから1分に載せる。インジ総当たりはしない。
+
+スポット: [SPOT-HTF-001](spots/SPOT-HTF-001-15m-bull-1m-ema-reclaim.md) ·
+[SPOT-HTF-002](spots/SPOT-HTF-002-15m-bull-1m-break-prior-high.md) ·
+メモ: [htf-1m-spots](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-htf-1m-spots.md)
+
+検証は直近1年。決済EVが黒の条件だけ8年。
+レポート: `eval/reports/20260825-bracket-htf1m-setY.md`（実行後）
+
 ## 1分足入口の遅延
 
 測った遅れ（値動きがある2週間、2024-03）:

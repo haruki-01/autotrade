@@ -118,6 +118,56 @@ def _atr(df: pd.DataFrame, n: int) -> pd.Series:
     return tr.ewm(alpha=1 / n, adjust=False).mean()
 
 
+def _resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
+    cols: dict[str, str] = {
+        "open": "first",
+        "high": "max",
+        "low": "min",
+        "close": "last",
+    }
+    if "volume" in df.columns:
+        cols["volume"] = "sum"
+    return df.resample(rule, label="left", closed="left").agg(cols).dropna()
+
+
+def _align_completed_htf(df_1m: pd.DataFrame, htf: pd.DataFrame, minutes: int) -> pd.DataFrame:
+    """上位足はバーが確定した1分にだけ載せる。未完成足は使わない。
+
+    ``label=left, closed=left`` の15分足 T は [T, T+15min)。確定は T+14min。
+    """
+    out = htf.copy()
+    out.index = htf.index + pd.Timedelta(minutes=minutes - 1)
+    out = out[~out.index.duplicated(keep="last")]
+    return out.reindex(df_1m.index, method="ffill")
+
+
+def _completed_htf(df: pd.DataFrame, minutes: int) -> pd.DataFrame:
+    htf = _resample_ohlc(df, f"{minutes}min")
+    htf["ema20"] = _ema(htf["close"], 20)
+    htf["ema50"] = _ema(htf["close"], 50)
+    htf["bull"] = (htf["close"] > htf["open"]).astype(float)
+    htf["bear"] = (htf["close"] < htf["open"]).astype(float)
+    htf["trend_up"] = (htf["close"] > htf["ema20"]).astype(float)
+    htf["trend_dn"] = (htf["close"] < htf["ema20"]).astype(float)
+    htf["ema_up"] = (htf["ema20"] > htf["ema50"]).astype(float)
+    htf["ema_dn"] = (htf["ema20"] < htf["ema50"]).astype(float)
+    htf["prior_high"] = htf["high"].shift(1)
+    htf["prior_low"] = htf["low"].shift(1)
+    return _align_completed_htf(df, htf, minutes)
+
+
+def _flag(s: pd.Series) -> pd.Series:
+    return s.fillna(0).astype(float) > 0.5
+
+
+def _cross_up(close: pd.Series, level: pd.Series) -> pd.Series:
+    return (close > level) & (close.shift(1) <= level.shift(1))
+
+
+def _cross_dn(close: pd.Series, level: pd.Series) -> pd.Series:
+    return (close < level) & (close.shift(1) >= level.shift(1))
+
+
 @dataclass
 class Signals:
     """各足で +1（ロング）/ -1（ショート）/ 0（何もしない）。"""
@@ -173,6 +223,75 @@ def sig_rsi_revert(df: pd.DataFrame, p: dict) -> Signals:
     cross_lo = (r < lo) & (r.shift(1) >= lo)
     cross_hi = (r > hi) & (r.shift(1) <= hi)
     return Signals(np.where(cross_lo, 1, np.where(cross_hi, -1, 0)).astype(np.int8))
+
+
+def sig_htf15_bull_pb(df: pd.DataFrame, p: dict) -> Signals:
+    """15分が確定陽線/陰線のあと、1分が15分EMA20を取り戻す押し目。"""
+    del p
+    a = _completed_htf(df, 15)
+    ema = a["ema20"]
+    long = _flag(a["bull"]) & _cross_up(df["close"], ema)
+    short = _flag(a["bear"]) & _cross_dn(df["close"], ema)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf15_bull_brk(df: pd.DataFrame, p: dict) -> Signals:
+    """15分が確定陽線/陰線のあと、1分が直前の確定15分高値/安値を更新。"""
+    del p
+    a = _completed_htf(df, 15)
+    long = _flag(a["bull"]) & _cross_up(df["close"], a["prior_high"])
+    short = _flag(a["bear"]) & _cross_dn(df["close"], a["prior_low"])
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf1h_bull_pb(df: pd.DataFrame, p: dict) -> Signals:
+    """1時間が確定陽線/陰線の中で、1分が15分EMA20を取り戻す。"""
+    del p
+    a15 = _completed_htf(df, 15)
+    a1h = _completed_htf(df, 60)
+    ema = a15["ema20"]
+    long = _flag(a1h["bull"]) & _cross_up(df["close"], ema)
+    short = _flag(a1h["bear"]) & _cross_dn(df["close"], ema)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf15_ema_pb(df: pd.DataFrame, p: dict) -> Signals:
+    """15分終値が15分EMA20の上/下（トレンド）で、1分がそのEMAを取り戻す。"""
+    del p
+    a = _completed_htf(df, 15)
+    ema = a["ema20"]
+    long = _flag(a["trend_up"]) & _cross_up(df["close"], ema)
+    short = _flag(a["trend_dn"]) & _cross_dn(df["close"], ema)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf1h_ema_pb(df: pd.DataFrame, p: dict) -> Signals:
+    """1時間EMA20>EMA50の中で、1分が15分EMA20を取り戻す。"""
+    del p
+    a15 = _completed_htf(df, 15)
+    a1h = _completed_htf(df, 60)
+    ema = a15["ema20"]
+    long = _flag(a1h["ema_up"]) & _cross_up(df["close"], ema)
+    short = _flag(a1h["ema_dn"]) & _cross_dn(df["close"], ema)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf15_bull_sqz(df: pd.DataFrame, p: dict) -> Signals:
+    """15分が確定陽線/陰線のときだけ、1分の収縮抜けに乗る。"""
+    a = _completed_htf(df, 15)
+    sq = sig_squeeze_break(df, p or {"q": 0.15, "n": 14, "look": 96, "window": 12})
+    long = _flag(a["bull"]) & (sq.values == 1)
+    short = _flag(a["bear"]) & (sq.values == -1)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
+
+
+def sig_htf15_bull_runs(df: pd.DataFrame, p: dict) -> Signals:
+    """15分が確定陽線/陰線のときだけ、1分の連続足継続に乗る。"""
+    a = _completed_htf(df, 15)
+    r = sig_runs(df, p or {"k": 4})
+    long = _flag(a["bull"]) & (r.values == 1)
+    short = _flag(a["bear"]) & (r.values == -1)
+    return Signals(np.where(long, 1, np.where(short, -1, 0)).astype(np.int8))
 
 
 def sig_runs_resampled(df: pd.DataFrame, p: dict) -> Signals:
@@ -388,6 +507,13 @@ SIGNALS: dict[str, SignalFn] = {
     "rsi_revert": sig_rsi_revert,
     "runs": sig_runs,
     "runs_resampled": sig_runs_resampled,
+    "htf15_bull_pb": sig_htf15_bull_pb,
+    "htf15_bull_brk": sig_htf15_bull_brk,
+    "htf1h_bull_pb": sig_htf1h_bull_pb,
+    "htf15_ema_pb": sig_htf15_ema_pb,
+    "htf1h_ema_pb": sig_htf1h_ema_pb,
+    "htf15_bull_sqz": sig_htf15_bull_sqz,
+    "htf15_bull_runs": sig_htf15_bull_runs,
     "runs_fade": sig_runs_fade,
     "squeeze_break": sig_squeeze_break,
     "vol_spike": sig_vol_spike,
@@ -516,5 +642,41 @@ def cycle_bracket_1m() -> dict[str, dict]:
         "signal": "runs_resampled",
         "params": {"k": 5, "rule": "15min"},
         "why": "5連続15分足の継続（決済だけ1分足）",
+    }
+    # 上位足は確定バーで場面を決め、1分はトリガーだけ。バー数は×15しない。
+    out["br_htf15_bull_pb"] = {
+        "signal": "htf15_bull_pb",
+        "params": {},
+        "why": "15分陽線のあと1分が15分EMAを取り戻す",
+    }
+    out["br_htf15_bull_brk"] = {
+        "signal": "htf15_bull_brk",
+        "params": {},
+        "why": "15分陽線のあと1分が直前15分高値を更新",
+    }
+    out["br_htf1h_bull_pb"] = {
+        "signal": "htf1h_bull_pb",
+        "params": {},
+        "why": "1時間陽線の中で1分が15分EMAを取り戻す",
+    }
+    out["br_htf15_ema_pb"] = {
+        "signal": "htf15_ema_pb",
+        "params": {},
+        "why": "15分がEMA上のとき1分がそのEMAを取り戻す",
+    }
+    out["br_htf1h_ema_pb"] = {
+        "signal": "htf1h_ema_pb",
+        "params": {},
+        "why": "1時間EMA順方向の中で1分が15分EMAを取り戻す",
+    }
+    out["br_htf15_bull_sqz"] = {
+        "signal": "htf15_bull_sqz",
+        "params": {"q": 0.15, "n": 14, "look": 96, "window": 12},
+        "why": "15分陽線のときだけ1分の収縮抜け",
+    }
+    out["br_htf15_bull_runs"] = {
+        "signal": "htf15_bull_runs",
+        "params": {"k": 4},
+        "why": "15分陽線のときだけ1分の4連続継続",
     }
     return out

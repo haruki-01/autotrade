@@ -317,6 +317,10 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 - **(0) 分母: 元本 300 USDT で確定**（1回の証拠金 30）。月120% = 月360 USDT。必要 N×Q²=3.00（実測0.179の17倍）。
 - **(1) 実施済み:** 12h / 1.00% / 1枠を15分足・直近1年で測った。**EV決済黒字 0。8年は回さない。**
   レポート: `eval/reports/20260825-bracket12h15m-setY.md`
+- **(2) 採用・実施中:** 上位足で場面、1分は入る瞬間だけ（案2）。枠は据え置き。
+  スポット: [SPOT-HTF-001](../hypothesis/spots/SPOT-HTF-001-15m-bull-1m-ema-reclaim.md) /
+  [SPOT-HTF-002](../hypothesis/spots/SPOT-HTF-002-15m-bull-1m-break-prior-high.md)。
+  コマンド: `scripts/run_bracket_pack.py --set Y --interval 1m --maker-entry --pack htf --tag bracket-htf1m`
 
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
 workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·
