@@ -301,11 +301,20 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 最良でも +0.9pt（`br_fund_cheap`）。混み合いに乗るのは明確に負け（z=−6.35）。
 `br_runs_5` に funding 安い側フィルタを足す one-point は勝率が動かず頻度だけ落ちた。
 
-次の手は枠の外に出ることになる。候補は (1) 決済率をさらに譲って幅を広げる
-（下限50%なら必要上振れ +2.0pt）か、(2) 1分足で入口を取る、か。
-どちらも春希さんの判断。
+次の手は枠の外に出ることになる。候補と実測:
+
+1. **保有を12hにして幅を1.00%へ** — 決済率70%を保ったまま必要上振れ +4.2pt → **+2.9pt**。
+   1枠の捨て率は 48% → 50% でほぼ増えない。16h はさらに +2.4pt まで下がるが伸びは小さい。
+2. **1分足で入口** — 1〜5分の遅れは勝率差 0pt。遅延より未完成足・欠測・取得側の追加が本体。
+3. **複数建玉** — サブ口座なしでは独立チケットは不可（Bybit はネット1本、hedge でも long+short の2本まで）。
+   重なりの 87% は同方向なので hedge は効かない。同方向に足すと捨て率は 8% まで落ちるが、
+   清算・平均単価・Partial TP/SL のレースが残る。**枠が黒字になるまでやらない。**
+
+正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
+`eval/reports/20260825-hold-and-overlap.md` · `eval/reports/20260825-1m-delay.md`
 
 計算: `scripts/optimize_bracket.py` · `scripts/limit_fill_risk.py` ·
+`scripts/hold_and_overlap.py` · `scripts/measure_1m_delay.py` ·
 レポート: `eval/reports/20260825-bracket15-summary.md`
 
 ### 目標からの逆算モデル（2026-08-24）
