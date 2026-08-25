@@ -79,14 +79,11 @@ sets:
 min_trades: 100
 max_drawdown_pct: 20.0
 
-# --- 運用要件（2026-08-24 追加）
-# min_trades とは別の軸。あちらは「測れるか」、こちらは「回す価値があるか」。
-# 正しくても月2回しか撃たないロジックは、元本を遊ばせているのと同じ。
-#
-# 入口判断は 1分〜15分足で行い、月50エントリー以上。
-# 月50 = 年600回。往復コスト 0.135 USDT/回 なので年81 USDT = 元本300の27%を
-# コストに払う。ここを踏まえて純EVが必要な水準は
-#   docs/hypothesis/postmortems/2026-08-24-trade-rate-requirement.md に導出。
+# --- 運用要件の記録（2026-08-24 追加 / 2026-08-25 から合否に使わない）
+# 数値はレポートに出す。SH 経路の PASS/FAIL には使わない。
+# 合否は費用後 EV>0（3期間の符号）と max_drawdown_pct。
+# ランナー: python scripts/run_slow_pack.py --campaign ev-dd --config configs/eval_v3_btc.yaml
+# 履歴: docs/hypothesis/postmortems/2026-08-24-trade-rate-requirement.md
 min_trades_per_month: 50
 max_entry_timeframe: "15m"
 

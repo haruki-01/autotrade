@@ -6,8 +6,9 @@ equity curve ordered by exit time. That merge is only legitimate because
 the per-symbol runs really are independent.
 
 Usage:
-    python scripts/run_slow_pack.py --set B
-    python scripts/run_slow_pack.py --set B --logics sh01_base,sh01_veto_1p0
+    python scripts/run_slow_pack.py --config configs/eval_v3_btc.yaml --set B
+    python scripts/run_slow_pack.py --config configs/eval_v3_btc.yaml --set B \\
+        --campaign ev-dd --logics sh01n_center,sh01_base
 """
 
 from __future__ import annotations
@@ -64,15 +65,16 @@ def portfolio_metrics(
     max_dd_limit: float,
     months: float,
     min_per_month: float = 0.0,
+    apply_trade_rate_gate: bool = True,
 ) -> dict:
     """Metrics on the merged book rather than on any single symbol.
 
-    ``min_trades`` and ``min_per_month`` answer different questions and both
-    have to be reported. The first is a sample-size floor -- below it the
-    expectancy cannot be measured, so the verdict is "cannot tell" rather than
-    "fails". The second is a requirement on the strategy itself: capital that
-    sits idle for weeks is not being put to work, however good the few trades
-    it does take turn out to be.
+    ``min_trades`` is a sample-size floor: below it expectancy cannot be
+    measured, so the verdict is "cannot tell" rather than "fails".
+    ``min_per_month`` is reported either way. It is a pass/fail gate only when
+    ``apply_trade_rate_gate`` is true (the 2026-08-24 operational requirement).
+    The 2026-08-25 campaign judges cost-after EV and drawdown; monthly 50 is
+    not a gate on that path.
     """
     n = len(trades)
     if n == 0:
@@ -88,7 +90,12 @@ def portfolio_metrics(
             "total_fees": 0.0,
             "total_funding": 0.0,
             "gate_pass": False,
-            "gate_failures": ["min_trades", "expectancy", "trade_rate"],
+            "gate_failures": ["min_trades", "expectancy"]
+            + (["trade_rate"] if apply_trade_rate_gate else []),
+            "yaml_gate_failures": ["min_trades", "expectancy", "trade_rate"],
+            "ev_dd_pass": False,
+            "sample_hold": True,
+            "campaign": "ev-dd" if not apply_trade_rate_gate else "yaml",
         }
 
     df = pd.DataFrame(trades).sort_values("exit_time")
@@ -113,15 +120,21 @@ def portfolio_metrics(
     meeting = int((counts >= min_per_month).sum()) if min_per_month > 0 else 0
     meeting_pct = 100.0 * meeting / n_months if n_months else 0.0
 
-    failures = []
+    yaml_failures = []
     if n < min_trades:
-        failures.append("min_trades")
+        yaml_failures.append("min_trades")
     if avg <= 0:
-        failures.append("expectancy")
+        yaml_failures.append("expectancy")
     if dd > max_dd_limit:
-        failures.append("drawdown")
+        yaml_failures.append("drawdown")
     if min_per_month > 0 and per_month < min_per_month:
-        failures.append("trade_rate")
+        yaml_failures.append("trade_rate")
+
+    if apply_trade_rate_gate:
+        failures = yaml_failures
+    else:
+        failures = ev_dd_fail
+    ev_dd_fail = [f for f in yaml_failures if f in ("expectancy", "drawdown")]
 
     return {
         "trades": n,
@@ -136,6 +149,10 @@ def portfolio_metrics(
         "total_funding": float(df["funding"].sum()),
         "gate_pass": not failures,
         "gate_failures": failures,
+        "yaml_gate_failures": yaml_failures,
+        "ev_dd_pass": not ev_dd_fail,
+        "sample_hold": n < min_trades,
+        "campaign": "ev-dd" if not apply_trade_rate_gate else "yaml",
     }
 
 
@@ -146,6 +163,16 @@ def main() -> None:
     ap.add_argument("--logics", default="")
     ap.add_argument("--tag", default="slow-pack")
     ap.add_argument("--lock", default=str(MULTI_LOCK_PATH))
+    ap.add_argument(
+        "--campaign",
+        choices=("yaml", "ev-dd"),
+        default="yaml",
+        help=(
+            "yaml: eval yaml のゲートをそのまま使う（月50含む）。"
+            "ev-dd: 費用後EV>0 と DD だけを合否にする。月50は報告のみ。"
+            "min_trades 未達は判定保留（サンプル）として印を付ける。"
+        ),
+    )
     ap.add_argument(
         "--risk-usdt",
         type=float,
@@ -162,8 +189,13 @@ def main() -> None:
         ),
     )
     args = ap.parse_args()
+    apply_rate = args.campaign == "yaml"
 
     cfg, _, raw = load_eval_config(args.config)
+    lock_path = Path(args.lock)
+    if args.lock == str(MULTI_LOCK_PATH) and Path(args.config).name.startswith("eval_v3"):
+        lock_path = Path("eval/locks/eval_v3_btc.lock.yaml")
+        args.lock = str(lock_path)
     risk_usdt = args.risk_usdt if args.risk_usdt is not None else cfg.risk_per_trade_usdt
     min_trades = args.min_trades if args.min_trades is not None else cfg.min_trades
     lock_bytes = Path(args.lock).read_bytes()
@@ -245,6 +277,7 @@ def main() -> None:
             max_dd_limit=cfg.max_drawdown_pct,
             months=set_months,
             min_per_month=cfg.min_trades_per_month,
+            apply_trade_rate_gate=apply_rate,
         )
         row = {
             "logic_id": logic_id,
@@ -256,6 +289,7 @@ def main() -> None:
             "symbols": symbols,
             "risk_per_trade_usdt": risk_usdt,
             "min_trades_used": min_trades,
+            "campaign": args.campaign,
             "env": env,
             "trades_per_symbol": per_symbol,
             **m,
@@ -269,7 +303,12 @@ def main() -> None:
         (out_dir / "metrics.json").write_text(json.dumps(row, indent=2, default=str), "utf-8")
         row["artifacts_dir"] = str(out_dir)
 
-        flag = "PASS" if m["gate_pass"] else "FAIL"
+        if args.campaign == "ev-dd":
+            flag = "PASS" if m["ev_dd_pass"] else "FAIL"
+            if m["sample_hold"]:
+                flag += "/HOLD"
+        else:
+            flag = "PASS" if m["gate_pass"] else "FAIL"
         print(
             f"[{i:3d}/{len(logic_ids)}] {logic_id:22s} {flag} "
             f"n={m['trades']:4d} ({m['trades_per_month']:5.1f}/月) "
@@ -292,31 +331,50 @@ def main() -> None:
         + f", max_dd={cfg.max_drawdown_pct}%, risk={risk_usdt} USDT/trade"
         + (
             f", 最低 {cfg.min_trades_per_month:.0f} エントリー/月"
-            if cfg.min_trades_per_month
+            if cfg.min_trades_per_month and args.campaign == "yaml"
+            else ""
+        )
+        + (
+            f", campaign=ev-dd（月{cfg.min_trades_per_month:.0f}回は報告のみ・合否に使わない）"
+            if args.campaign == "ev-dd"
             else ""
         )
         + ("（★上書き）" if risk_usdt != cfg.risk_per_trade_usdt else ""),
         "",
         "実行環境: " + " / ".join(f"{k} {v}" for k, v in env.items()),
         "",
-        "| logic | ノブ | n | 月あたり | EV | 勝率 | DD | 総リターン | 判定 | 落ちた条件 |",
-        "|-------|------|---|---------|----|------|----|-----------|------|-----------|",
+        "| logic | ノブ | n | 月あたり | EV | 勝率 | DD | 総リターン | EV+DD | サンプル | 落ちた条件 |",
+        "|-------|------|---|---------|----|------|----|-----------|-------|----------|-----------|",
     ]
     for r in rows:
+        evdd = "PASS" if r.get("ev_dd_pass") else "FAIL"
+        sample = "判定保留" if r.get("sample_hold") else "ok"
+        drops = r.get("gate_failures") or []
         md.append(
             f"| `{r['logic_id']}` | {r['knob']} | {r['trades']} "
             f"| {r['trades_per_month']:.1f} | {r['avg_trade_pnl']:+.3f} "
             f"| {r['win_rate_pct']:.1f}% | {r['max_drawdown_pct']:.1f}% "
-            f"| {r['total_return_pct']:+.1f}% | {'PASS' if r['gate_pass'] else 'FAIL'} "
-            f"| {', '.join(r['gate_failures']) or '—'} |"
+            f"| {r['total_return_pct']:+.1f}% | {evdd} | {sample} "
+            f"| {', '.join(drops) or '—'} |"
         )
     base.with_suffix(".md").write_text("\n".join(md) + "\n", "utf-8")
 
-    npass = sum(1 for r in rows if r["gate_pass"])
-    print(f"\nPASS {npass}/{len(rows)}  →  {base.with_suffix('.md')}")
-    for r in rows:
-        if r["gate_pass"]:
-            print(f"  {r['logic_id']}  EV={r['avg_trade_pnl']:+.3f} n={r['trades']}")
+    if args.campaign == "ev-dd":
+        npass = sum(1 for r in rows if r.get("ev_dd_pass"))
+        print(f"\nEV+DD PASS {npass}/{len(rows)}  →  {base.with_suffix('.md')}")
+        for r in rows:
+            mark = "PASS" if r.get("ev_dd_pass") else "FAIL"
+            hold = " HOLD" if r.get("sample_hold") else ""
+            print(
+                f"  {r['logic_id']}  {mark}{hold}  "
+                f"EV={r['avg_trade_pnl']:+.3f} n={r['trades']}"
+            )
+    else:
+        npass = sum(1 for r in rows if r["gate_pass"])
+        print(f"\nPASS {npass}/{len(rows)}  →  {base.with_suffix('.md')}")
+        for r in rows:
+            if r["gate_pass"]:
+                print(f"  {r['logic_id']}  EV={r['avg_trade_pnl']:+.3f} n={r['trades']}")
 
 
 if __name__ == "__main__":
