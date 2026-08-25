@@ -21,6 +21,8 @@ PYTHONPATH=src python3 -m autotrade.cli demo --submit --order-logic sh01n_regime
 
 止める: `touch secrets/demo/KILL`（次のサイクルで停止）
 
+`bybit.env` がエディタに出ないときは [secrets/README.md](../secrets/README.md) の「開けないとき」を見る。**Ctrl+P でパスを直接開く。**
+
 ログ: `artifacts/demo/demo.jsonl`
 
 live キーは拒否する。`--submit` と Vision 足の組み合わせも拒否する（研究データと本番の差を混ぜない）。

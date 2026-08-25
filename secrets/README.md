@@ -27,6 +27,23 @@ cp secrets/live/account.env.example secrets/live/account.env
 
 その後、各 `.env` に実際の値を記入してください。
 
+## Cursor で `bybit.env` が開けないとき
+
+Git に載せないファイルなので、左の一覧に出ないことがあります。**バグではありません。**
+
+1. **Ctrl+P**（Mac は **Cmd+P**）を押し、次をそのまま入力して開く  
+   `secrets/demo/bybit.env`
+2. 一覧にフォルダはあるがファイルが無い → ターミナル:
+
+```bash
+cp secrets/demo/bybit.env.example secrets/demo/bybit.env
+```
+
+そのあと、もう一度 Ctrl+P で開く。
+
+キーは `.example` には書かない（GitHub に載る）。`bybit.env` だけに書く。
+
+
 ## ルール
 
 1. **出金権限は付けない**（取引に必要な権限のみ）
