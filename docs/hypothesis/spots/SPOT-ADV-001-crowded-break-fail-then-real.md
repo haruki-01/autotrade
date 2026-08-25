@@ -1,7 +1,10 @@
 # SPOT-ADV-001: 定番ブレイクbotの初回を餌にし、失敗したあとだけ本方向に乗る
 
-status: proposed  
+status: tested-fail  
 created: 2026-08-25  
+updated: 2026-08-25
+
+Set Y 10変種すべて決済EV赤。アジア箱だけは 30% で悪化。箱を短くすると無作為に近づくだけ。  
 評価軸: [MARKET_ADVANTAGE_AXES.md](../../master/MARKET_ADVANTAGE_AXES.md)
 
 ## 仮説（一文）

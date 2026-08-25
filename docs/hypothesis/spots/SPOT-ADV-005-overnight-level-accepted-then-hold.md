@@ -1,7 +1,10 @@
 # SPOT-ADV-005: 薄い時間に守られていた水準が、厚い時間の確定足で折れたあと、overnight在庫の損切が続く
 
-status: proposed  
+status: tested-fail  
 created: 2026-08-25  
+updated: 2026-08-25
+
+Set Y 10変種すべて決済EV赤（n≥100の黒なし）。月50回に届かない。1時間確定は勝率だけ 40.7%。  
 評価軸: [MARKET_ADVANTAGE_AXES.md](../../master/MARKET_ADVANTAGE_AXES.md)
 
 ## 仮説（一文）

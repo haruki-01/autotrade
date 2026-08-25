@@ -1,7 +1,10 @@
 # SPOT-ADV-004: 個人が多数側にいる方向の「トレンド」は認知されていても燃料が逆。そこは撃たない
 
-status: proposed  
+status: tested-fail-as-entry  
 created: 2026-08-25  
+updated: 2026-08-25
+
+Set Y: 拒否はホストより勝率が少し上がる（002: 38.4→40.1、反転 36.7）。費用後は赤。単独入口にはしない、という判断は維持。ホストが無作為なら拒否だけでは黒にならない。  
 評価軸: [MARKET_ADVANTAGE_AXES.md](../../master/MARKET_ADVANTAGE_AXES.md)
 
 ## 仮説（一文）

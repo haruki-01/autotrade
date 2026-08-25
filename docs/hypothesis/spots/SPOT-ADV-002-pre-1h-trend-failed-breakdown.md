@@ -1,7 +1,10 @@
 # SPOT-ADV-002: 1時間はまだトレンド未認定。下位の失敗下抜けが種になる
 
-status: proposed  
+status: tested-fail  
 created: 2026-08-25  
+updated: 2026-08-25
+
+Set Y 10変種すべて決済EV赤。k_1h を変えても n が動かない＝「未HH」が常に真に近い。次に定義を変えるならスイングの LH 継続。同じ1年で11回目の微調整はしない。  
 評価軸: [MARKET_ADVANTAGE_AXES.md](../../master/MARKET_ADVANTAGE_AXES.md)
 
 ## 仮説（一文）
