@@ -138,6 +138,12 @@ def run_bracket(
     else:
         p_hat, z_win = float("nan"), float("nan")
 
+    resolved_mask = t["kind"].isin(["win", "loss"])
+    timeout_mask = t["kind"] == "timeout"
+    ev_resolved = float(t.loc[resolved_mask, "pnl"].mean()) if resolved else float("nan")
+    ev_timeout = float(t.loc[timeout_mask, "pnl"].mean()) if timeouts else float("nan")
+    timeout_rate = timeouts / n_t
+
     equity = np.cumsum(pnl)
     peak = np.maximum.accumulate(np.concatenate([[0.0], equity]))
     dd = float(np.max(peak - np.concatenate([[0.0], equity])))
@@ -148,9 +154,12 @@ def run_bracket(
         "losses": losses,
         "timeouts": timeouts,
         "resolve_rate": resolved / n_t,
+        "timeout_rate": timeout_rate,
         "win_rate_resolved": p_hat,
         "z_vs_null": float(z_win),
         "ev_usdt": ev,
+        "ev_resolved_usdt": ev_resolved,
+        "ev_timeout_usdt": ev_timeout,
         "ev_r": float(t["r_mult"].mean()),
         "sd_usdt": sd,
         "t_stat": float(ev / sd * np.sqrt(n_t)) if sd and sd > 0 else float("nan"),
@@ -262,8 +271,9 @@ def main() -> None:
         print(
             f"[{k:3d}/{len(ids)}] {logic_id:22s} "
             f"n={r['trades']:5d} ({r['per_month']:5.1f}/月) "
-            f"勝率={r['win_rate_resolved']*100:5.1f}% z={r['z_vs_null']:+5.2f} "
-            f"EV={r['ev_usdt']:+.4f} t={r['t_stat']:+5.2f}"
+            f"勝率={r['win_rate_resolved']*100:5.1f}% "
+            f"強制決済={r['timeout_rate']*100:4.0f}% "
+            f"EV全部={r['ev_usdt']:+.4f} EV決済={r['ev_resolved_usdt']:+.4f}"
         )
 
     res = pd.DataFrame(rows).sort_values("z_vs_null", ascending=False)
@@ -286,12 +296,20 @@ def main() -> None:
         "",
         f"- **帰無仮説 {100/(1+rr):.1f}%** — ドリフトのない価格での 1:{rr:.1f} ブラケット当たり率。"
         "これ以下なら情報ゼロ",
-        f"- **損益分岐 {be_win*100:.1f}%** — 費用を引いて黒字になる勝率",
+        f"- **損益分岐 {be_win*100:.1f}%** — 決済分だけで費用を引いて黒字になる勝率",
         f"- 差は **{(be_win-1/(1+rr))*100:.1f} ポイント**。ここを超える条件を探している",
+        "",
+        "## ことば",
+        "",
+        "- **無作為** — 足も向きもサイコロ。同じ損切り・利確・保有上限を通す。"
+        "「いつ入るか」に情報が無いときの成績。シグナルがこれより良くないと、条件に意味が無い",
+        "- **強制決済** — 利確も損切りもつかないまま保有上限（いま12時間）で閉じた割合",
+        "- **EV全部** — 決済＋強制決済を含む、1回あたりの平均損益",
+        "- **EV決済** — 利確か損切りがついたトレードだけの平均損益",
         "",
         "## 結果（勝率の上振れ順）",
         "",
-        f"| logic | 狙い | n | 回/月 | 決済率 | 勝率 | z(vs {100/(1+rr):.1f}%) | EV(USDT) | t値 | 判定 |",
+        f"| logic | 狙い | n | 回/月 | 強制決済 | 勝率（決済） | z(vs {100/(1+rr):.1f}%) | EV全部 | EV決済 | 判定 |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for _, r in res.iterrows():
@@ -305,8 +323,9 @@ def main() -> None:
             verdict = "情報なし"
         L.append(
             f"| `{r['logic_id']}` | {r['why']} | {r['trades']} | {r['per_month']:.1f} "
-            f"| {r['resolve_rate']*100:.1f}% | **{r['win_rate_resolved']*100:.1f}%** "
-            f"| {r['z_vs_null']:+.2f} | {r['ev_usdt']:+.4f} | {r['t_stat']:+.2f} | {verdict} |"
+            f"| {r['timeout_rate']*100:.0f}% | **{r['win_rate_resolved']*100:.1f}%** "
+            f"| {r['z_vs_null']:+.2f} | {r['ev_usdt']:+.4f} | {r['ev_resolved_usdt']:+.4f} "
+            f"| {verdict} |"
         )
 
     ctrl = res[res["logic_id"].str.startswith("br_random")]
@@ -320,12 +339,16 @@ def main() -> None:
     for _, r in ctrl.iterrows():
         L.append(
             f"- `{r['logic_id']}`: 勝率 {r['win_rate_resolved']*100:.1f}%"
-            f"（理論 {100/(1+rr):.1f}%、z={r['z_vs_null']:+.2f}）、n={r['trades']}"
+            f"（理論 {100/(1+rr):.1f}%、z={r['z_vs_null']:+.2f}）、"
+            f"強制決済 {r['timeout_rate']*100:.0f}%、"
+            f"EV全部 {r['ev_usdt']:+.4f} / EV決済 {r['ev_resolved_usdt']:+.4f}、"
+            f"n={r['trades']}"
         )
 
     beats = res[res["win_rate_resolved"] > 1.0 / (1.0 + rr)]
     profit = res[(res["ev_usdt"] > 0) & (res["trades"] >= cfg.min_trades)]
     profit_tiny = res[(res["ev_usdt"] > 0) & (res["trades"] < cfg.min_trades)]
+    profit_res = res[(res["ev_resolved_usdt"] > 0) & (res["trades"] >= cfg.min_trades)]
     L += [
         "",
         "## まとめ",
@@ -333,7 +356,8 @@ def main() -> None:
         f"- 検証した条件: **{len(res)}**",
         f"- 帰無仮説（{100/(1+rr):.1f}%）を上回った: **{len(beats)}**",
         f"- z ≥ 2（偶然では説明しにくい）: **{int((res['z_vs_null'] >= 2).sum())}**",
-        f"- 費用後に黒字（n≥{cfg.min_trades}）: **{len(profit)}**",
+        f"- EV全部が黒字（n≥{cfg.min_trades}）: **{len(profit)}**",
+        f"- EV決済が黒字（n≥{cfg.min_trades}）: **{len(profit_res)}**",
         f"- 黒字だがサンプル不足: **{len(profit_tiny)}**",
         f"- 月50回以上撃てた: **{int((res['per_month'] >= 50).sum())}**",
         "",
