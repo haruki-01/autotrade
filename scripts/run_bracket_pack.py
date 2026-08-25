@@ -176,6 +176,9 @@ def main() -> None:
     ap.add_argument("--config", default="configs/eval_v3_btc.yaml")
     ap.add_argument("--lock", default="eval/locks/eval_v3_btc.lock.yaml")
     ap.add_argument("--set", required=True)
+    ap.add_argument("--out-set", default="", help="レポート上の期間名（省略時は --set）")
+    ap.add_argument("--start", default="", help="評価開始日 YYYY-MM-DD（省略時は config の set）")
+    ap.add_argument("--end", default="", help="評価終了日 YYYY-MM-DD（省略時は config の set）")
     ap.add_argument("--logics", default="")
     ap.add_argument("--interval", default="15m", choices=("15m", "1m"))
     ap.add_argument("--ohlcv-only", action="store_true", help="派生データ条件を外す")
@@ -203,8 +206,10 @@ def main() -> None:
         cycle = CYCLE_BRACKET
         bars_per_hour = BARS_PER_HOUR
 
-    lo = pd.Timestamp(cfg.sets[args.set].start, tz="UTC")
-    hi = pd.Timestamp(cfg.sets[args.set].end, tz="UTC") + pd.Timedelta(days=1)
+    win_start = args.start or cfg.sets[args.set].start
+    win_end = args.end or cfg.sets[args.set].end
+    lo = pd.Timestamp(win_start, tz="UTC")
+    hi = pd.Timestamp(win_end, tz="UTC") + pd.Timedelta(days=1)
     df = df.loc[(df.index >= lo) & (df.index <= hi)]
     months = (hi - lo).days / 30.4375
 
@@ -263,7 +268,7 @@ def main() -> None:
             continue
         r["logic_id"] = logic_id
         r["why"] = cycle[logic_id]["why"]
-        r["set"] = args.set
+        r["set"] = args.out_set or args.set
         r["per_month"] = r["trades"] / months
         r["beats_null"] = r["win_rate_resolved"] > 1.0 / (1.0 + rr)
         r["profitable"] = r["ev_usdt"] > 0 and r["trades"] >= cfg.min_trades
@@ -277,19 +282,20 @@ def main() -> None:
         )
 
     res = pd.DataFrame(rows).sort_values("z_vs_null", ascending=False)
-    stamp = f"eval/reports/20260825-{args.tag}-set{args.set}"
+    label = args.out_set or args.set
+    stamp = f"eval/reports/20260825-{args.tag}-set{label}"
     Path(stamp + ".json").write_text(
         json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
     fee_label = "入口メイカー/出口テイカー" if args.maker_entry else "両側テイカー"
     L = [
-        f"# 固定ブラケット検証 — Set {args.set}",
+        f"# 固定ブラケット検証 — Set {label}",
         "",
         f"BTCUSDT {args.interval} ／ 損切り **{stop_pct*100:.2f}%** ／ 利確 "
         f"**{stop_pct*rr*100:.2f}%**（1:{rr:.1f}）／ 保有上限 **{MAX_HOURS:.0f}時間** ／ "
         f"同時建玉 1",
-        f"期間: {cfg.sets[args.set].start} 〜 {cfg.sets[args.set].end}（{months:.1f}ヶ月）",
+        f"期間: {win_start} 〜 {win_end}（{months:.1f}ヶ月）",
         f"手数料前提: {fee_label}（往復 {cost_rate*100:.3f}% = 許容損失の {cost_r*100:.1f}%）",
         "",
         "## 判定の2本の線",
