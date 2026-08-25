@@ -309,6 +309,12 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
    最良 39.5%（`br_squeeze_tight`）。対照 38%。損益分岐 42.9%。
 3. 複数建玉は枠が黒字になってから。
 
+### 次の進め方（2026-08-25・プラン）
+
+評価軸と候補の順位は
+[notes/2026-08-25-next-options.md](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-next-options.md)。
+推奨の先頭は **(0) 月120%の分母確認** と **(1) 12h/1.00%枠を15分足のまま直近1年で測る**（枠と足を分けて見る）。
+
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
 workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·
 config: `configs/eval_v4_btc_1m.yaml` ·
