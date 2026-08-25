@@ -297,6 +297,15 @@ _NEIGHBOURS: list[tuple[str, str, str, dict[str, Any]]] = [
     ("stop_1p25", "損切1.25日足ATR", "リスク距離。", {"stop_atr_mult": 1.25}),
     ("stop_1p75", "損切1.75日足ATR", "リスク距離。", {"stop_atr_mult": 1.75}),
     ("stop_2p0", "損切2.0日足ATR", "リスク距離。", {"stop_atr_mult": 2.0}),
+    # 論点B: 休む条件。中心（利確4ATR）に対する1点差分。入口は変えない。
+    ("regime_50d", "50日線と同じ向きだけ", "地合い。短いほど休む期間が短い。", {"regime_days": 50}),
+    ("regime_100d", "100日線と同じ向きだけ", "地合い。", {"regime_days": 100}),
+    ("regime_200d", "200日線と同じ向きだけ", "地合い。論点Bの既定候補。", {"regime_days": 200}),
+    ("regime_300d", "300日線と同じ向きだけ", "地合い。長いほど上昇期にショートを止める。", {"regime_days": 300}),
+    ("regime_against", "対照: 200日線と逆向きだけ", "地合いの符号反転。",
+     {"regime_days": 200, "regime_mode": "against"}),
+    ("long_only", "ロングのみ（ショートを休む）", "上昇期にショートしない。", {"long_only": True}),
+    ("short_only", "対照: ショートのみ", "方向フィルタの符号反転。", {"short_only": True}),
 ]
 
 CYCLE_SLOW.update(
