@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -157,7 +158,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     demo.add_argument(
         "--submit",
         action="store_true",
-        help="Send testnet orders. Requires secrets/demo/bybit.env keys. Never live.",
+        help="Send testnet orders. Requires keys in secrets/demo/bybit.txt. Never live.",
     )
     demo.add_argument(
         "--once",
@@ -171,6 +172,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Public klines. --submit requires bybit.",
     )
     demo.add_argument("--poll-seconds", type=float, default=15.0)
+
+    sub.add_parser(
+        "secrets-init",
+        help="Create secrets/demo/bybit.txt, make it editable, keep keys out of git",
+    )
 
     return p.parse_args(argv)
 
@@ -414,6 +420,37 @@ def cmd_eval_prepare(args: argparse.Namespace) -> int:
     return 0
 
 
+DEMO_KEYS_PATH = Path("secrets/demo/bybit.txt")
+DEMO_KEYS_TEMPLATE = """# Demo / testnet keys. Open THIS file in the left Explorer.
+# Do not put keys in *.example (those go to GitHub).
+# Do not git add this file after filling keys.
+
+BYBIT_ENV=demo
+BYBIT_API_KEY=
+BYBIT_API_SECRET=
+BYBIT_BASE_URL=https://api-testnet.bybit.com
+"""
+
+
+def cmd_secrets_init(_args: argparse.Namespace) -> int:
+    from autotrade.exec.secrets import protect_from_commit
+
+    DEMO_KEYS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not DEMO_KEYS_PATH.exists():
+        DEMO_KEYS_PATH.write_text(DEMO_KEYS_TEMPLATE, encoding="utf-8")
+        print(f"created {DEMO_KEYS_PATH}")
+    else:
+        print(f"exists {DEMO_KEYS_PATH}")
+    DEMO_KEYS_PATH.chmod(0o644)
+    protect_from_commit(DEMO_KEYS_PATH)
+    subprocess.run(["git", "config", "core.hooksPath", ".githooks"], check=False)
+    print(
+        "左の Explorer で secrets/demo/bybit.txt を開いてキーを書いてください。"
+        " *.example には書かないでください（GitHub に載ります）。"
+    )
+    return 0
+
+
 def cmd_eval(args: argparse.Namespace) -> int:
     logic_ids = [x.strip() for x in args.logic_id.split(",") if x.strip()]
     unknown = [x for x in logic_ids if x not in LOGIC_META]
@@ -467,6 +504,8 @@ def main(argv: list[str] | None = None) -> None:
                 poll_seconds=args.poll_seconds,
             )
         )
+    if args.command == "secrets-init":
+        raise SystemExit(cmd_secrets_init(args))
     raise SystemExit(1)
 
 

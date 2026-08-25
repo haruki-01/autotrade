@@ -5,5 +5,21 @@
   "workbench.activityBar.location": "default",
   "workbench.panel.defaultLocation": "bottom",
   "workbench.editor.openSideBySideDirection": "right",
-  "explorer.autoReveal": true
+  "explorer.autoReveal": true,
+  "explorer.excludeGitIgnore": false,
+  "search.useIgnoreFiles": false,
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "data/cache": true,
+    "artifacts": true,
+    ".venv": true,
+    "venv": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "data/cache": true,
+    "artifacts": true
+  }
 }

@@ -22,7 +22,7 @@
 
 ## 次アクション
 
-1. `secrets/demo/bybit.env` に testnet キーを入れて `autotrade demo --submit`
+1. `secrets/demo/bybit.txt` に testnet キーを入れて `autotrade demo --submit`
 2. ログで 50日（影）と 100日（注文）のシグナルが同時に残るか見る
 3. 建玉がずれたら止める。live はまだやらない
 

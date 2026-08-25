@@ -13,15 +13,15 @@ PYTHONPATH=src python3 -m autotrade.cli demo --once
 # 常駐（まだ注文しない）
 PYTHONPATH=src python3 -m autotrade.cli demo
 
-# testnet に成行を出す（secrets/demo/bybit.env が必要）
-cp secrets/demo/bybit.env.example secrets/demo/bybit.env
-# キーを記入。BYBIT_BASE_URL は https://api-testnet.bybit.com のまま
+# testnet に成行を出す（左の一覧の secrets/demo/bybit.txt にキー）
+PYTHONPATH=src python3 -m autotrade.cli secrets-init
+# bybit.txt を開いて KEY / SECRET を記入。BYBIT_BASE_URL は testnet のまま
 PYTHONPATH=src python3 -m autotrade.cli demo --submit --order-logic sh01n_regime_100d
 ```
 
 止める: `touch secrets/demo/KILL`（次のサイクルで停止）
 
-`bybit.env` がエディタに出ないときは [secrets/README.md](../secrets/README.md) の「開けないとき」を見る。**Ctrl+P でパスを直接開く。**
+キーは **`secrets/demo/bybit.txt`** に書く（左のフォルダ一覧から開く）。`.example` や `bybit.env` は使わない。
 
 ログ: `artifacts/demo/demo.jsonl`
 

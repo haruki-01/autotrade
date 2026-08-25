@@ -91,7 +91,7 @@ SH-01 中心（`sh01n_center`）要約: 3期間 EV +1.951 / +0.528 / +0.456、DD
 
 **研究データと本番の差。** シグナル実装は demo ループに載せた。残るのは:
 
-1. `secrets/demo/bybit.env` に testnet キー
+1. `secrets/demo/bybit.txt` に testnet キー
 2. `--submit` で注文と建玉が一致するか（Gate: ずれたら止める）
 3. live 前に Bybit 足でシグナルを目視（lock は Vision）
 

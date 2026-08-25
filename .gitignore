@@ -7,6 +7,7 @@ secrets/**/credentials*
 secrets/**/password*
 secrets/**/account.env
 secrets/**/bybit.env
+# bybit.txt is tracked empty so Cursor can open it. Never commit filled keys.
 !secrets/**/*.example
 !secrets/**/README.md
 !secrets/**/.gitkeep

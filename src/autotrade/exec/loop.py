@@ -18,7 +18,7 @@ import yaml
 from autotrade.data.binance_vision import BinanceVisionClient, ensure_binance_data
 from autotrade.data.bybit import BybitPublicClient, ensure_data
 from autotrade.exec.bybit_private import BybitPrivateClient
-from autotrade.exec.secrets import assert_demo_only, load_bybit_env
+from autotrade.exec.secrets import assert_demo_only, load_bybit_env, protect_from_commit
 from autotrade.exec.signals import Intent, intent_for_bar, last_complete_bar
 from autotrade.exec.sizing import qty_fixed_margin, stop_take_prices
 from autotrade.strategy.slow import prepare_slow
@@ -59,7 +59,7 @@ def load_demo_config(path: str | Path) -> DemoConfig:
         risk_per_trade_usdt=float(raw.get("risk_per_trade_usdt", 3)),
         kill_file=raw.get("kill_file", "secrets/demo/KILL"),
         log_path=raw.get("log_path", "artifacts/demo/demo.jsonl"),
-        secrets_path=raw.get("secrets_path", "secrets/demo/bybit.env"),
+        secrets_path=raw.get("secrets_path", "secrets/demo/bybit.txt"),
         public_base_url=raw.get("public_base_url", "https://api.bybit.com"),
     )
 
@@ -279,10 +279,12 @@ def run_demo(
     private = None
     if submit:
         creds = load_bybit_env(cfg.secrets_path)
+        protect_from_commit(creds.path)
         assert_demo_only(creds)
         if not creds.has_keys:
             raise SystemExit(
-                f"{cfg.secrets_path} に API キーがありません。"
+                f"{creds.path} に API キーがありません。"
+                "左の一覧で secrets/demo/bybit.txt を開き、"
                 "キーなしなら --submit を付けずに dry-run してください。"
             )
         private = BybitPrivateClient(creds)
