@@ -28,7 +28,7 @@
 | 戦略実装（5本） | **完了・formal FAIL** | H01 / L-COST / L-MOM-VOL / L-BREAK / H21。詳細は formal batch レポート |
 | Formal eval 環境 | **完了** | `configs/eval_v1.yaml` + `eval/locks/` + `autotrade eval`。実データのみ |
 | L-BREAK-2 | **formal FAIL** | 4H Donchian。n=58（改善も ≥100 未達）。EV/DDは良好 |
-| デモ注文（testnet） | **未着手** | |
+| デモ注文（testnet） | **スケルトン完了** | `autotrade demo`。キーなし dry-run。`--submit` は testnet のみ |
 | 本番執行 | **未着手** | |
 | Dashboard / UI | **対象外（後回し）** | |
 

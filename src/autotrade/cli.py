@@ -144,6 +144,34 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Do not append to docs/research registry",
     )
 
+    demo = sub.add_parser(
+        "demo",
+        help="SH-01 rest filters on Bybit testnet (dry-run unless --submit)",
+    )
+    demo.add_argument("--config", default="configs/demo_sh01.yaml")
+    demo.add_argument(
+        "--order-logic",
+        default=None,
+        help="Which logic may place orders (default: config order_logic). The other is shadow.",
+    )
+    demo.add_argument(
+        "--submit",
+        action="store_true",
+        help="Send testnet orders. Requires secrets/demo/bybit.env keys. Never live.",
+    )
+    demo.add_argument(
+        "--once",
+        action="store_true",
+        help="One 15m cycle then exit (for checks). Default is to keep polling.",
+    )
+    demo.add_argument(
+        "--data-source",
+        choices=("bybit", "vision"),
+        default="bybit",
+        help="Public klines. --submit requires bybit.",
+    )
+    demo.add_argument("--poll-seconds", type=float, default=15.0)
+
     return p.parse_args(argv)
 
 
@@ -426,6 +454,19 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit(cmd_eval_prepare(args))
     if args.command == "eval":
         raise SystemExit(cmd_eval(args))
+    if args.command == "demo":
+        from autotrade.exec.loop import run_demo
+
+        raise SystemExit(
+            run_demo(
+                args.config,
+                submit=args.submit,
+                once=args.once,
+                order_logic=args.order_logic,
+                data_source=args.data_source,
+                poll_seconds=args.poll_seconds,
+            )
+        )
     raise SystemExit(1)
 
 

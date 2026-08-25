@@ -1,6 +1,4 @@
-# Latest — SH-01 休む条件 2026-08-25
+# Latest — demo へ
 
-SMA と同じ向きだけ（50/100日）は 3期間とも Return/DD で買い持ちを上回る。100日がプール t 最大。
-符号反転は Set C で EV マイナス。
-
-正本: `eval/reports/20260825-slow-rest.md`
+50日と100日を採用。`autotrade demo`。1枠のため注文は100日（入れ替え可）、50日は影ログ。
+手順: `docs/ops/DEMO.md`

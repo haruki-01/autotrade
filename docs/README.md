@@ -22,6 +22,7 @@ docs/
 | 日付順の探索ログ | [master/IMPLEMENTATION_PLAN.md](./master/IMPLEMENTATION_PLAN.md) |
 | 歪み・優位の前提 | [master/MARKET_EDGE_MAP.md](./master/MARKET_EDGE_MAP.md) · [優位の採点軸](./master/MARKET_ADVANTAGE_AXES.md) |
 | 特定ロジックの進捗・メモ | [workstreams/](./workstreams/) |
+| **demo の起動** | [ops/DEMO.md](./ops/DEMO.md) |
 | バックテストの数値ログ | [research/INDEX.md](./research/INDEX.md) |
 
 ## 書き分けルール（短く）

@@ -40,3 +40,12 @@ cp secrets/live/account.env.example secrets/live/account.env
 ```bash
 chmod 600 secrets/demo/bybit.env secrets/live/bybit.env
 ```
+
+## Demo 起動
+
+手順の正本: [docs/ops/DEMO.md](../docs/ops/DEMO.md)
+
+```bash
+PYTHONPATH=src python3 -m autotrade.cli demo --once
+PYTHONPATH=src python3 -m autotrade.cli demo --submit   # testnet キー必須
+```
