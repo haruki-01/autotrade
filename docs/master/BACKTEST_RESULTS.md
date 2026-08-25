@@ -53,3 +53,16 @@ Formal, real data, `eval_v3_btc`. Monthly 50 is not a gate.
 
 Report: `eval/reports/20260825-slow-evdd.md`
 
+## 2026-08-25 — SH-01 rest filters (論点B)
+
+One-point SMA / long-only on `sh01n_center`. Formal, same lock.
+
+| Item | `sh01n_regime_100d` |
+|------|---------------------|
+| Pooled | n=133, EV +1.306, t=+3.01 |
+| Set C ret/DD vs BTC hold | **3.44 vs 1.51** |
+| 3-period ret/DD vs hold | win / win / win（50d も同じ） |
+| Control `regime_against` | Set C EV −0.779 **FAIL** |
+
+Report: `eval/reports/20260825-slow-rest.md`
+

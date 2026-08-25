@@ -18,7 +18,7 @@
 | HYP-009 | [HYP-009-d001-fake-rebreak](./HYP-009-d001-fake-rebreak/) | formal FAIL | D-001 実証① n=1 |
 | HYP-010 | [HYP-010-d001-fake-retest](./HYP-010-d001-fake-retest/) | formal FAIL | D-001 実証② n=1 |
 | L-BRACKET | [L-BRACKET-12h-1m](./L-BRACKET-12h-1m/) | 打ち止め | 12h入口 1年決済EV黒0。合否軸はEV+DDへ |
-| SH-01 | [SH-01-daily-trend](./SH-01-daily-trend/) | EV+DD PASS | サンプルは期間ごと保留。Set C は買い持ちに負ける |
+| SH-01 | [SH-01-daily-trend](./SH-01-daily-trend/) | 休む条件済み | 100日SMAで C の Return/DD が買い持ち超え。採用判断 |
 
 \* 期待値・DDはクリア、トレード数不足で不合格。一括レポート: [eval/reports/20260822-formal-eval-batch-setB.md](../eval/reports/20260822-formal-eval-batch-setB.md) · D/Rバッチ: [eval/reports/20260822-formal-eval-d001-r001-setB.md](../eval/reports/20260822-formal-eval-d001-r001-setB.md)
 

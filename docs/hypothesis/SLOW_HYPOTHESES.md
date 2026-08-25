@@ -1,10 +1,11 @@
 # 低速側の仮説（SH-01〜）— コストから逆算した設計
 
-status: **2026-08-25 再検証。EV+DD は PASS。期間ごとの n は判定保留。**
+status: **2026-08-25。EV+DD は PASS。休む条件（100日SMA）で Set C の Return/DD は買い持ちを上回る。採用判断待ち。**
 月50回・月120%は合否に使わない。12hブラケット入口は打ち止め。
-中心 `sh01n_center`: 3期間EV+、DD 2.8/5.3/7.6%、プール n=164 / EV +0.989 / t=+2.57。
-Set C の Return/DD は買い持ちに負ける（+1.14 対 +1.51）。
-正本レポート: [eval/reports/20260825-slow-evdd.md](../../eval/reports/20260825-slow-evdd.md)
+中心 `sh01n_center`: プール n=164 / EV +0.989 / t=+2.57。Set C Return/DD は買い持ちに負ける。
+`sh01n_regime_100d`: プール t=+3.01。Set C Return/DD **3.44** 対買い持ち 1.51。3期間とも買い持ちを上回る。
+正本: [eval/reports/20260825-slow-evdd.md](../../eval/reports/20260825-slow-evdd.md) ·
+[休む条件](../../eval/reports/20260825-slow-rest.md)
 月50での打ち止め記録: [月50エントリー要件](./postmortems/2026-08-24-trade-rate-requirement.md)
 
 created: 2026-08-23 / updated: 2026-08-25

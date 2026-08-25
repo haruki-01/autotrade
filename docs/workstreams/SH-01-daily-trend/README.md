@@ -4,7 +4,7 @@
 |------|-----|
 | logic_id | `sh01n_center`（中心） / `sh01_base`（固定利確なし） |
 | 主歪み | コストが R の数%に収まる値幅（日足ATR損切り） |
-| ステータス | EV+DD PASS（期間ごとサンプル保留）。Set C は買い持ち Return/DD 負け |
+| ステータス | 休む条件測定済み。100日SMAで Set C Return/DD が買い持ちを上回る。採用判断待ち |
 | 優先順 | 1 |
 
 ## 目的
@@ -18,14 +18,12 @@
 - 環境: `configs/eval_v3_btc.yaml` + `eval/locks/eval_v3_btc.lock.yaml@e7bcbe449cbb`
 - 2026-08-25 formal（`--campaign ev-dd`）: 中心・base とも 3期間 EV+、DD≤20%。プール t=+2.57
 - 期間ごと n は 100 未満 → 判定保留。月 0.9〜1.8 回は報告のみ
-- Set C Return/DD は買い持ちに負ける
-- 正本: `eval/reports/20260825-slow-evdd.md`
+- 2026-08-25 休む条件: `eval/reports/20260825-slow-rest.md`。`regime_50d` / `regime_100d` は 3期間とも Return/DD で買い持ちを上回る
 
 ## 次アクション
 
-1. 春希さんの論点A: SH-01 を DD 売りとして demo に出すか（正本 [CURRENT.md](../../master/CURRENT.md)）
-2. 「Set C で買い持ちに負けるのが嫌」なら論点Bだけ（既存 `regime` 1点）。入口は増やさない
-3. 採用するなら論点C（Bybit / demo）。live 前に Vision データを再確認
+1. 論点A: `sh01n_regime_100d`（または 50d / 休まない中心）を demo に出すか
+2. 出すなら論点C（Bybit / demo）。入口は増やさない
 
 ## メモ置き場
 
@@ -34,6 +32,6 @@
 
 ## 関連マスター
 
-- [IMPLEMENTATION_PLAN](../../master/IMPLEMENTATION_PLAN.md)
+- [CURRENT](../../master/CURRENT.md)
 - [TARGET_MODEL](../../master/TARGET_MODEL.md)
 - [MARKET_ADVANTAGE_AXES](../../master/MARKET_ADVANTAGE_AXES.md)
