@@ -184,6 +184,23 @@ def sig_rsi_revert(df: pd.DataFrame, p: dict) -> Signals:
     return Signals(np.where(cross_lo, 1, np.where(cross_hi, -1, 0)).astype(np.int8))
 
 
+def sig_runs_resampled(df: pd.DataFrame, p: dict) -> Signals:
+    """上位足で連続を数え、その足の確定1分にだけシグナルを置く。先読みしない。"""
+    k = int(p.get("k", 5))
+    rule = str(p.get("rule", "15min"))
+    ohlc = (
+        df.resample(rule, label="left", closed="left")
+        .agg({"open": "first", "high": "max", "low": "min", "close": "last"})
+        .dropna()
+    )
+    s15 = sig_runs(ohlc, {"k": k}).values
+    minutes = int(pd.Timedelta(rule).total_seconds() // 60)
+    fire_at = ohlc.index + pd.Timedelta(minutes=minutes - 1)
+    mapped = pd.Series(s15, index=fire_at)
+    aligned = mapped.reindex(df.index).fillna(0).astype(np.int8)
+    return Signals(aligned.to_numpy())
+
+
 def sig_runs(df: pd.DataFrame, p: dict) -> Signals:
     """同方向の足が k 本続いたあと。継続側に賭ける。"""
     k = int(p.get("k", 4))
@@ -379,6 +396,7 @@ SIGNALS: dict[str, SignalFn] = {
     "donchian_fade": sig_donchian_fade,
     "rsi_revert": sig_rsi_revert,
     "runs": sig_runs,
+    "runs_resampled": sig_runs_resampled,
     "runs_fade": sig_runs_fade,
     "squeeze_break": sig_squeeze_break,
     "vol_spike": sig_vol_spike,
@@ -491,9 +509,21 @@ def cycle_bracket_1m() -> dict[str, dict]:
             params.setdefault("window", 12)
         elif signal in ("vol_spike", "vol_spike_fade"):
             params.setdefault("look", 96)
-        scaled = {
-            key: (value * M15_TO_1M if key in _BAR_COUNT_KEYS and isinstance(value, int) else value)
-            for key, value in params.items()
-        }
+        scaled = {}
+        for key, value in params.items():
+            if key in _BAR_COUNT_KEYS and isinstance(value, int):
+                # 連続足の本数 k は1分足ネイティブ（5本=5分）。時間換算すると
+                # 75本連続になり、以前の br_runs_5 とは別物でほとんど発火しない。
+                if signal in ("runs", "runs_fade") and key == "k":
+                    scaled[key] = value
+                else:
+                    scaled[key] = value * M15_TO_1M
+            else:
+                scaled[key] = value
         out[logic_id] = {**spec, "params": scaled}
+    out["br_runs_5_15m"] = {
+        "signal": "runs_resampled",
+        "params": {"k": 5, "rule": "15min"},
+        "why": "5連続15分足の継続（決済だけ1分足）",
+    }
     return out

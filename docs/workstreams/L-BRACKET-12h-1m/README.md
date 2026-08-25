@@ -4,7 +4,7 @@
 |------|-----|
 | logic_id | `br_*`（固定ブラケットの入口条件群） |
 | 主歪み | 順張りの継続（15分足で z が出た側） |
-| ステータス | `proposed`（直近1年スクリーニング中） |
+| ステータス | screen FAIL（Set Y 黒字 0。8年は未実施） |
 | 優先順 | 1 |
 
 ## 目的
@@ -14,18 +14,17 @@
 ## 現状
 
 - 実装: 枠定数と1分足取得・検証ランナーあり
-- 最新ラン: 未検証（Set Y 待ち）
-- 8年（eval_v3）は **1年で黒字が出てから**。先に回さない
+- 最新ラン: Set Y（2025-08-23〜2026-08-22）**黒字 0** / 帰無40%超え 0
+- 8年（eval_v3）は回していない（指示どおり）
 
 ## 次アクション
 
-1. `scripts/prepare_btc_1m.py` で Set Y の1分足 lock
-2. `run_bracket_pack.py --interval 1m --maker-entry --set Y`
-3. 黒字0なら8年は回さない。黒字があればその logic だけ eval_v3 へ
+1. 春希さんの判断。この入口群を打ち止めるか、1分足ネイティブの新しい定義だけを足すか。
+2. 8年は黒字が出るまで回さない。
 
 ## メモ置き場
 
-調査メモは [notes/](./notes/) へ。数値の正本は `eval/reports/` と [BRACKET_FRAME.md](../../hypothesis/BRACKET_FRAME.md)。
+調査メモは [notes/](./notes/) へ。数値の正本は `eval/reports/20260825-bracket1m-setY.md` と [BRACKET_FRAME.md](../../hypothesis/BRACKET_FRAME.md)。
 
 ## 関連マスター
 

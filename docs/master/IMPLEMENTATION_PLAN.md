@@ -303,19 +303,16 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 
 次の手は枠の外に出ることになる。候補と実測:
 
-1. **保有を12hにして幅を1.00%へ（採用）** — 1枠のまま。必要上振れ +4.2pt → **+2.9pt**。
-   入口は1分足。時間窓は15分足と同じ（バー数×15）。
-   **直近1年（Set Y）で先に検証し、黒字の条件だけ8年へ進む。**
-2. 複数建玉は枠が黒字になってから。
+1. **保有を12hにして幅を1.00%へ（採用）** — 1枠のまま。必要上振れ **+2.9pt**。
+   入口は1分足。時間窓は15分足と同じ（バー数×15）。連続足だけは1分ネイティブ。
+2. **直近1年 Set Y: 黒字 0。8年は回さない。**
+   最良 39.5%（`br_squeeze_tight`）。対照 38%。損益分岐 42.9%。
+3. 複数建玉は枠が黒字になってから。
 
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
 workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·
-config: `configs/eval_v4_btc_1m.yaml`
-
-計算: `scripts/optimize_bracket.py` · `scripts/limit_fill_risk.py` ·
-`scripts/hold_and_overlap.py` · `scripts/measure_1m_delay.py` ·
-`scripts/prepare_btc_1m.py` · `scripts/run_bracket_pack.py --interval 1m` ·
-レポート: `eval/reports/20260825-bracket15-summary.md`
+config: `configs/eval_v4_btc_1m.yaml` ·
+レポート: `eval/reports/20260825-bracket1m-setY.md`
 
 ### 目標からの逆算モデル（2026-08-24）
 

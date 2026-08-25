@@ -129,7 +129,12 @@ def _klines_zip_to_ohlcv(raw: pd.DataFrame) -> pd.DataFrame:
     if raw[col0].dtype == object:
         raw = raw.copy()
         raw[col0] = pd.to_numeric(raw[col0], errors="coerce")
-    start_ms = raw.iloc[:, 0].astype("int64")
+    start_ms = pd.to_numeric(raw.iloc[:, 0], errors="coerce")
+    # 2025-07 以降の Vision 1m は open_time がマイクロ秒。
+    if float(start_ms.median()) >= 1e14:
+        start_ms = (start_ms / 1000).round().astype("int64")
+    else:
+        start_ms = start_ms.astype("int64")
     df = pd.DataFrame(
         {
             "start_ms": start_ms,

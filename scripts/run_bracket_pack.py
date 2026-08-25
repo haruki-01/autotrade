@@ -257,7 +257,7 @@ def main() -> None:
         r["set"] = args.set
         r["per_month"] = r["trades"] / months
         r["beats_null"] = r["win_rate_resolved"] > 1.0 / (1.0 + rr)
-        r["profitable"] = r["ev_usdt"] > 0
+        r["profitable"] = r["ev_usdt"] > 0 and r["trades"] >= cfg.min_trades
         rows.append(r)
         print(
             f"[{k:3d}/{len(ids)}] {logic_id:22s} "
@@ -291,12 +291,14 @@ def main() -> None:
         "",
         "## 結果（勝率の上振れ順）",
         "",
-        "| logic | 狙い | n | 回/月 | 決済率 | 勝率 | z(vs 33.3%) | EV(USDT) | t値 | 判定 |",
+        f"| logic | 狙い | n | 回/月 | 決済率 | 勝率 | z(vs {100/(1+rr):.1f}%) | EV(USDT) | t値 | 判定 |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for _, r in res.iterrows():
-        if r["ev_usdt"] > 0:
+        if r["ev_usdt"] > 0 and r["trades"] >= cfg.min_trades:
             verdict = "黒字"
+        elif r["ev_usdt"] > 0:
+            verdict = "黒字だがn不足"
         elif r["win_rate_resolved"] > 1.0 / (1.0 + rr):
             verdict = "情報あり/赤字"
         else:
@@ -322,7 +324,8 @@ def main() -> None:
         )
 
     beats = res[res["win_rate_resolved"] > 1.0 / (1.0 + rr)]
-    profit = res[res["ev_usdt"] > 0]
+    profit = res[(res["ev_usdt"] > 0) & (res["trades"] >= cfg.min_trades)]
+    profit_tiny = res[(res["ev_usdt"] > 0) & (res["trades"] < cfg.min_trades)]
     L += [
         "",
         "## まとめ",
@@ -330,7 +333,8 @@ def main() -> None:
         f"- 検証した条件: **{len(res)}**",
         f"- 帰無仮説（{100/(1+rr):.1f}%）を上回った: **{len(beats)}**",
         f"- z ≥ 2（偶然では説明しにくい）: **{int((res['z_vs_null'] >= 2).sum())}**",
-        f"- 費用後に黒字: **{len(profit)}**",
+        f"- 費用後に黒字（n≥{cfg.min_trades}）: **{len(profit)}**",
+        f"- 黒字だがサンプル不足: **{len(profit_tiny)}**",
         f"- 月50回以上撃てた: **{int((res['per_month'] >= 50).sum())}**",
         "",
     ]
