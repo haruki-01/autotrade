@@ -1,6 +1,6 @@
 # SPOT-HTF-001: 上位足の陽線場面で、1分がEMAへ戻して再開
 
-status: testing  
+status: tested-fail  
 created: 2026-08-25
 
 ## 仮説（一文）

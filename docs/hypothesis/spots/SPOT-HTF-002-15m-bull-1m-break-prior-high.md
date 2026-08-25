@@ -1,6 +1,6 @@
 # SPOT-HTF-002: 上位足の陽線場面で、1分が直前15分高値を更新
 
-status: testing  
+status: tested-fail  
 created: 2026-08-25
 
 ## 仮説（一文）
