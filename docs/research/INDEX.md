@@ -9,6 +9,8 @@
 | Run ID | 日付 | 仮説 | ロジック | Set | データ | ステータス | 期待値 | DD | トレード | 詳細 |
 |--------|------|------|----------|-----|--------|------------|--------|-----|----------|------|
 | 20260825-slow-evdd | 2026-08-25 | SH-01 | sh01n_center | A/B/C | binance_vision | `pass`* | 0.99 | 7.6% | 164 | [doc](entries/SH-01-sh01n_center-evdd-20260825.md) |
+
+\* EV+DD は PASS。期間ごとの n<100 は判定保留。月50は非ゲート。
 | 20260823-071 | 2026-08-23 | EH-09 | eh09_slope_0p05 | B | binance_vision | `pass` | 0.11 | 3.7% | 179 | [doc](entries/EH-09-eh09_slope_0p05-setB-20260823-071.md) |
 | 20260823-072 | 2026-08-23 | EH-09 | eh09_trail_2p5 | B | binance_vision | `pass` | 0.02 | 11.8% | 266 | [doc](entries/EH-09-eh09_trail_2p5-setB-20260823-072.md) |
 | 20260823-068 | 2026-08-23 | EH-09 | eh09_base | B | binance_vision | `pass` | 0.01 | 9.2% | 311 | [doc](entries/EH-09-eh09_base-setB-20260823-068.md) |
