@@ -1,6 +1,6 @@
 # SPOT-BR-004: 確定15分インサイドの箱を、1分で片側に抜ける
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

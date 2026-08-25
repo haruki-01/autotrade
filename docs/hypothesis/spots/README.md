@@ -12,7 +12,7 @@
 | カタログ | 仮説一文（未検証・浅い地図） |
 | 深いスポット | 複合条件＋市場の見落とし＋攻め方 |
 | 逆算発見 | Discovery期間の統計からの①候補（検証ではない） |
-| 詳細例 | [SPOT-001](./SPOT-001-double-bottom-neckline-retest.md) · [SPOT-D001](./SPOT-D001-compress-fake-then-real-break.md) · [SPOT-R001](./SPOT-R001-near-high-expanded.md) · [SPOT-R4H-001](./SPOT-R4H-001-non-asia-h4-break.md) · [SPOT-HTF-001](./SPOT-HTF-001-15m-bull-1m-ema-reclaim.md) · [SPOT-HTF-002](./SPOT-HTF-002-15m-bull-1m-break-prior-high.md) · [ブラケット入口 BR-001〜008](./CATALOG.md#n-ブラケット入口上位足の場面--1分の瞬間2026-08-25) |
+| 詳細例 | [SPOT-001](./SPOT-001-double-bottom-neckline-retest.md) · [ADV-001〜006](./SPOT-ADV-001-crowded-break-fail-then-real.md) · [優位の採点](../../master/MARKET_ADVANTAGE_AXES.md) |
 
 ## 注意
 

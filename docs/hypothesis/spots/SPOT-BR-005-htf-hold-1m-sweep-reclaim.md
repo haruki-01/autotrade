@@ -1,6 +1,6 @@
 # SPOT-BR-005: 上位の押し安値は守り、下位だけ狩って取り戻してから入る
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

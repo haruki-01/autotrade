@@ -1,6 +1,6 @@
 # SPOT-BR-003: 15分の旗竿のあと、1分の旗面を竿方向に抜ける
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

@@ -15,7 +15,7 @@
 | HYP-002 | [HYP-002-e1-breakout-long-v2](./HYP-002-e1-breakout-long-v2/) | formal FAIL* | EV+・DD良・n=6（サイジング$30/$3） |
 | HYP-009 | [HYP-009-d001-fake-rebreak](./HYP-009-d001-fake-rebreak/) | formal FAIL | D-001 実証① n=1 |
 | HYP-010 | [HYP-010-d001-fake-retest](./HYP-010-d001-fake-retest/) | formal FAIL | D-001 実証② n=1 |
-| L-BRACKET | [L-BRACKET-12h-1m](./L-BRACKET-12h-1m/) | 案2 FAIL・入口①起票 | BR-001〜008 未検証 |
+| L-BRACKET | [L-BRACKET-12h-1m](./L-BRACKET-12h-1m/) | 優位軸で入口再考 | ADV-001〜006 未検証。BRは不採用 |
 
 \* 期待値・DDはクリア、トレード数不足で不合格。一括レポート: [eval/reports/20260822-formal-eval-batch-setB.md](../eval/reports/20260822-formal-eval-batch-setB.md) · D/Rバッチ: [eval/reports/20260822-formal-eval-d001-r001-setB.md](../eval/reports/20260822-formal-eval-d001-r001-setB.md)
 

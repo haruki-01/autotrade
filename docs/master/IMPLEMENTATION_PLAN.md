@@ -320,9 +320,10 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 - **(2) 実施済み:** 上位足で場面、1分は入る瞬間だけ（案2）。**EV決済黒字 0。8年は回さない。**
   最良 `br_htf1h_ema_pb` 41.2%（z=+0.61）。15分陽線＋押し目は無作為より悪い。
   レポート: `eval/reports/20260825-bracket-htf1m-setY.md`
-- **(3) 入口①を8本起票（未検証）:** 案2と違う場面（スイング・箱・旗・インサイド・狩り取り戻し・二度目抜け・時間の始値箱・レッグ半値）。
-  一覧: [entry-spot-batch](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-entry-spot-batch.md)。
-  次は短リストを選んでから②。8本の総当たりはしない。
+- **(3) 入口①を8本起票したあと再採点:** BR-001〜008 は人と定番botが同時再現できるため不採用。
+  評価軸の正本: [MARKET_ADVANTAGE_AXES.md](./MARKET_ADVANTAGE_AXES.md)。
+  再考: ADV-001〜006。[rescore](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-advantage-rescore.md)。
+  次は短リスト（002 / 001 / 005、拒否は004）だけ②。総当たりはしない。
 
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
 workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·

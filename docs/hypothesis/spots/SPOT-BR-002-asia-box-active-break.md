@@ -1,6 +1,6 @@
 # SPOT-BR-002: アジアでできた箱を、厚い時間の1分で割る
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

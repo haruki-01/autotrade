@@ -281,7 +281,9 @@ OHLCV の最良（+3.9pt）にも届かない。
 
 **結果（Set Y）: 決済EV黒字 0。8年は回さない。** 最良 `br_htf1h_ema_pb` 41.2%（z=+0.61、EV決済 −0.038）。15分陽線＋押し目は無作為より悪い。
 
-代替の入口①（未検証）: [SPOT-BR-001〜008](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-entry-spot-batch.md)
+代替の入口①: BR-001〜008 は優位軸で不採用。後継は
+[ADV-001〜006](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-advantage-rescore.md) ·
+軸の正本 [MARKET_ADVANTAGE_AXES.md](../master/MARKET_ADVANTAGE_AXES.md)
 
 ## 1分足入口の遅延
 

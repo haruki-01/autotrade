@@ -1,6 +1,6 @@
 # SPOT-BR-006: 同じ15分高値の初回は見送り、二度目の終値抜けだけ取る
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

@@ -4,7 +4,7 @@
 |------|-----|
 | logic_id | `br_*`（固定ブラケットの入口条件群） |
 | 主歪み | 順張りの継続（15分足で z が出た側） |
-| ステータス | 案2 FAIL。入口スポット BR-001〜008 を起票（未検証） |
+| ステータス | 入口を優位軸で再採点。BR不採用。ADV 未検証 |
 | 優先順 | 1 |
 
 ## 目的
@@ -21,12 +21,11 @@
 
 ## 次アクション
 
-1. 春希さんが入口スポット（BR-001〜008）から短リストを選ぶ
-2. 選んだ①だけ②を実装し、直近1年で測る。8年は決済EVが黒になってから。枠はまだ触らない
+1. 短リスト ADV-002 / 001 / 005（拒否は ADV-004 を1点）だけ②へ。BR-001〜008 は実装しない
+2. 8年は決済EVが黒になってから。枠はまだ触らない
 
-入口一括: [notes/2026-08-25-entry-spot-batch.md](./notes/2026-08-25-entry-spot-batch.md)  
-棄却済み案2: [notes/2026-08-25-htf-1m-spots.md](./notes/2026-08-25-htf-1m-spots.md)  
-レポート: `eval/reports/20260825-bracket-htf1m-setY.md`
+優位軸: [MARKET_ADVANTAGE_AXES.md](../../master/MARKET_ADVANTAGE_AXES.md)  
+再採点: [notes/2026-08-25-advantage-rescore.md](./notes/2026-08-25-advantage-rescore.md)
 
 ## メモ置き場
 

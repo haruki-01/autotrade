@@ -1,6 +1,6 @@
 # SPOT-BR-008: 15分の急なレッグの半値まで戻し、1分で再開する
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 

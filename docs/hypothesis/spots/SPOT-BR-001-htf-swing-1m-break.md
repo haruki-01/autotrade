@@ -1,6 +1,6 @@
 # SPOT-BR-001: 上位足のスイング継続を、1分の高値更新で取る
 
-status: proposed  
+status: superseded-weak-edge  
 created: 2026-08-25  
 枠: 12h / 1.00% / 1:1.5 / 上位足は確定後のみ / 1分はトリガーだけ
 
