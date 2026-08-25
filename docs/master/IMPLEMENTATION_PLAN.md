@@ -315,7 +315,8 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 [notes/2026-08-25-next-options.md](../workstreams/L-BRACKET-12h-1m/notes/2026-08-25-next-options.md)。
 
 - **(0) 分母: 元本 300 USDT で確定**（1回の証拠金 30）。月120% = 月360 USDT。必要 N×Q²=3.00（実測0.179の17倍）。
-- **(1) 実施中:** 12h / 1.00% / 1枠を **15分足・直近1年** で測る。黒字の条件だけ8年へ。
+- **(1) 実施済み:** 12h / 1.00% / 1枠を15分足・直近1年で測った。**EV決済黒字 0。8年は回さない。**
+  レポート: `eval/reports/20260825-bracket12h15m-setY.md`
 
 正本: [BRACKET_FRAME.md](../hypothesis/BRACKET_FRAME.md) ·
 workstream: [L-BRACKET-12h-1m](../workstreams/L-BRACKET-12h-1m/) ·
