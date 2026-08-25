@@ -1,0 +1,62 @@
+# 直近1年・1分足のスクリーニング環境。
+#
+# 枠: 保有12時間 / 損切り1.00% / 利確1.50% / 同時1枠 / 入口指値。
+# 8年の合否（eval_v3）は置き換えない。1年で黒字の条件だけ v3 の全履歴に進む。
+#
+# コスト・口座条件・DD 上限は v1/v2/v3 と同一。緩めた点はない。
+# 入口足だけ 1m。シグナルの時間窓は15分足と同じ（バー数×15）。
+
+eval_version: "eval_v4_btc_1m"
+schema_version: 1
+
+symbols:
+  - BTCUSDT
+
+symbol: BTCUSDT
+category: linear
+base_url: https://api.bybit.com
+
+preferred_data_source: bybit
+allowed_data_sources:
+  - bybit
+  - binance_vision
+
+initial_equity: 300.0
+leverage: 3.0
+risk_per_trade_pct: 1.0
+
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+
+max_concurrent_positions: 1
+
+daily_ema: 200
+h4_ema: 20
+m15_ema: 20
+
+stop_loss_pct: 1.0
+take_profit_pct: 1.5
+
+fee_rate_per_side: 0.00055
+slippage_pct_per_side: 0.0002
+
+# ウォームアップ用に prepare は start の40日前から取る。
+sets:
+  Y:
+    start: "2025-08-23"
+    end: "2026-08-22"
+
+min_trades: 100
+max_drawdown_pct: 20.0
+
+min_trades_per_month: 50
+max_entry_timeframe: "1m"
+
+forbid_synthetic: true
+primary_gate_set: Y
+holdout_set: Y
+
+required_sets:
+  - Y

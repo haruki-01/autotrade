@@ -1,0 +1,297 @@
+schema_version: 1
+eval_version: eval_v2
+created_at: '2026-08-24T21:57:20Z'
+git_commit: a5a7434
+config_path: configs/eval_v2.yaml
+config_sha256: 2a3cb453cbee2c814c683892d6abce6cec7e8e733c85e91cd45e62f8831f13c4
+forbid_synthetic: true
+symbols:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- DOGEUSDT
+costs:
+  fee_rate_per_side: 0.00055
+  slippage_pct_per_side: 0.0002
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+  leverage: 3.0
+  initial_equity: 300.0
+gates:
+  min_trades: 100
+  max_drawdown_pct: 20.0
+  min_trades_scope: portfolio total across symbols, per set
+datasets:
+  A:
+    eval_window:
+      start: '2023-01-01'
+      end: '2023-12-31'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: c6ade6a76d8f0a72afc7738fbef6975c9ba775fbc57f96fa1884f32490fd5f0b
+          data/cache/BTCUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: bc6dd6623b15d06489ab525f509543e1d7d498f1e7e67c133ae83bbe97de07a0
+          data/cache/BTCUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 17d2ec88647f7fdad31816d08fe4455a99c41adc02942c3f5c25e2f7ae58e114
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 0384b8c1c772925b99df601897bcd72a877902c3f470f53a405d83ada332761f
+          data/cache/BTCUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 9a960af139b4037a454bf9225affc501de3d3a3262e82db14e8fb22bd22df3bb
+          data/cache/BTCUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: f732bbd2e004b59dce50df436d73f0d38f7fb29099d8a3bf51f22280b7a3af1c
+          data/cache/BTCUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: dd887681d73c50a576d36f668230db21aa28fa9ca8c6804a871cbff9f960c90f
+      ETHUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/ETHUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: f5c3a21bb7dd71925d9407a5ba57273a2a8c614405b0621e03a6e0970a8c3719
+          data/cache/ETHUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: e9a7d285fa7135de1c8ca7cf9baaa8a8f6ea8d4fc74f580df8a062fc1713f969
+          data/cache/ETHUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: bbe93ff8418eef0b961a78b70886c99e3532984b57dddcabea2f7c203112e447
+        derivatives:
+          data/cache/ETHUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 66d74c17855ce251c0088392ca55c1bf2f7d3766067d0e55f0f4d1708d97a7f7
+          data/cache/ETHUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 9b0ace116611413eb175efe9b1c1a087afb4fe10e9dd6bf2ff50bca098792678
+          data/cache/ETHUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: dadde7a2f8b978950216e96f12e5d435ee8ac5fed6d25b74a2b9a25c407ce191
+          data/cache/ETHUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: 6dc69bda248b65aac6cfde5ad3bbffa7abf196dadd654222f46d78ac380d1c47
+      SOLUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/SOLUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: e9f87bfe9a6e8a18ae197a8c8c11e3354592958b528238582659544864ffe5df
+          data/cache/SOLUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: 0603aa63744d146b1077b59e396fff83e868338eaa5fe54113723b51222ce367
+          data/cache/SOLUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 0e2ff8169e26dce54b539566b8417a707afdc099987f05c424189e86495c5e66
+        derivatives:
+          data/cache/SOLUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 388f696f9c306abda08716e1386ea1697572ebd6422d6f40a9dba211b808e75c
+          data/cache/SOLUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 8390e99e5019adad110628cca20b54087160894925391ea451be1781366f6f48
+          data/cache/SOLUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: 212abfdabc4c611b32eaf8330a55c991fb966988b8640e222765d494d3808001
+          data/cache/SOLUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: a47bd417f3a125f01ff46e57227d311448a714cc3c98b23b1f0fd4542e357acd
+      BNBUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BNBUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 2345cb786d82337056f173ed715cb773397873a4c9037478593a933b5a5fe23f
+          data/cache/BNBUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: dc93806656adadf3415264d16c770ac211691c37e9337831a47e9aa9479a8d67
+          data/cache/BNBUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 070a7b31bb5cfb080ff94a026c2ce392c6b2e811015af6b61579c803bfdbc5b7
+        derivatives:
+          data/cache/BNBUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 44785dee96c4c516c0d7261c9b28c7253e83dc17899bb90e98140ff0e8d394ad
+          data/cache/BNBUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 316d2d2e8657ac2e4cffd57cc29d3c38d48e8e0db25ae04fa87fcad16281c635
+          data/cache/BNBUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: 53ad277e852df59b74bfbb5fc658bb8f442d0940b2ada05ed3f4baa4d49211b8
+          data/cache/BNBUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: f21e7eb5ae2edfa11236addb4e5c4fe59ea122997810eccbdb9c5ff6cca238cc
+      XRPUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/XRPUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 1a5524a1c79732ee3d102f22d4fd7ad891ab9388ed05f3606a9b50a6165a7936
+          data/cache/XRPUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: 8d8c6a14cc4cc9d225aa1ef00eae1756b064ed321422e35de9607671516f1068
+          data/cache/XRPUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 093c73aff92fd1ea5672d43b5ca028ed1d154abe4955c1b59cd058a6cabc9545
+        derivatives:
+          data/cache/XRPUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 0ce15bcda7540840330d16c30fbbcddd19f9ff6f717743260dbce63f27926ede
+          data/cache/XRPUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: b9257522b1ed6e7e21ddf7a43f024a28f70107d1be129db132ab7fe47a8e64bd
+          data/cache/XRPUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: 9685484e43a50288790e86479651a84466d117600de2118723ea80c889ea1c35
+          data/cache/XRPUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: ad0a0de066e884d3cefb26d0155ce48a02417b32c28c0e73834a27a993f14976
+      DOGEUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/DOGEUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: f080c06be11dc519ea6530b4da823cd993f813a4ed1e13f865677614d9d93774
+          data/cache/DOGEUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: bd2e22522889a058ed8e9932e533d09c56b28542169d699902c731167388c8f4
+          data/cache/DOGEUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 6984b1e6c2b5c4ebd3f8e7e105765f30f6e3d14ddfc776b0dd09203a2d565dfb
+        derivatives:
+          data/cache/DOGEUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 0279ad50c96f2d8d306163e5f65577462206aa8c3b657f5c53ef918d7d55c18c
+          data/cache/DOGEUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 93a1f9613daffe895ef17acc9cbd2065c365fb947d33338def6ef0fff8593fc6
+          data/cache/DOGEUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: a80b713f3be64e670ef7e227a13d7cf6eb409e39a92fce3d9b9bef87e4c73192
+          data/cache/DOGEUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: f34e95d7465acf6ac4dd7f75c0e2ed0dd92c0fd32c632cc7b61b526e0fe90fc4
+  B:
+    eval_window:
+      start: '2024-01-01'
+      end: '2024-12-31'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: f37d2ac4cf95a6f7357bd1e850c4a73182d5b9f257c7d0860b41c1d4e47ab3f4
+          data/cache/BTCUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 1458794232afad57c29ef125767e6f2f20def7dcc9ab2eea7a0a3da28847cdb3
+          data/cache/BTCUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: cf197568d976ef382040403140c45bc5fa480c67109b7e060607900adafa9bdd
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: d1b22378e756c2d633d05305eaa9d7f1b507e9cf16c44ac607c032d76f3a7e34
+          data/cache/BTCUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 070af164f462e4dec03af92960944685c63ec53bbbacd1b9648ac8c1af5c9077
+          data/cache/BTCUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: 6df63d9e8eaf5477c4aca324cbd2f85acd70d088f67e05a35b827d6fba915a08
+          data/cache/BTCUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 702b6495d061398eb4f43fe32c45d2a962056aec5efbc204c5d921bf6f7d8731
+      ETHUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/ETHUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 7066d28eef975b537df58dba447c04332cc05f55a2b3ca90189d8a7a0bc3081a
+          data/cache/ETHUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 2921e60d0394e900509e21ec246a1d18debf4135173729fff5be31728bdac29a
+          data/cache/ETHUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: e7d9d65f2098645273d9921845a30fc8e37711066eca98eb95665edb12044643
+        derivatives:
+          data/cache/ETHUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: c18064949d3fe7097ec81a33f2405885eaaf0391c5408bc01683c6b5c3662930
+          data/cache/ETHUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 8526f91b6d8ea4ec77d8e4db40aeec67ae63bec65dae92d9cf0f65fc56986a31
+          data/cache/ETHUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: e8c957d2efe99ff9d6e6700be4fe18e55b326b5971258b774f4322ed9d85d82a
+          data/cache/ETHUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 057cfe57ae7b8aab1b9f43d1574efaa28be7f4d3a55e0f072a9448fc03d7b343
+      SOLUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/SOLUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 08f2c18a06e7d528f9b0ce68b94b77d30839b6321a2b73ccda0e23aa7ad7b6e9
+          data/cache/SOLUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: f247372bdcdfbcb7e303614d99e3135680dc136b98614753785cfcd22f4744a2
+          data/cache/SOLUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: f11d096edf066931fc5e408fcd846b0f448a2a68cf19f8ff3baa560a575e8c89
+        derivatives:
+          data/cache/SOLUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: cb8322b4e7ed32f3ccf0f2dc48ed8d0aa95ca81efc0ff5f60ff6502ac33d9768
+          data/cache/SOLUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 8696613de3ddc5b2220ccc69a7b383078b94e02977fe7ab8e5e438435a4cce89
+          data/cache/SOLUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: a3092bc22460218935b31623738b5071322b5088ac3d654dcec34a5c9cdc30ec
+          data/cache/SOLUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 66596fe26c90c00dff99f53a0fd4f933284b441c322a3264e43bd3a60a65dcc1
+      BNBUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/BNBUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 5cc20245fb968ae3d2d525a5323fcff4783e80903fa43ad03c44d430879ef611
+          data/cache/BNBUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 59eba0e1c3cd9a51e6194a0e90ed667228886504064ee40038349bb4a1113ba9
+          data/cache/BNBUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: c337dbde475dc6e81e7942d2d9f1d8cc147687c4c4408e6c0ac3ee2525a88385
+        derivatives:
+          data/cache/BNBUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: 33776e5cac2088b4466874356a18c8998a5d14481e4b824e374cb22438f0cb36
+          data/cache/BNBUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: d6e51bd4cd2d940c14a6bd245afb7fd2beae97c9355bdd6a852ce5fa1b39563d
+          data/cache/BNBUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: 78e1ab894673a90613f41c4cce954f77cbeadfa2e734d17259d02e21d8c8b4d5
+          data/cache/BNBUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 03d665c94795fc7d9fafb6f73a6146e70431afc084720a8794cc06aa3ae1fa96
+      XRPUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/XRPUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: ba6482293eb1d4781499a3dff50e2e319af9a58f31655129ebcde20d2543ed0e
+          data/cache/XRPUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 11842e46eae8e7c3a793f55de60467a520b179dbd966c2b7af18398b05d3e14d
+          data/cache/XRPUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: 7435dc9729d7786af1fcaafb6c3391100ca7fbf870ddb99f13e7ae2e6fd54e85
+        derivatives:
+          data/cache/XRPUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: 989a10affce2c1282d5c189a24df67d1b52fd5acafeb596f7ebe20dfa61b60ee
+          data/cache/XRPUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: d0b07a78e48ba89de7021decc8440f93f877faa0f52c1387b0214fc575306b4e
+          data/cache/XRPUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: c8ebd7a3fd50cbfd85d32e9dbfd10cb308d7be403b6ffc2203fa422b9e9f3c90
+          data/cache/XRPUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 1f7468895c281c29b966fac743ffb3794b1a95b842d62b2b3fb2b2df6813b3c1
+      DOGEUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/DOGEUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: c9cd18616cb297ad62c3e9a392d3ddc8d7d3edfb143fc3e4919bd4a1400c9c57
+          data/cache/DOGEUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: b3c40bbd967bd4c0223b6658507870456b5762c4b2928b05a2795e30b85f0266
+          data/cache/DOGEUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: cfb724fcedfd2747e7c1b790d280d82025510833ec8dd7ef70032d58d8d53a54
+        derivatives:
+          data/cache/DOGEUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: a584fca0f3dd564583de8707b5cac726097ba1690040fce2bbb9cdd3a356496f
+          data/cache/DOGEUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: abb6ffebc8a583a7db9f6cc41ffae503cd7b80592a50e64c7b26ac0447ee0fd3
+          data/cache/DOGEUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: de1df6fbc343804782ab956159f4ec61ccec8faae4d2b6b68d3d7703696d87b0
+          data/cache/DOGEUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 0bc2dda9b88d9fbb5a32c7ad173fe3f68b330d56fde6f9ca46aaefb86b444b3d
+  C:
+    eval_window:
+      start: '2025-01-01'
+      end: '2026-08-22'
+    symbols:
+      BTCUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/BTCUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: f07580696df59365e92cf5ae6f087e1f440c61516cb95180d4afce68fc37856c
+          data/cache/BTCUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 237495f9fb172c0a1e52f86803e9a6e8e0571290bec21eefe3e19ec868d035ab
+          data/cache/BTCUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: ddba66310b771fb70c26b04a95f5735be748b11ec7d7bf0a3755bbf8a2682b56
+        derivatives:
+          data/cache/BTCUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 016c67b4b939c93b96185e8c65d30e2e7f35644182cac073d0849f260bc8dc94
+          data/cache/BTCUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 0a183cbf59269fa72080ea33b8269fa4146b87904427d8211d38936f016872cd
+          data/cache/BTCUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: be2e2abb924248360959c810392c9d0236b7bc554f288d4aa271b78a5294f58c
+          data/cache/BTCUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 1d79f4c2ff2a69433dab5f68e5e44d35980abbc585b9978b2318542f155014a8
+      ETHUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/ETHUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: cd2ce7af88395c9d73d240b002a403aee2287196b292814b65b2a4c8247de727
+          data/cache/ETHUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: f3a4683245d65c457d3d11c5e224a335826e34f7e9ee934eb17b3a3177e2702a
+          data/cache/ETHUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: 46b79a109daea3283a7c07a34b9bd66495a9f9de7df90357e539eabb11617b52
+        derivatives:
+          data/cache/ETHUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 93f4f6bfdac8bebdc872393fc646dcf713b8e3104e2e44bf802edbe1bfdbde59
+          data/cache/ETHUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 3b1881cc4b64a59e894ed2244b55a91d5c0c4e535dd739c25eb6e85abf84055c
+          data/cache/ETHUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 5565c47472e7d6c1ee7c95bb7f64c5cc6fd61452e8b737e2434c4a977df8345f
+          data/cache/ETHUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 31a1c92cbc7692879fcc945ba4ecc2420e6b6b4ffb33b2bfea2bdbba097f1e39
+      SOLUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/SOLUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: b47f97e01ea25c702c5c355c31002676c6267e0fb923c4d8f91a5328e61fe3e6
+          data/cache/SOLUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: e2b9264dde2d3bd09008495d6dbe71b77d4317307f04d820ee672f3b781b1aa4
+          data/cache/SOLUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: fb690bc44fd51ca41713cb3f25e4db4be19f153293e5150039cd7e06d4db67ad
+        derivatives:
+          data/cache/SOLUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: f9ec80244e445e14e95eb3ea4191531553b5daed510625248920c3cd9ee7a4de
+          data/cache/SOLUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 94b91417fe258470d635129ca3d14a7e7ce13d69aa61241c9f16861928931ae4
+          data/cache/SOLUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: f3f6ffc52ddeccbefda6f35db4bbd52c526b24cd66544bf1c1cae183e666d174
+          data/cache/SOLUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 81293ab2ac735eab9e12c7bd606e989dc70c819ba6e83d74e4d2f5267fa0f769
+      BNBUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/BNBUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: 4bbe1f7bddd23867d9a9a21cdf49b32059f3fce3367f8267eaadd426f1913f7e
+          data/cache/BNBUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: ab55056c4cbaa2d04255e93389ef5ad1d7ff1e2066ff886e81e7937e883d005a
+          data/cache/BNBUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: 5f9aa3ff24ffea7ae8c721ca1a331586558f757bc667d3f5b015eb3e290bfb80
+        derivatives:
+          data/cache/BNBUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 6b449ccbb4af680612db66974fba243cca5a28dd1a4f662850ae89f196afcfac
+          data/cache/BNBUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: d100f52c7e9183b4f2d103ea651f26d82b4b30a92c0fff9e80bd6aef3f6239a7
+          data/cache/BNBUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 541817ad03166908d67526b8332c2d49a051a8c393d27efb5481a168f06b95dc
+          data/cache/BNBUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 73c6c35b36870d8e9d5dec0838d23cb27499fe341c9ec7ca6df7bcc38b007447
+      XRPUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/XRPUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: d36aede9121c80cfc8d8309f47fbcb35e5810b1d8d736fc7737170d344286769
+          data/cache/XRPUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 2c8519aa72af0244efedeca0c0ca54e42b27f05e73191e0f2bc4026b5f1a5700
+          data/cache/XRPUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: ad2821c97c84138ec613d3c15247b5cfa470feb89ad768e59bd482e69623f0d6
+        derivatives:
+          data/cache/XRPUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 51f37d0ad92c22e331f6f4fed176bf1c3ade70be07f51a06e6aa086e42814363
+          data/cache/XRPUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 6dfc03acf21f1f65842a751d7a24027d770aa42626c3ecc0d9d17701c1b17a6b
+          data/cache/XRPUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 063ed530d686e57803c5556f1df2aa99f90719d6ccda08a13432e7776984bc2b
+          data/cache/XRPUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: bbfeb8db7dbd5c195435b058342ca5f7479d91ec722552edb35e872012cdb57a
+      DOGEUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/DOGEUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: de2100e03c0dad84949a881c83bc075a60ac7cf3d98bcbf84c1cb2f5cd17db4d
+          data/cache/DOGEUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 8bc903ab2be5c83961fc1b86f06735e8458fe12327e0c70dc7964747bf56e18a
+          data/cache/DOGEUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: f33b2486cb7b9af463b1642e4bf0e46f3709e197cbf6578a2a88935c4c5f9f63
+        derivatives:
+          data/cache/DOGEUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 8ed4929f4b196c649bb374a63f8d2fcc78ce7c8b81bc5b72b8714a8c72cb2663
+          data/cache/DOGEUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 3a0a89de07e618df3dd60bd25df16a72eceda6414c9b915324f7ae5ca7276b84
+          data/cache/DOGEUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: bb8e7cccfb3baaddc4ce03b7f7c78461184707b9dd3f75a712da01b76a564f87
+          data/cache/DOGEUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 80132bbff15a64c6c4358a2a591d8dc795f5cdfb1c06a69cade2d8f0a144735d
+notes: Multi-symbol formal eval. Trades from every symbol merge into one equity curve;
+  fixed_margin sizing makes the per-symbol runs independent.

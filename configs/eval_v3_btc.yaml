@@ -1,0 +1,100 @@
+# Formal evaluation environment (LOCKED) — BTC-USDT only, long history
+#
+# なぜ v3 が必要か:
+#   v2 は日足規模のロジックが1銘柄では年20〜25回しか発火しないという問題を、
+#   6銘柄バスケットで解いていた。BTC-USDT 単独に絞るとその手が使えない。
+#   v2 の期間（1〜1.6年）で BTC だけを回すと n=15〜43 で、min_trades=100 に
+#   構造的に届かない（実測: eval/reports/20260824-slow-btc-set*.md）。
+#
+#   残る手は期間を伸ばすことだけなので、Binance に BTCUSDT の15分足がある
+#   全範囲（2017-08〜）を使い、ほぼ等長の3期間に割る。
+#   ウォームアップは daily_ema×2 = 400日なので、最初の期間は 2018-10 から。
+#
+#   それでも1期間あたり n は 100 に届かない（年22回 × 2.6年 ≒ 57）。
+#   **ゲートは緩めない。** 期間ごとの合否ではなく、
+#     - 3期間すべてで EV の符号が同じか（機構の再現性）
+#     - 全履歴プールでの n と EV の t 値（推定の精度）
+#   の2つで読む。min_trades を下げるなら、その根拠は
+#   docs 側で t 値から導出してから変える。
+#
+#   コスト・口座条件・DD 上限は v1/v2 と完全に同一。緩めた点はない。
+
+eval_version: "eval_v3_btc"
+schema_version: 1
+
+# BTC-USDT のみ。バスケットは廃止した。
+symbols:
+  - BTCUSDT
+
+symbol: BTCUSDT
+category: linear
+base_url: https://api.bybit.com
+
+preferred_data_source: bybit
+allowed_data_sources:
+  - bybit
+  - binance_vision
+
+# Virtual account — v1/v2 と同一
+initial_equity: 300.0
+leverage: 3.0
+risk_per_trade_pct: 1.0
+
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+
+# 1銘柄なので1枠
+max_concurrent_positions: 1
+
+daily_ema: 200
+h4_ema: 20
+m15_ema: 20
+
+stop_loss_pct: 1.0
+take_profit_pct: 1.5
+
+# コストは v1/v2 と完全に同一
+fee_rate_per_side: 0.00055
+slippage_pct_per_side: 0.0002
+
+# BTCUSDT の15分足がある全範囲を、ほぼ等長の3期間に割る。
+# 相場の性格が偏らないよう、強気・弱気・横ばいがどの期間にも入る長さにしてある。
+sets:
+  A:
+    start: "2018-10-01"
+    end: "2021-04-30"
+  B:
+    start: "2021-05-01"
+    end: "2023-12-31"
+  C:
+    start: "2024-01-01"
+    end: "2026-08-22"
+
+# --- 測定可能性の床（PROJECT_PLAN の初期ガードレール）
+# 「100回未満は判定保留（サンプル不足）」が出自。取引頻度の要件ではない。
+# 1銘柄では期間ごとに到達できないが、下げない。
+# 必要 n はばらつきから逆算して報告する（scripts/pooled_significance.py）。
+min_trades: 100
+max_drawdown_pct: 20.0
+
+# --- 運用要件（2026-08-24 追加）
+# min_trades とは別の軸。あちらは「測れるか」、こちらは「回す価値があるか」。
+# 正しくても月2回しか撃たないロジックは、元本を遊ばせているのと同じ。
+#
+# 入口判断は 1分〜15分足で行い、月50エントリー以上。
+# 月50 = 年600回。往復コスト 0.135 USDT/回 なので年81 USDT = 元本300の27%を
+# コストに払う。ここを踏まえて純EVが必要な水準は
+#   docs/hypothesis/postmortems/2026-08-24-trade-rate-requirement.md に導出。
+min_trades_per_month: 50
+max_entry_timeframe: "15m"
+
+forbid_synthetic: true
+primary_gate_set: B
+holdout_set: C
+
+required_sets:
+  - A
+  - B
+  - C

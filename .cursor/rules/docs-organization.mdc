@@ -1,0 +1,39 @@
+---
+description: docs を master / workstreams / research に分けて格納・参照する
+alwaysApply: true
+---
+
+# ドキュメントの置き場と活用
+
+知識は3層。迷ったら `docs/README.md` を見る。
+
+| 層 | パス | 入れるもの | 入れないもの |
+|----|------|------------|--------------|
+| Master | `docs/master/` | 全体方針・前提・合否・ロードマップ | 1ロジックの調査メモ |
+| Workstream | `docs/workstreams/<id>/` | その要素の目的・進捗・リサーチメモ | 全体方針の変更案（先に master へ） |
+| Research | `docs/research/` | 1回のBT結果（CLI自動） | 長い調査ノート |
+| Ops | `docs/ops/` | 環境・レイアウト | 戦略判断 |
+
+## 自動格納（エージェントの義務）
+
+1. **方針・フェーズ・ゲート変更** → `docs/master/` の該当ファイルを更新。workstream には要約リンクだけ。
+2. **特定ロジックの調査・設計メモ** → 既存 `docs/workstreams/<id>/notes/YYYY-MM-DD-slug.md` に保存。なければ `_template` から新規 workstream を作り `workstreams/README.md` の一覧も更新。
+3. **進捗・次アクション** → その workstream の `README.md`（現状 / 次アクション）を更新。
+4. **バックテスト結果** → `autotrade backtest` に任せ `docs/research/` へ。手書きで同じ数値を master に複製しない（要約だけ `BACKTEST_RESULTS.md`）。
+5. **新規ロジックを議論し始めたら** → 実装前でも workstream フォルダを作る（proposed）。
+
+## 活用（読む順）
+
+作業開始時:
+
+1. `docs/master/IMPLEMENTATION_PLAN.md` — いま何をするか
+2. 対象の `docs/workstreams/<id>/README.md` — その要素の現状
+3. 必要なら `docs/master/MARKET_EDGE_MAP.md` と `docs/research/INDEX.md`
+
+全体方針と矛盾する提案は、先に master の該当箇所を直してから workstream を進める。
+
+## 命名
+
+- Workstream フォルダ: `<LOGIC_OR_HYPOTHESIS_ID>-<short-slug>`（例: `L-COST-cost-gate`）
+- notes: `YYYY-MM-DD-topic.md`
+- 1メモ = 1テーマ。検証ランは notes に書かず research へ

@@ -1,1 +1,56 @@
+# autotrade
 
+Bybit BTC-USDT の自動売買 bot（研究〜実運用）。
+
+## いまの方針
+
+- 1本の bot で「仮説 → バックテスト → デモ → 少額本番」を通す
+- UI なし（ログと数値で管理）
+- 時間足: **日足=全体トレンド / 4時間=現在トレンド / 15分=エントリー**
+
+## セットアップ
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+## よく使うコマンド
+
+```bash
+# 実データ取得（ローカルPCなど Bybit API が使える環境で）
+autotrade fetch-data --set all
+
+# 本検証セット B でバックテスト（ロジック指定）
+autotrade backtest --set B --logic-id cost_gate_v1
+
+# クラウド等で API が地理制限のとき（動作確認用・成績は参考にしない）
+autotrade backtest --set B --synthetic --logic-id vol_scaled_trend_v1
+```
+
+## 検証・評価（Formal Eval）
+
+合成 smoke は動作確認のみ。**合否は実データ formal eval**:
+
+```bash
+PYTHONPATH=src python3 -m autotrade.cli eval-prepare --config configs/eval_v1.yaml
+PYTHONPATH=src python3 -m autotrade.cli eval --logic-id cost_gate_v1
+```
+
+詳細: [eval/README.md](eval/README.md) · スキル: `.cursor/skills/backtest-eval/`
+
+結果は `artifacts/backtests/` に出力されます。
+
+> 注意: Cursor Cloud エージェント環境からは Bybit API が国制限で 403 になることがあります。  
+> **本番相当の検証は、手元の Cursor ウィンドウで `fetch-data` → `backtest` を実行してください。**
+
+## ドキュメント
+
+地図: [docs/README.md](docs/README.md)
+
+- **仮説ラボ（精度・立て方）:** [docs/hypothesis/](docs/hypothesis/) · [プラン](docs/hypothesis/PLAN.md)
+- **Master（全体設計）:** [docs/master/](docs/master/)
+- **Workstreams:** [docs/workstreams/](docs/workstreams/)
+- **Research / Eval:** [docs/research/](docs/research/) · [eval/](eval/)
+- **Ops:** [docs/ops/](docs/ops/) · [Secrets](secrets/README.md)

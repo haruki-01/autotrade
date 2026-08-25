@@ -1,0 +1,56 @@
+# Formal evaluation environment (LOCKED)
+# 実装・合否判定で使う数値の正本。検証時は必ずこのファイルを使う。
+# 変更する場合は version を上げ、eval lock を再生成すること。
+
+eval_version: "eval_v1.1"
+schema_version: 1
+
+symbol: BTCUSDT
+category: linear
+base_url: https://api.bybit.com
+
+preferred_data_source: bybit
+allowed_data_sources:
+  - bybit
+  - binance_vision
+
+# Virtual account — sized for demo-unit realism (≈10× margin slots)
+initial_equity: 300.0
+leverage: 3.0
+# Legacy % mode (unused when sizing.mode = fixed_margin)
+risk_per_trade_pct: 1.0
+
+# Demo / live unit sizing (interpretation B)
+# 証拠金 $30 × レバ3 → 最大元本 $90 / 1トレード許容損失 $3
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+
+daily_ema: 50
+h4_ema: 20
+m15_ema: 20
+
+stop_loss_pct: 1.0
+take_profit_pct: 1.5
+
+fee_rate_per_side: 0.00055
+slippage_pct_per_side: 0.0002
+
+sets:
+  A:
+    start: "2023-01-01"
+    end: "2023-12-31"
+  B:
+    start: "2024-01-01"
+    end: "2024-12-31"
+  C:
+    start: "2025-01-01"
+    end: "2026-08-22"
+
+min_trades: 100
+max_drawdown_pct: 20.0
+
+forbid_synthetic: true
+primary_gate_set: B
+holdout_set: C
