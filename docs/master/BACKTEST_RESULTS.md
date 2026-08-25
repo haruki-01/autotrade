@@ -38,3 +38,18 @@ Artifacts: `artifacts/backtests/20260822T050037Z_setB/`
 ### Caveat
 
 Binance Vision spot ≠ Bybit linear exactly (funding, microstructure). Good enough to reject a clearly losing rule set; not enough to green-light live.
+
+## 2026-08-25 — SH-01 EV+DD campaign
+
+Formal, real data, `eval_v3_btc`. Monthly 50 is not a gate.
+
+| Item | `sh01n_center` |
+|------|----------------|
+| Sets A/B/C EV | +1.951 / +0.528 / +0.456 |
+| DD | 2.8% / 5.3% / 7.6% |
+| Pooled | n=164, EV +0.989, t=+2.57 |
+| Gate | EV+DD **PASS**; per-set n **HOLD** |
+| Set C vs BTC hold (ret/DD) | 1.14 vs 1.51 (lose) |
+
+Report: `eval/reports/20260825-slow-evdd.md`
+

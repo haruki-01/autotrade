@@ -322,7 +322,11 @@ OHLCV以外（OI/funding/basis/taker）も同じブラケットで7条件を回�
 
 - **(0) 分母: 元本 300 USDT で確定**（1回の証拠金 30）。月120%は別軸（到達可能性）。
 - **ブラケット 12h 入口: 打ち止め。** ADV 40本まで 1年決済EV黒 0。8年は回さない。
-- **本命: SH-01 を eval_v3_btc で再検証**（`--campaign ev-dd`）。中心 `sh01n_center`、対照 `sh01_base`。
+- **SH-01 EV+DD: PASS（サンプルは期間ごと判定保留）。**
+  中心 3期間EV+、DD 2.8/5.3/7.6%、プール t=+2.57。Set C は買い持ち Return/DD に負ける。
+  レポート: `eval/reports/20260825-slow-evdd.md`
+
+次の1点: 上昇期に BTC 保有の方が Return/DD で勝つことを受け入れるなら demo。受け入れないならサイジング／「持たない期間」。12h入口は再開しない。
 
 正本: [SLOW_HYPOTHESES.md](../hypothesis/SLOW_HYPOTHESES.md) ·
 workstream: [SH-01-daily-trend](../workstreams/SH-01-daily-trend/) ·

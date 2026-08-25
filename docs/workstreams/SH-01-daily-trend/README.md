@@ -4,7 +4,7 @@
 |------|-----|
 | logic_id | `sh01n_center`（中心） / `sh01_base`（固定利確なし） |
 | 主歪み | コストが R の数%に収まる値幅（日足ATR損切り） |
-| ステータス | 再検証中（2026-08-25。合否は費用後EV>0 と DD） |
+| ステータス | EV+DD PASS（期間ごとサンプル保留）。Set C は買い持ち Return/DD 負け |
 | 優先順 | 1 |
 
 ## 目的
@@ -15,14 +15,16 @@
 ## 現状
 
 - 実装: `src/autotrade/strategy/slow.py`
-- 環境: `configs/eval_v3_btc.yaml` + `eval/locks/eval_v3_btc.lock.yaml`
-- 2026-08-24 記録（月50ゲート時）: 中心プール n=164 / EV +0.989 / t=+2.57 / DD 2.8/5.3/7.6%。3期間EV+。月1.6–1.8回で当時 FAIL
-- 2026-08-25: 月50を合否から外して再測定する
+- 環境: `configs/eval_v3_btc.yaml` + `eval/locks/eval_v3_btc.lock.yaml@e7bcbe449cbb`
+- 2026-08-25 formal（`--campaign ev-dd`）: 中心・base とも 3期間 EV+、DD≤20%。プール t=+2.57
+- 期間ごと n は 100 未満 → 判定保留。月 0.9〜1.8 回は報告のみ
+- Set C Return/DD は買い持ちに負ける
+- 正本: `eval/reports/20260825-slow-evdd.md`
 
 ## 次アクション
 
-1. `run_slow_pack.py --campaign ev-dd` で `sh01n_center` と `sh01_base` を Set A/B/C
-2. プール t と買い持ち Return/DD を同じレポートに書く
+1. 上昇期に BTC 保有の方が Return/DD で勝つことを受け入れるか（春希さん）
+2. 受け入れるなら demo。12hブラケット入口は再開しない
 3. live 前は Bybit 再確認（lock は binance_vision）
 
 ## メモ置き場
