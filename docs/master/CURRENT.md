@@ -35,7 +35,7 @@ Bybit の **BTC-USDT 1本**を、同じルールで **バックテスト → dem
 
 | 項目 | 値 |
 |---|---|
-| 取引所 | Bybit（研究データは Vision 可。live 前に Bybit 再確認） |
+| 取引所 | **Bybit は日本居住では前提崩れ。** 国内候補は [EXCHANGE_CANDIDATES_JP.md](../ops/EXCHANGE_CANDIDATES_JP.md)。当面の第一候補は GMOコイン / bitFlyer |
 | 銘柄 | BTC-USDT のみ |
 | 合否 | 費用後 EV>0（3期間の符号）と DD≤20% |
 | サンプル | `min_trades=100` は下げない。未達は判定保留 |
