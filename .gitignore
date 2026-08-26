@@ -1,0 +1,40 @@
+# Secrets — never commit real credentials
+secrets/**/*.env
+secrets/**/*.key
+secrets/**/*.pem
+secrets/**/*.json
+secrets/**/credentials*
+secrets/**/password*
+secrets/**/account.env
+secrets/**/bybit.env
+# bybit.txt is tracked empty so Cursor can open it. Never commit filled keys.
+!secrets/**/*.example
+!secrets/**/README.md
+!secrets/**/.gitkeep
+
+# Common env / secret patterns
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/*
+!.vscode/settings.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Market data cache & run artifacts
+data/cache/
+artifacts/
+eval/reports/*
+!eval/reports/.gitkeep

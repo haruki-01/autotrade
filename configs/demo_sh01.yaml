@@ -1,0 +1,24 @@
+# SH-01 rest filters on Bybit testnet. Same signals as eval_v3_btc.
+#
+# 1枠なので注文を出すのは order_logic 1本だけ。
+# もう1本は同じループで影（ログのみ）。切り替える:
+#   autotrade demo --order-logic sh01n_regime_50d
+
+mode: demo
+symbol: BTCUSDT
+category: linear
+public_base_url: https://api.bybit.com
+
+logics:
+  - sh01n_regime_50d
+  - sh01n_regime_100d
+order_logic: sh01n_regime_100d
+
+warmup_days: 400
+leverage: 3.0
+margin_per_trade: 30.0
+risk_per_trade_usdt: 3.0
+
+secrets_path: secrets/demo/bybit.txt
+kill_file: secrets/demo/KILL
+log_path: artifacts/demo/demo.jsonl

@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""Block committing Bybit API keys in tracked secrets files."""
+
+from __future__ import annotations
+
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+from autotrade.exec.secrets import filled_secret_names  # noqa: E402
+
+
+def _staged_secrets() -> list[str]:
+    out = subprocess.check_output(
+        ["git", "diff", "--cached", "--name-only", "-z", "--", "secrets"],
+        cwd=ROOT,
+    )
+    return [p for p in out.decode().split("\0") if p]
+
+
+def main() -> int:
+    blocked: list[str] = []
+    for rel in _staged_secrets():
+        try:
+            blob = subprocess.check_output(["git", "show", f":{rel}"], cwd=ROOT)
+        except subprocess.CalledProcessError:
+            continue
+        names = filled_secret_names(blob.decode("utf-8", errors="replace"))
+        if names:
+            blocked.append(rel)
+    if blocked:
+        print(
+            "Do not commit API keys. Unstage: "
+            + ", ".join(blocked)
+            + "\nWrite keys only in secrets/demo/bybit.txt and do not git add it.",
+            file=sys.stderr,
+        )
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

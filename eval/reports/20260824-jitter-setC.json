@@ -1,0 +1,104 @@
+[
+  {
+    "logic_id": "sh01_base",
+    "set": "C",
+    "rel": 1e-06,
+    "clean_trades": 145,
+    "clean_ev": 0.37985962929336536,
+    "jitter_ev_min": 0.37985414421690866,
+    "jitter_ev_max": 0.3818480040431502,
+    "jitter_ev_mean": 0.3810091999985345,
+    "jitter_ev_std": 0.0006741191317315541,
+    "jitter_trades_min": 145,
+    "jitter_trades_max": 145,
+    "ev_sign_stable": true,
+    "runs": [
+      {
+        "seed": "none",
+        "trades": 145,
+        "ev": 0.37985962929336536
+      },
+      {
+        "seed": 0,
+        "trades": 145,
+        "ev": 0.3818480040431502
+      },
+      {
+        "seed": 1,
+        "trades": 145,
+        "ev": 0.3813236584935688
+      },
+      {
+        "seed": 2,
+        "trades": 145,
+        "ev": 0.37985414421690866
+      },
+      {
+        "seed": 3,
+        "trades": 145,
+        "ev": 0.3803826450629964
+      },
+      {
+        "seed": 4,
+        "trades": 145,
+        "ev": 0.3813253221926772
+      },
+      {
+        "seed": 5,
+        "trades": 145,
+        "ev": 0.38132142598190566
+      }
+    ]
+  },
+  {
+    "logic_id": "sh01_tp_4atr",
+    "set": "C",
+    "rel": 1e-06,
+    "clean_trades": 194,
+    "clean_ev": 0.6706461150514356,
+    "jitter_ev_min": 0.6706456728087432,
+    "jitter_ev_max": 0.671745762783581,
+    "jitter_ev_mean": 0.6713767170073988,
+    "jitter_ev_std": 0.0005165658736081474,
+    "jitter_trades_min": 194,
+    "jitter_trades_max": 194,
+    "ev_sign_stable": true,
+    "runs": [
+      {
+        "seed": "none",
+        "trades": 194,
+        "ev": 0.6706461150514356
+      },
+      {
+        "seed": 0,
+        "trades": 194,
+        "ev": 0.6717398994877094
+      },
+      {
+        "seed": 1,
+        "trades": 194,
+        "ev": 0.6717395991473659
+      },
+      {
+        "seed": 2,
+        "trades": 194,
+        "ev": 0.6706456728087432
+      },
+      {
+        "seed": 3,
+        "trades": 194,
+        "ev": 0.6706467038241641
+      },
+      {
+        "seed": 4,
+        "trades": 194,
+        "ev": 0.671745762783581
+      },
+      {
+        "seed": 5,
+        "trades": 194,
+        "ev": 0.6717426639928288
+      }
+    ]
+  }
+]

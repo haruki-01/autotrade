@@ -1,0 +1,495 @@
+[
+  {
+    "logic_id": "sh01n_center",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u4e2d\u5fc3: \u5229\u78ba4ATR",
+    "knob": "\u4e2d\u5fc3: \u5229\u78ba4ATR",
+    "why": "3\u671f\u9593\u30b2\u30fc\u30c8\u3092\u901a\u3063\u305f\u8a2d\u5b9a\u305d\u306e\u3082\u306e\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 20,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 20,
+      "LINKUSDT": 17
+    },
+    "trades": 77,
+    "avg_trade_pnl": 0.4636695058700042,
+    "total_return_pct": 11.900850650663441,
+    "max_drawdown_pct": 12.254257188179539,
+    "win_rate_pct": 35.064935064935064,
+    "payoff_ratio": 2.3082224087722745,
+    "total_fees": 2.9529520047087416,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_center"
+  },
+  {
+    "logic_id": "sh01n_tp_2",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba2ATR",
+    "knob": "\u5229\u78ba2ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002\u8fd1\u3059\u304e\u308b\u3068\u52dd\u3061\u3092\u5207\u308b\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 24,
+      "DOTUSDT": 23,
+      "AVAXUSDT": 29,
+      "LINKUSDT": 23
+    },
+    "trades": 99,
+    "avg_trade_pnl": -0.13224309107524024,
+    "total_return_pct": -4.364022005482926,
+    "max_drawdown_pct": 14.674183896081527,
+    "win_rate_pct": 41.41414141414141,
+    "payoff_ratio": 1.3054510137688202,
+    "total_fees": 3.690924432794756,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "expectancy"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_tp_2"
+  },
+  {
+    "logic_id": "sh01n_tp_3",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba3ATR",
+    "knob": "\u5229\u78ba3ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 22,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 23,
+      "LINKUSDT": 19
+    },
+    "trades": 84,
+    "avg_trade_pnl": -0.10380230162951792,
+    "total_return_pct": -2.906464445626511,
+    "max_drawdown_pct": 14.649773028595614,
+    "win_rate_pct": 33.33333333333333,
+    "payoff_ratio": 1.8914217950968324,
+    "total_fees": 3.1848676578840247,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "expectancy"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_tp_3"
+  },
+  {
+    "logic_id": "sh01n_tp_5",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba5ATR",
+    "knob": "\u5229\u78ba5ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 19,
+      "DOTUSDT": 17,
+      "AVAXUSDT": 17,
+      "LINKUSDT": 15
+    },
+    "trades": 68,
+    "avg_trade_pnl": 0.5675594603792822,
+    "total_return_pct": 12.864681101930397,
+    "max_drawdown_pct": 13.197616758094735,
+    "win_rate_pct": 36.76470588235294,
+    "payoff_ratio": 2.260039490431693,
+    "total_fees": 2.682444560551846,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_tp_5"
+  },
+  {
+    "logic_id": "sh01n_tp_6",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba6ATR",
+    "knob": "\u5229\u78ba6ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 17,
+      "DOTUSDT": 16,
+      "AVAXUSDT": 16,
+      "LINKUSDT": 15
+    },
+    "trades": 64,
+    "avg_trade_pnl": 0.38996675433834577,
+    "total_return_pct": 8.319290759218045,
+    "max_drawdown_pct": 14.504886435687379,
+    "win_rate_pct": 37.5,
+    "payoff_ratio": 2.029899724329328,
+    "total_fees": 2.539888190535483,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_tp_6"
+  },
+  {
+    "logic_id": "sh01n_tp_8",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5229\u78ba8ATR",
+    "knob": "\u5229\u78ba8ATR",
+    "why": "\u5229\u78ba\u8ddd\u96e2\u3002\u9060\u3044\u307b\u3069\u5229\u78ba\u306a\u3057\u306b\u8fd1\u3065\u304f\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 17,
+      "DOTUSDT": 15,
+      "AVAXUSDT": 17,
+      "LINKUSDT": 15
+    },
+    "trades": 64,
+    "avg_trade_pnl": 0.10386585338840934,
+    "total_return_pct": 2.2158048722860757,
+    "max_drawdown_pct": 16.92659525826277,
+    "win_rate_pct": 35.9375,
+    "payoff_ratio": 1.882778814650301,
+    "total_fees": 2.557719482401394,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_tp_8"
+  },
+  {
+    "logic_id": "sh01n_entry_15d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e315\u65e5",
+    "knob": "\u5165\u53e315\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 24,
+      "DOTUSDT": 25,
+      "AVAXUSDT": 23,
+      "LINKUSDT": 22
+    },
+    "trades": 94,
+    "avg_trade_pnl": 0.055023964368492814,
+    "total_return_pct": 1.7240842168794401,
+    "max_drawdown_pct": 16.86034398380546,
+    "win_rate_pct": 29.78723404255319,
+    "payoff_ratio": 2.4216011600336547,
+    "total_fees": 3.6288361292596427,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_entry_15d"
+  },
+  {
+    "logic_id": "sh01n_entry_25d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e325\u65e5",
+    "knob": "\u5165\u53e325\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 17,
+      "DOTUSDT": 19,
+      "AVAXUSDT": 18,
+      "LINKUSDT": 13
+    },
+    "trades": 67,
+    "avg_trade_pnl": 0.0516079315936273,
+    "total_return_pct": 1.1525771389243378,
+    "max_drawdown_pct": 16.22625277986372,
+    "win_rate_pct": 32.83582089552239,
+    "payoff_ratio": 2.0994753481129735,
+    "total_fees": 2.5126357813812565,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_entry_25d"
+  },
+  {
+    "logic_id": "sh01n_entry_30d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u5165\u53e330\u65e5",
+    "knob": "\u5165\u53e330\u65e5",
+    "why": "\u5f15\u304d\u91d1\u306e\u9577\u3055\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 15,
+      "DOTUSDT": 16,
+      "AVAXUSDT": 15,
+      "LINKUSDT": 12
+    },
+    "trades": 58,
+    "avg_trade_pnl": -0.17369034016733262,
+    "total_return_pct": -3.358013243235103,
+    "max_drawdown_pct": 18.98828799655013,
+    "win_rate_pct": 29.310344827586203,
+    "payoff_ratio": 2.204693773366913,
+    "total_fees": 2.2487252071459927,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades",
+      "expectancy"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_entry_30d"
+  },
+  {
+    "logic_id": "sh01n_exit_7d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u9000\u51fa7\u65e5",
+    "knob": "\u9000\u51fa7\u65e5",
+    "why": "\u9000\u51fa\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 20,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 21,
+      "LINKUSDT": 17
+    },
+    "trades": 78,
+    "avg_trade_pnl": 0.4339461686148029,
+    "total_return_pct": 11.282600383984875,
+    "max_drawdown_pct": 10.830178964917932,
+    "win_rate_pct": 33.33333333333333,
+    "payoff_ratio": 2.4848471666413445,
+    "total_fees": 2.972920410497005,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_exit_7d"
+  },
+  {
+    "logic_id": "sh01n_exit_15d",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u9000\u51fa15\u65e5",
+    "knob": "\u9000\u51fa15\u65e5",
+    "why": "\u9000\u51fa\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 20,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 20,
+      "LINKUSDT": 17
+    },
+    "trades": 77,
+    "avg_trade_pnl": 0.454016572508509,
+    "total_return_pct": 11.653092027718404,
+    "max_drawdown_pct": 12.904921383744497,
+    "win_rate_pct": 33.76623376623377,
+    "payoff_ratio": 2.4130662174608717,
+    "total_fees": 2.94772028395906,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_exit_15d"
+  },
+  {
+    "logic_id": "sh01n_stop_1p25",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52071.25\u65e5\u8db3ATR",
+    "knob": "\u640d\u52071.25\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 21,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 21,
+      "LINKUSDT": 19
+    },
+    "trades": 81,
+    "avg_trade_pnl": 0.34265235618549766,
+    "total_return_pct": 9.251613617008436,
+    "max_drawdown_pct": 13.362937656782794,
+    "win_rate_pct": 29.629629629629626,
+    "payoff_ratio": 2.7651529117172458,
+    "total_fees": 3.7321377387239716,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_stop_1p25"
+  },
+  {
+    "logic_id": "sh01n_stop_1p75",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52071.75\u65e5\u8db3ATR",
+    "knob": "\u640d\u52071.75\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 19,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 20,
+      "LINKUSDT": 17
+    },
+    "trades": 76,
+    "avg_trade_pnl": 0.25643014955872345,
+    "total_return_pct": 6.4962304554876615,
+    "max_drawdown_pct": 13.323136223293574,
+    "win_rate_pct": 35.526315789473685,
+    "payoff_ratio": 2.0762361224589205,
+    "total_fees": 2.503490688287976,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_stop_1p75"
+  },
+  {
+    "logic_id": "sh01n_stop_2p0",
+    "hypothesis_id": "SH-01N",
+    "name": "SH-01N \u640d\u52072.0\u65e5\u8db3ATR",
+    "knob": "\u640d\u52072.0\u65e5\u8db3ATR",
+    "why": "\u30ea\u30b9\u30af\u8ddd\u96e2\u3002",
+    "set": "B",
+    "symbols": [
+      "LTCUSDT",
+      "DOTUSDT",
+      "AVAXUSDT",
+      "LINKUSDT"
+    ],
+    "risk_per_trade_usdt": 3.0,
+    "min_trades_used": 100,
+    "trades_per_symbol": {
+      "LTCUSDT": 19,
+      "DOTUSDT": 20,
+      "AVAXUSDT": 20,
+      "LINKUSDT": 17
+    },
+    "trades": 76,
+    "avg_trade_pnl": 0.16902287443713404,
+    "total_return_pct": 4.281912819074063,
+    "max_drawdown_pct": 13.761862065664054,
+    "win_rate_pct": 36.84210526315789,
+    "payoff_ratio": 1.8856260599173322,
+    "total_fees": 2.1936058264941733,
+    "total_funding": 0.0,
+    "gate_pass": false,
+    "gate_failures": [
+      "min_trades"
+    ],
+    "artifacts_dir": "artifacts/evals/20260824T221104Z_slow_setB/setB_sh01n_stop_2p0"
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "logic_id": "db_1h_fresh48_v1",
+    "gate_pass": false,
+    "trades": 192,
+    "avg_trade_pnl": -0.11991421193943369,
+    "max_drawdown_pct": 10.842509564125407,
+    "total_return_pct": -10.842509564125402,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020255Z_db_1h_fresh48_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_close_bottoms_v1",
+    "gate_pass": false,
+    "trades": 292,
+    "avg_trade_pnl": -0.08331013419392931,
+    "max_drawdown_pct": 12.926055154481295,
+    "total_return_pct": -12.926055154481297,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020259Z_db_1h_close_bottoms_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_fresh72_v1",
+    "gate_pass": false,
+    "trades": 196,
+    "avg_trade_pnl": -0.12342958207325731,
+    "max_drawdown_pct": 11.298066028787844,
+    "total_return_pct": -11.298066028787845,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020303Z_db_1h_fresh72_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_clean_v1",
+    "gate_pass": false,
+    "trades": 210,
+    "avg_trade_pnl": -0.13158639323892177,
+    "max_drawdown_pct": 14.096392587638048,
+    "total_return_pct": -12.672050077604224,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020306Z_db_1h_clean_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_stop_bottom_v1",
+    "gate_pass": false,
+    "trades": 207,
+    "avg_trade_pnl": -0.12465515798838282,
+    "max_drawdown_pct": 12.381378008999947,
+    "total_return_pct": -11.829835608836902,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020310Z_db_1h_stop_bottom_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_band_wide_v1",
+    "gate_pass": false,
+    "trades": 211,
+    "avg_trade_pnl": -0.11412611907745682,
+    "max_drawdown_pct": 12.105634196903566,
+    "total_return_pct": -11.498356935106269,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020313Z_db_1h_band_wide_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_band_tight_v1",
+    "gate_pass": false,
+    "trades": 208,
+    "avg_trade_pnl": -0.06979692810276648,
+    "max_drawdown_pct": 9.169988803264927,
+    "total_return_pct": -8.27125368179351,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020317Z_db_1h_band_tight_v1_setC.md"
+  },
+  {
+    "logic_id": "db_1h_wide_v1",
+    "gate_pass": false,
+    "trades": 273,
+    "avg_trade_pnl": -0.06596577417414681,
+    "max_drawdown_pct": 11.966370810740457,
+    "total_return_pct": -10.50628782269496,
+    "gate_failures": [
+      "expectancy"
+    ],
+    "report_path": "eval/reports/20260823T020321Z_db_1h_wide_v1_setC.md"
+  }
+]

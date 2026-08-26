@@ -1,0 +1,85 @@
+# Formal evaluation environment (LOCKED) — slow profile, multi-symbol
+# eval_v1 の結果は保存する。v2 は「コストが無視できる時間軸で戦う」ための環境。
+# 変更する場合は version を上げ、eval lock を再生成すること。
+#
+# なぜ v2 が必要か:
+#   eval_v1 は 15分足 + 1時間ATR で損切りしていた。1時間ATR の中央値は終値比 0.53〜0.69% で、
+#   損切り1.5ATR = 約1% に対し往復コストは 0.150%。つまり毎トレード R の 14〜19% を
+#   コストに払っていた（実測: eval/reports/20260823-cost-horizon.md）。
+#   日足ATR（中央値 3.2〜3.9%）なら同じ計算で 2.5〜3.2% まで下がる。
+#
+#   ただし日足規模のロジックは1銘柄では年20〜40回しか発火せず min_trades=100 に届かない。
+#   ゲートを緩めるのではなく、**銘柄を増やして回数を稼ぐ**。
+#   これは同時に「機構なら別の銘柄でも効くはず」という追加の検証でもある。
+
+eval_version: "eval_v2_oos"
+schema_version: 1
+
+# 代表銘柄。事前に宣言し、結果を見てから足したり外したりしない。
+# バスケット外の検証用。SH-01 の結果を見たあとに選んだのではなく、
+# 「時価総額上位で全期間データがある」条件だけで機械的に決めた4銘柄。
+symbols:
+  - LTCUSDT
+  - DOTUSDT
+  - AVAXUSDT
+  - LINKUSDT
+
+symbol: BTCUSDT  # 単体実行時の既定
+category: linear
+base_url: https://api.bybit.com
+
+preferred_data_source: bybit
+allowed_data_sources:
+  - bybit
+  - binance_vision
+
+# Virtual account — v1 と同一。口座条件は変えない
+initial_equity: 300.0
+leverage: 3.0
+risk_per_trade_pct: 1.0
+
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+
+# 最大同時保有。1銘柄1枠、証拠金 30 × 6 = 180 ≤ 300
+max_concurrent_positions: 6
+
+# 遅い側のウォームアップを確保するため 200 に上げる（_set_bounds が ×2 して使う）
+daily_ema: 200
+h4_ema: 20
+m15_ema: 20
+
+stop_loss_pct: 1.0
+take_profit_pct: 1.5
+
+# コストは v1 と完全に同一。緩めない
+fee_rate_per_side: 0.00055
+slippage_pct_per_side: 0.0002
+
+sets:
+  A:
+    start: "2023-01-01"
+    end: "2023-12-31"
+  B:
+    start: "2024-01-01"
+    end: "2024-12-31"
+  C:
+    start: "2025-01-01"
+    end: "2026-08-22"
+
+# min_trades は据え置き。ただし解釈は「その期間の全銘柄合計」
+min_trades: 100
+max_drawdown_pct: 20.0
+
+forbid_synthetic: true
+primary_gate_set: B
+holdout_set: C
+
+# 判定は3期間すべて。未使用期間を残さないための追加ルールは
+# docs/hypothesis/craft/VALIDATION_FLOW.md を参照
+required_sets:
+  - A
+  - B
+  - C

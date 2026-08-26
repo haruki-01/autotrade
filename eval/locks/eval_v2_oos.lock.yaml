@@ -1,0 +1,211 @@
+schema_version: 1
+eval_version: eval_v2_oos
+created_at: '2026-08-24T21:57:31Z'
+git_commit: a5a7434
+config_path: configs/eval_v2_oos.yaml
+config_sha256: ab9d50699f2605eec9a52bfdb24ba31d27c32d07658b9cbf8c39f9ab4a87591d
+forbid_synthetic: true
+symbols:
+- LTCUSDT
+- DOTUSDT
+- AVAXUSDT
+- LINKUSDT
+costs:
+  fee_rate_per_side: 0.00055
+  slippage_pct_per_side: 0.0002
+sizing:
+  mode: fixed_margin
+  margin_per_trade: 30.0
+  risk_per_trade_usdt: 3.0
+  leverage: 3.0
+  initial_equity: 300.0
+gates:
+  min_trades: 100
+  max_drawdown_pct: 20.0
+  min_trades_scope: portfolio total across symbols, per set
+datasets:
+  A:
+    eval_window:
+      start: '2023-01-01'
+      end: '2023-12-31'
+    symbols:
+      LTCUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/LTCUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 42ec6f7703248bef0b5126c12aa313e4eda203b8610f2b075d4007e1b0f9efc7
+          data/cache/LTCUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: fd311016e534c874b7bfe2bab75f4e191065d75a1453197d5032a60c410b79dc
+          data/cache/LTCUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: e3f43fc651ee9ce9ab5f995ff76d859a893ee7355c5f58b390e3eb6d72178925
+        derivatives:
+          data/cache/LTCUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 7df320eaa95f6dba20d2afa2fab9f5cbfa59b0f0fb9388dc5d8a4a452abff144
+          data/cache/LTCUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: ebe8238af3a6239c513ee7da0475d8cd4ccd68f612c9f55c5e49a0b9d1ec3582
+          data/cache/LTCUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: 5e1d124db19cd4615453fc3eeda92a32add0fbda9b7104923316f15ac44bfbe7
+          data/cache/LTCUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: a7e470c21583296a2cf263ffe8401d510c53a5286b12b05eba851c1435589c8f
+      DOTUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/DOTUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 98343f8d07adb342d2e9d7287822ff826a5df9d1239b636672dc14d0239aa62e
+          data/cache/DOTUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: 0efe10450d6eb50ea623aef2ae02be37c69ea4f3d221b08fe20f2219b44661fc
+          data/cache/DOTUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 014fa174456b2bfceb242429e315acfd750d4a92d30e15ece8cc48e4315b3355
+        derivatives:
+          data/cache/DOTUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 8420681c83a3bd7539958f7eac6b6f2b518baee0b615c9a4051d220b373a6568
+          data/cache/DOTUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 361460b5453e53f5c8fa854d8d86aae77d8713b9a509eff24578b5a6dc4a36cb
+          data/cache/DOTUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: 97f6e43abb31ceded663d803664835631b8b9c54bee780b7ed925241be5389b4
+          data/cache/DOTUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: 174ad6a6ad9504b37046d5e85457fefc44972634ce1beccd0c94d201c918dbd9
+      AVAXUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/AVAXUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 3cc99e51fe6960b59c0aae25ce48c2c2bb7e5273f85f942657447bc52955124a
+          data/cache/AVAXUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: e032e77a24ed1f61200f385717b320a7b7b88349a4165962002d603f8652fd29
+          data/cache/AVAXUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: c7cb17c5d04f6d3058adb973d5d883b6777224b8bb26d8ef8d01b5f0d55196bb
+        derivatives:
+          data/cache/AVAXUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 6527d2035c8ec8a474953bee1a91acf79053947ccd7db30d3f070822fe1576d6
+          data/cache/AVAXUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: 9361af6450645c5b4ae326edf5bde011dabf12d37fbbea11d5205a51c92bf650
+          data/cache/AVAXUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: baf701d2702ed99cc86386ded30f6a24695f71436d8d5d1a832cee836b33f3a9
+          data/cache/AVAXUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: 3c39336ec10390412a49ea76774e8d25ede6cf9ac50c29caddb99ccf5c2cfbcb
+      LINKUSDT:
+        fetch_window:
+          start: '2021-11-27'
+          end: '2023-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/LINKUSDT_binance_spot_1d_2021-11-27_2023-12-31.csv: 0901071282e91a1c75729f0d6b8e6ed3d5fec1f828ee0fe57951767517d0c73b
+          data/cache/LINKUSDT_binance_spot_4h_2021-11-27_2023-12-31.csv: 3dfaa0c864826802f27774a1e7526c015e0df717531c75d74e866250a5a56b1c
+          data/cache/LINKUSDT_binance_spot_15m_2021-11-27_2023-12-31.csv: 44b4a9ae3a9c36faabf96e7182c1a5f27f035e823cd40cc86a723d8ce5066198
+        derivatives:
+          data/cache/LINKUSDT_binance_um_metrics_2021-11-27_2023-12-31.csv: 8822d68bac1a72a6da60a146aa9afd8a7d2ae7528f633cf7b0ecbe4639a91d9a
+          data/cache/LINKUSDT_binance_um_funding_2021-11-27_2023-12-31.csv: a3037dee23479336b44442b45cdf35a2be8410aa8f9dcaa5c4ef5a00ef500c04
+          data/cache/LINKUSDT_binance_um_premium_2021-11-27_2023-12-31.csv: e11f479124d7107cc83992e1d7d7796af73ac0d2fb58dd5e7df82fcca876391e
+          data/cache/LINKUSDT_binance_um_perp15m_2021-11-27_2023-12-31.csv: 365cc77d2b5d7e2103a2eeaa1174b91b2f478728b1689e043fac68b1a731a4b0
+  B:
+    eval_window:
+      start: '2024-01-01'
+      end: '2024-12-31'
+    symbols:
+      LTCUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/LTCUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 3a11537370db878413e74a3d9be8163f43df9cba07d7f15a8db83646e32151ea
+          data/cache/LTCUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: d8659627314f3859a2c4a815bf41750d5be03b62da11fe38be5235769ba3a55f
+          data/cache/LTCUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: 7fb4abd1721ce9576b7f3fe82836699387ab8bda962f1e781f228b3ef6cdb958
+        derivatives:
+          data/cache/LTCUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: 11335b0e378ecb87828a6aa496a6ed779fb8f067456f1750f6625d4573f9fc60
+          data/cache/LTCUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: eec4ea39da7b6a7d4e5120d3f215a530089317842f92a00aaeff28ea9d028b5c
+          data/cache/LTCUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: c213ef9fef51a4cd11052b70a13a90a7dc1df2966e5cffc230baeae8c81f15ba
+          data/cache/LTCUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 8a631d1d3974f8aa665ae2143b1dcc5f1c65f87ef851d74c01c6cc1ad62886f5
+      DOTUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/DOTUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 3b37403a20e43a8dc4d37a843dd8cb7ad4d7e7d8fa8d393c28407ea1ebe440c6
+          data/cache/DOTUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 758061faf10e28a9433f96734211694d9b38885b844c7005bfd7ab87a9e01608
+          data/cache/DOTUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: aba93a0b30d2d106969e974e0daad8a061a5b187d6f8dd6edfcb477e89462c0c
+        derivatives:
+          data/cache/DOTUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: 4323a05a73507fcb4f285f50f26e43118974e0a9e43ca9e0a2cd912b4e13fd0e
+          data/cache/DOTUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: e2696d28597e86290879e6d1adfd66069cc35aa22077f00e70639b45ef64dcb6
+          data/cache/DOTUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: cf40a298e40bb3827ff8ca3b859394c47d1c848d89735470cd98132cdb5eadc8
+          data/cache/DOTUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 630fc4615a8f4615dee666070efc99d5ee28e29e521221b37b3c253cf5836dea
+      AVAXUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/AVAXUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 3414d00a752ba84b962089bc0b4f63406e1761c673c8235742f1e404ce409dc0
+          data/cache/AVAXUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: d0db5b89ce7f254c382c8c06fe0856221c246657ff2d3a47a53d627e30bde9d3
+          data/cache/AVAXUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: ba7d565c71c12e6f233c80a927d1cb4bf4b03c116227d772562881dc5eea2630
+        derivatives:
+          data/cache/AVAXUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: df98b164731bedaedfd0fc1b0a4e404f61f8708ce6050f0bfe41ef07fbbd665d
+          data/cache/AVAXUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 2fd52cee150011cac871be638904247b24f3cc023881a55eb7a522620631e26f
+          data/cache/AVAXUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: d03f9ea36670c8416ae2ef384009eeb5064b0cc644f0e1055384a75f77adba4e
+          data/cache/AVAXUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 9840bcefb9a224de53813fbfde62d0a881211cc228110f6bbac26d74c3bc17c3
+      LINKUSDT:
+        fetch_window:
+          start: '2022-11-27'
+          end: '2024-12-31'
+        data_source: binance_vision
+        files:
+          data/cache/LINKUSDT_binance_spot_1d_2022-11-27_2024-12-31.csv: 741e8b9c0824a61d7d9604f5722eea5232c0b234f87b4a2ac23c53dd3191f65d
+          data/cache/LINKUSDT_binance_spot_4h_2022-11-27_2024-12-31.csv: 4102f71e68371f483b71fea44ddf34c4382eef446856b05bfe0114b152481c2c
+          data/cache/LINKUSDT_binance_spot_15m_2022-11-27_2024-12-31.csv: 438e94ae24a09d8d45da9ce1f7dd59e143b6cc8d25c96aa4a21e6c742689698d
+        derivatives:
+          data/cache/LINKUSDT_binance_um_metrics_2022-11-27_2024-12-31.csv: 3b875d982e7e9e055eed0b6758374887ac769e0c977e4ad86c3fbd011e752409
+          data/cache/LINKUSDT_binance_um_funding_2022-11-27_2024-12-31.csv: 96055cd37195f541049fdba0f856a5c8482df9ae7b9c048cd1eae450088a243b
+          data/cache/LINKUSDT_binance_um_premium_2022-11-27_2024-12-31.csv: 5b9fe33f585503626383f270b913b15f0e4ad6222676e2a60baf5f9f208092e2
+          data/cache/LINKUSDT_binance_um_perp15m_2022-11-27_2024-12-31.csv: 146ff7fa3355b5bff02d7df789fd0e4fed53df42b2413114f24183ca1193cc54
+  C:
+    eval_window:
+      start: '2025-01-01'
+      end: '2026-08-22'
+    symbols:
+      LTCUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/LTCUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: b41753a156fd1e2b772ffae012ccdb1045ba3c6007fed4c62005466d76dd5205
+          data/cache/LTCUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 895a01c739a6765db7a97866caff269aa588b3aa682653272b14528ec767b8db
+          data/cache/LTCUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: 42b96aab2a25f73502826dababc1cef9a093654982d1e896539207259696dd97
+        derivatives:
+          data/cache/LTCUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: b5d1acd132a5139b740466b6efa7217f6441de27922ba69ea1b58c53ab2ebb4a
+          data/cache/LTCUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 4d6b12146077d15062d2b032692d7b1cf1049bfe38039adaee3b6eda6ced3f9a
+          data/cache/LTCUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 4b4e10909503482f3bf61db186e206337a1fbaa841aee27977211209e45f0879
+          data/cache/LTCUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: c4c7b078100baf3db27e7558ae829f2abc5f7d098834e34d424e95f3c25c28f3
+      DOTUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/DOTUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: d216eae0e7e13b873f731a2dcb35833891f854689345c8ef6e867eb14f33f51f
+          data/cache/DOTUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: 353a0334c816148bd73adfa98ce95a3c7692ab1aa8ab45ed7c9d061887c9e7a3
+          data/cache/DOTUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: c50c9684dc09a0e0b2e11cf442fb7db6fb0e18145860db25f7a3407cbbd59911
+        derivatives:
+          data/cache/DOTUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 20da76881315e9c1b6b834bc5ca278222db18c2cfff7f63a25be6063899cc54d
+          data/cache/DOTUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 6323e712c70626e20cc99a0c72f48bb350cbdf6cd98071be2c1c1cfe26510cbf
+          data/cache/DOTUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 7f7a82adf7b4029c3e433165826faca60bb22ed76e48f28c09fe0981289c0d10
+          data/cache/DOTUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 33527c51a1a116bd94815a17e76e4abd29e76c23db7a9c8811eee0bbd4fc35b1
+      AVAXUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/AVAXUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: 6a60cb428089966c94a95737e6bb46fb2d2c3e54a77cd0bfe87b6fff21c4c05d
+          data/cache/AVAXUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: d4d1f6609d67b3f5ac4e80f20d034f4dac202d535d76444c8930e691da3b41b2
+          data/cache/AVAXUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: 0a47112f337eda056fc4ec9e2f6849ef4282b333a45d3ddf5077cb37f26c33dc
+        derivatives:
+          data/cache/AVAXUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: 85ba45e2149c34d952f7890b563c2371c7a71e24ad3ab1320d17be403cf2dd4c
+          data/cache/AVAXUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: 656dfcb92a13e92d5c1397ddb2c677423ac1b1516ab86cfefab8e8bd33560b1f
+          data/cache/AVAXUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: beac115814a3f9a172f972b23d8c811665d1800e600da0bfef5419ad4c889371
+          data/cache/AVAXUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 928f00db0f6dfb6c28a5b3572d1c61e85b8934f5c5587ddc48f014b54b47fef2
+      LINKUSDT:
+        fetch_window:
+          start: '2023-11-28'
+          end: '2026-08-22'
+        data_source: binance_vision
+        files:
+          data/cache/LINKUSDT_binance_spot_1d_2023-11-28_2026-08-22.csv: 4a5cc7e880a13dd579600736b31d2fd811bec8e8abdc7dc09c99f4d03d5546bb
+          data/cache/LINKUSDT_binance_spot_4h_2023-11-28_2026-08-22.csv: fb0e730ab9a35d4ec020b9ec87c4967cbd6aed65fb77f2ebed6e8ea269521028
+          data/cache/LINKUSDT_binance_spot_15m_2023-11-28_2026-08-22.csv: a8f107b6971af4c0b44959aaef07790de8a1ca2eaaa7477ebdc597de74cc39a7
+        derivatives:
+          data/cache/LINKUSDT_binance_um_metrics_2023-11-28_2026-08-22.csv: e309b65dfbddb9815efd7fdd054421145dfcb62eff042ac9cfea8f81b1142573
+          data/cache/LINKUSDT_binance_um_funding_2023-11-28_2026-08-22.csv: b93e1ef39ecd39cce02d5886b9a5d32a42e4ad9aaad57553ebf3d6f3234a21af
+          data/cache/LINKUSDT_binance_um_premium_2023-11-28_2026-08-22.csv: 487fcf2ef46c19c156e00472ae7545edcf603f4575ac4d65fe6abde6c4d0d426
+          data/cache/LINKUSDT_binance_um_perp15m_2023-11-28_2026-08-22.csv: 60e819800c5505339a3bea44eebab35731eff164646e05144dce55eb8dd058ed
+notes: Multi-symbol formal eval. Trades from every symbol merge into one equity curve;
+  fixed_margin sizing makes the per-symbol runs independent.

@@ -1,0 +1,355 @@
+schema_version: 2
+# 検証すべき仮説リスト（機械可読）。正本の説明は EDGE_HYPOTHESES.md
+# status:
+#   proposed              未検証
+#   mechanism_replicated  本命−対照のEV差が Set B / Set C で同符号（機構あり）
+#   untestable            頻度不足で判定不能（仮説は保持）
+#   rare_edge             両期間でEVプラスだが min_trades に構造的に届かない
+#   fail                  棄却（対照が上回る or 期間依存 / n を増やしたら消えた）
+#   adopted               デモ/本番に載せた
+created: "2026-08-23"
+last_eval: "2026-08-23"
+
+eval_summary:
+  cycles: 100
+  refine_cycles: 63
+  refine2_cycles: 54
+  total_formal_evals: 217
+  logics_per_hypothesis: 10
+  set_b_pass: 11
+  set_c_holdout_pass: 2
+  both_period_pass: [eh01_brk_192, eh08_trail_4]
+  three_period_pass: []
+  adopted: 0
+  note: >
+    3期間（A/B/C）すべてゲートを通ったロジックは0本。判定は単体EVではなく
+    「本命と対照のEV差の符号が全期間で保たれるか」で行った。
+  known_issue:
+    id: BUG-ENTRY-FEE
+    fixed: "2026-08-23"
+    desc: >
+      run_backtest がエントリー手数料を equity からのみ引き、Trade.pnl は決済側の
+      手数料しか引いていなかった。expectancy ゲートが読む値が1トレードあたり
+      約 +0.05 USDT 過大だった。修正前の全評価（100サイクル・改良63本）の EV は
+      この分を差し引いて読むこと。修正は成績を下げる方向なので不合格の結論は不変。
+    guard: compute_metrics が sum(trade.pnl) と equity 増減の一致を検算する
+  cost_floor:
+    notional_usdt: 90.0
+    round_trip_cost_usdt: 0.135
+    pct_of_notional: 0.150
+    pct_of_risk_budget: 4.5
+    note: 測定したエッジ（0.05〜0.25 USDT/トレード）とコストが同じオーダー
+  postmortem: docs/hypothesis/postmortems/2026-08-23-edge-100-cycles.md
+  refine_postmortem: docs/hypothesis/postmortems/2026-08-23-edge-refine-cycles.md
+  refine2_postmortem: docs/hypothesis/postmortems/2026-08-23-edge-06-09-and-fee-bug.md
+  refine_result:
+    eh01r: {set_b_pass: 3, set_c_holdout_pass: 0, note: 退出の改良では帯から出ない}
+    eh07r: {set_b_pass: 0, both_period_positive: [eh07r_oi_rebuild_pre48], note: 希少で回数を増やすと消える}
+    eh02r: {set_b_pass: 0, note: 頻度は解決したが全滅。ゲートを外したほうが良い}
+    eh09r: {set_a_pass: 0, set_b_pass: 7, set_c_pass: 0, note: Set A で20本すべてマイナス・対照が優位。棄却}
+    eh06r: {set_a_pass: 4, set_b_pass: 1, set_c_pass: 0, note: 回転を落とすと A/B は好転するが C が届かない}
+    eh06n: {set_a_pass: 7, set_b_pass: 6, set_c_pass: 1, note: 近傍は傾斜。閾値もクールダウンも単調に効く}
+  carry_forward:
+    - 退出は構造退出のみ、またはATRトレール4以上（2.5は勝ちを切る）
+    - 突破系でエントリーを遅らせない
+    - 評価は3期間（A/B/C）。未使用の期間を必ず1つ残す
+    - 組合せだけが効く設定は、採用前に近傍を地図にして傾斜か一点かを見る
+    - シグナル探索より先にコスト構造（保有時間・元本）を決める
+  reports:
+    - eval/reports/20260823-edge-100-cycles-setB.md
+    - eval/reports/20260823-edge-100-cycles-setC.md
+    - eval/reports/20260823-edge-100-holdout-setC.md
+    - eval/reports/20260823-edge-100-replication.md
+    - eval/reports/20260823-edge-feefix-setA.md
+    - eval/reports/20260823-edge-feefix-setB.md
+    - eval/reports/20260823-edge-feefix-setC.md
+    - eval/reports/20260823-edge-feefix-three-periods.md
+
+data_prereqs:
+  - id: DATA-OI
+    desc: Binance futures metrics（OI・上位長短比・全口座長短比・成行買売比、5分）
+    status: available
+  - id: DATA-FUND
+    desc: Binance futures fundingRate（8時間）
+    status: available
+  - id: DATA-PREM
+    desc: Binance futures premiumIndexKlines（1時間）
+    status: available
+  - id: DATA-PERP
+    desc: Binance perp klines（15分・成行買い出来高つき）
+    status: available
+  - id: DATA-LIQ
+    desc: 清算スナップショット
+    status: unavailable
+    note: 配布終了。EH-07 は OI 急減で代理する
+  - id: WORK-FUNDING-PNL
+    desc: バックテストへの funding 計上
+    status: done
+    note: engine が funding_pay_rate 列を建玉に課金する。edge 100本はすべて計上済み
+
+hypotheses:
+  - id: EH-01
+    title: 建玉が増える突破だけが本物
+    direction: both
+    distortions: [E1, E7]
+    data: [DATA-OI]
+    priority: 1
+    status: mechanism_replicated
+    result:
+      status_reason: OI増減で分けた差が両期間で同符号（+0.054/+0.080 vs 無条件、+0.136/+0.054 vs OI減）
+      set_b_pass: [eh01_brk_192, eh01_long_only]
+      both_period_pass: [eh01_brk_192]
+      best_ev_b: 0.126
+      caveat: 両期間PASSの eh01_brk_192 は EV +0.010/+0.008 でコストと同桁。採用しない
+      next: 入口ではなく退出と建て方を変えてEVを上げる
+      refine:
+        phase: EH-01R（24本・入口凍結で退出と建て方のみ）
+        set_b_pass: [eh01r_entry_confirm, eh01r_brk192_trail_4, eh01r_brk192_retest]
+        set_c_holdout_pass: []
+        consistent_improvements: [eh01r_trail_off, eh01r_trail_4]
+        consistent_harm: [eh01r_trail_1p5]
+        finding: ATRトレール2.5は勝ちを切っていた。入口の建て方（確認・遅延・戻り）はすべて不安定
+        next: 退出は打ち止め。OIの測り方（相対水準・増加の持続性）に手を入れる
+    claim: N日高値/安値の突破は OI 増加を伴うときだけ継続し、OI 減少の突破は買い戻し/解消なので戻る
+    unpriced_because: 新規資金の突破と解消の突破が価格チャートでは同じ形に見える
+    who_loses: 形だけで飛び乗る参加者（自分たちの L-BREAK を含む）
+    testable: OI増減で二分して先行リターン分布が有意に異なり、増加側のみ費用後EV>0
+    kill_when: 二群に差が出ない、または増加側でも費用後EV≤0
+    one_knob: 既存 Donchian 突破に OI 増減ゲートのみ追加
+
+  - id: EH-02
+    title: 現物が先に動いた時だけ乗る
+    direction: both
+    distortions: [E1]
+    data: [DATA-PERP]
+    priority: 2
+    status: fail
+    result:
+      status_reason: 対照比 +0.355/+0.549 と効果量は最大だが n=39(B)/14(C) で判定不能
+      set_b_pass: []
+      both_period_pass: []
+      caveat: 閾値調整では発火数が足りない
+      next: 乖離の測り方そのものを再設計する（仮説は保持）
+      refine:
+        phase: EH-02R（18本・zで測り直し頻度のある突破のゲートに）
+        set_b_pass: []
+        finding: 頻度は解決（n=39→309）したが全18本が両期間マイナス。ゲートを外したほうが良い（+0.018/+0.044）
+        verdict: 100サイクルの大きな効果量は n=39 の小標本による見かけだった
+        next: 再探索しない
+    claim: 同一15分足で現物リターンが先物リターンを上回る局面は現金主導で継続しやすい
+    unpriced_because: 先物だけを見る参加者には主導者が現物かレバかが見えない
+    who_loses: 先物チャートのみで順張りし、レバ主導の動きで清算される側
+    testable: (現物−先物)乖離の上位帯のみで費用後EV>0 かつ n>=100
+    kill_when: 乖離でグループ分けしても先行リターンが変わらない / 乖離が費用未満
+    one_knob: 既存入口に spot-perp 乖離ゲートのみ追加
+
+  - id: EH-03
+    title: プレミアム先行の上昇は続かない
+    direction: short
+    distortions: [E3, E7]
+    data: [DATA-PREM]
+    priority: 3
+    status: fail
+    result:
+      status_reason: 失速確認の寄与が +0.001(B)/-0.010(C) で不安定。本命EV -0.280 / DD 39%
+      set_b_pass: []
+      both_period_pass: []
+      caveat: 高プレミアムは持続するほうが普通という反例が支配的
+      next: 再探索しない
+    claim: 先物プレミアムが高位に張り付き現物上昇が伴わない上昇はショートが取れる
+    unpriced_because: その上昇がいくらのコストで買われているかは価格に出ない
+    who_loses: 高プレミアムを払って上を追う側
+    testable: プレミアム上位帯×現物非追随でショート、費用後EV>0 / DD<=20%
+    kill_when: トレンド中は高プレミアムが持続し下落しないケースが支配的
+    one_knob: 価格の失速確認を必須にしたうえで閾値1点
+
+  - id: EH-04
+    title: 保有コストが安いトレンドだけ伸びる
+    direction: both
+    distortions: [E3, E1]
+    data: [DATA-FUND, WORK-FUNDING-PNL]
+    priority: 4
+    status: fail
+    result:
+      status_reason: 対照（fundingフィルタなし）のほうが良い（両期間）。仮説と反対
+      set_b_pass: []
+      both_period_pass: []
+      caveat: funding水準ではトレンドの寿命は変わらなかった
+      next: 再探索しない。この条件を他ロジックに足す理由もない
+    claim: 資金調達が安い/受け取れる方向のトレンドは長寿命、高コスト側は短命
+    unpriced_because: 「極端＝反転」ではなくトレンド寿命に対するコスト非対称性を見ている
+    who_loses: 混み合った高コスト側で保有し資金調達と清算で削られる側
+    testable: 同一トレンドロジックを funding 高/低で二分し低コスト側のみ費用後EV>0
+    kill_when: funding を損益計上しても二群に差が出ない
+    one_knob: funding 水準ゲートのみ
+
+  - id: EH-05
+    title: 建玉の山＋高値更新失敗は落ちる
+    direction: short
+    distortions: [E7, E2]
+    data: [DATA-OI]
+    priority: 5
+    status: fail
+    result:
+      status_reason: OI条件・上位比条件の寄与の符号が期間で反転
+      set_b_pass: []
+      both_period_pass: []
+      next: 再探索しない
+    claim: OI高水準 かつ k本以内に高値更新失敗 かつ上位長短比が買い偏重なら下落しやすい
+    unpriced_because: 横ばいに見える価格の下にどれだけロングが積まれているかは価格に出ない
+    who_loses: 高値圏で建玉を積んだ高レバのロング
+    testable: 条件成立後の下方向リターンが無条件分布より有意に悪い / ショート費用後EV>0
+    kill_when: 建玉高位のまま上昇継続が支配的（トレンド逆張り死）
+    one_knob: 建玉高水準の定義のみ
+
+  - id: EH-06
+    title: 個人と上位が逆を向いたら上位側
+    direction: both
+    distortions: [E7]
+    data: [DATA-OI]
+    priority: 6
+    status: mechanism_replicated
+    result:
+      status_reason: 上位側に付く優位が両期間で同符号（+0.061/+0.013）
+      set_b_pass: [eh06_win_10d]
+      both_period_pass: []
+      caveat: 差が小さく、回転が多くDDが大きい（B 19% / C 59%）
+      next: 完了（EH-06R / EH-06N）
+      refine:
+        phase: EH-06R（20本・回転とDDを落とす）+ EH-06N（14本・近傍地図）
+        periods: [A, B, C]
+        set_a_pass: 11
+        set_b_pass: 7
+        set_c_pass: 1
+        three_period_pass: []
+        control_delta:
+          set_a: 0.299
+          set_b: 0.476
+          set_c: 0.216
+        finding: >
+          符号反転の対照は3期間すべて −0.25 前後で、乖離の向きには本物の情報がある。
+          絞り込み（2.0σ + 24hクールダウン）で Set A +0.045 / Set B +0.185 まで上がるが
+          Set C は −0.043。近傍地図では閾値もクールダウンも単調（傾斜であり一点ではない）。
+        verdict: 機構は3期間で成立。ただし水準がコストに届かず単独では採用不可
+        next: 単独の入口ではなく、他ロジックに対する拒否フィルタとして再設計
+    claim: 全口座長短比と上位トレーダー長短比が逆方向に乖離したとき上位側に付く
+    unpriced_because: 公開値だが多数側と資金量側のズレとして使う参加者は少ない
+    who_loses: 多数側に張った小口
+    testable: 乖離上位帯のみで費用後EV>0 かつ n>=100
+    kill_when: 乖離の符号と先行リターンが無相関 / 該当局面が年数回
+    caveat: Binance の参加者構成であり市場全体ではない
+
+  - id: EH-07
+    title: 建玉が吹き飛んだ直後は元の方向に戻る
+    direction: both
+    distortions: [E2]
+    data: [DATA-OI]
+    priority: 7
+    status: rare_edge
+    result:
+      status_reason: 洗浄後は元方向が正しい。対照（フェード）比 +0.071/+0.344
+      set_b_pass: []
+      both_period_pass: []
+      caveat: 方向は正しいが本命自体のEVはまだマイナス寄り
+      next: 遅延と損切幅だけを変えた新カードにする
+      refine:
+        phase: EH-07R（21本・洗浄終了の判定を作り直し）
+        set_b_pass: []
+        both_period_positive: [eh07r_oi_rebuild_pre48]
+        finding: 全163本で唯一 両期間EVプラス（n=59/79）。ただし回数を増やす版は両期間で悪化
+        next: ロジック改良は打ち止め。min_trades の議論か複数銘柄化の判断材料にする
+    claim: OI急減＋大陽線/大陰線のあと、急変前のトレンド方向へ戻りやすい
+    unpriced_because: 清算の初動は速度勝負で取れない。終了判定は価格の髭では分からない
+    who_loses: 清算で強制的に降ろされた側
+    testable: OI急減イベント後の急変前方向リターン中央値が費用後プラス
+    kill_when: 遅れて入ると中央値ゼロ以下 / イベントが年10回未満
+    caveat: 清算スナップショット不在のため OI 代理
+
+  - id: EH-08
+    title: 静かなのに建玉が増える＝仕込み
+    direction: both
+    distortions: [E1, E6]
+    data: [DATA-OI]
+    priority: 8
+    status: fail
+    result:
+      status_reason: OI増フィルタの寄与が -0.057(B)/+0.025(C) で反転
+      set_b_pass: [eh08_ctrl_no_build, eh08_trail_4, eh08_long_only]
+      both_period_pass: [eh08_trail_4]
+      caveat: 両期間PASSは圧縮ブレイク自体の効果。OI蓄積の主張の証拠にはならない
+      next: OI蓄積としては再探索しない。圧縮ブレイクは別仮説として扱う
+    claim: ボラ圧縮中に OI が継続増加した後のブレイクは通常より大きく伸びる
+    unpriced_because: 価格が動かない間の建玉増加は「ただのレンジ」に見える
+    who_loses: レンジと判断して逆張りしていた参加者
+    testable: 圧縮+OI増 と 圧縮のみ でブレイク後の伸びと費用後EVが有意に違う
+    kill_when: 二群に差がない / イベントが年10回未満
+    one_knob: OI増加の定義のみ
+
+  - id: EH-09
+    title: 高値更新しても成行買いが減る＝吸収
+    direction: short
+    distortions: [E1]
+    data: [DATA-OI]
+    priority: 9
+    status: fail
+    result:
+      status_reason: Set A(2023) で符号が反転し、対照（順張り）のほうが優位。2024年限定の現象
+      set_b_pass: [eh09_base, eh09_win_8, eh09_win_32, eh09_slope_0p05, eh09_trail_2p5]
+      both_period_pass: []
+      caveat: Set B PASS 5本すべてが Set C で反転。機構はあるがEVが薄い
+      next: 完了（EH-09R で棄却）
+      refine:
+        phase: EH-09R（20本・成行比を先物出来高で測り直す + 退出）
+        periods: [A, B, C]
+        set_a_pass: 0
+        set_b_pass: 7
+        set_c_pass: 0
+        set_a_positive_ev: 0
+        control_delta:
+          set_a: -0.050
+          set_b: 0.121
+          set_c: 0.065
+        control_delta_volume_version:
+          set_a: -0.080
+          set_b: 0.193
+          set_c: 0.100
+        finding: >
+          Set B で7本がゲートを通り Set C でも符号は保たれたが、Set A では20本すべて
+          マイナスで対照が優位。metrics の集計比を先物出来高のテイカー買い比率に
+          置き換えても同じ結論。
+        verdict: 棄却。機構ではなく2024年の局面依存
+        next: 再探索しない
+    claim: 価格が高値更新する一方で成行買い比率が低下しているとき反転しやすい
+    unpriced_because: 上昇中に買いの勢いが弱まるズレは価格・出来高だけでは見えない
+    who_loses: 高値更新で順張りする参加者
+    testable: 高値更新×成行買い比率下降でショートして費用後EV>0
+    kill_when: 傾きと先行リターンが無相関 / 強トレンドで踏まれ DD 超過
+    one_knob: 成行比率の傾き測定窓のみ
+
+  - id: EH-10
+    title: 資金調達がリセットされた継続は本物
+    direction: both
+    distortions: [E3, E1]
+    data: [DATA-FUND, WORK-FUNDING-PNL]
+    priority: 10
+    status: untestable
+    result:
+      status_reason: n=7(B)/0(C)。加えて BTC の funding はほぼ常にプラスでショート側が成立しない
+      set_b_pass: []
+      both_period_pass: []
+      next: 発火条件を作り替えるか、funding がマイナスに振れる期間・銘柄で測る
+    claim: 押し目後に資金調達が平常へ戻り構造が維持されていればトレンド再開
+    unpriced_because: 同じ形の押し目でも混み合いが解消したかは資金調達にしか出ない
+    who_loses: 混み合ったままの押し目を買って次の下落で清算される側
+    testable: 押し目継続ロジックを funding リセット有無で二分しリセット側のみEV>0
+    kill_when: 二群に差がない
+
+common_rules:
+  - ノブは1点だけ（フィルタの積み上げは DB-21 で失敗）
+  - Set B PASS だけで採用しない。必ず Set C holdout
+  - min_trades=100 は Set B（1年）の合計
+  - EMA は使わない / 足は15分以上
+  - 合成データで合否を出さない
+  - positioning は Binance 由来。Bybit 本番前に再確認
+
+eval_order: [EH-01, EH-02, EH-05, EH-03, EH-09, EH-08, EH-06, EH-07, EH-04, EH-10]
