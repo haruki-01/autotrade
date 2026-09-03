@@ -4,6 +4,15 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 
 ## 仕様書
 
-正本は次を参照してください。
+正本（資金・目標・変数構造・検証ルール）。状態維持し、仮説の追記先にはしない。
 
 - [docs/SPEC.md](docs/SPEC.md)
+
+## リサーチ（仮説・検証シート）
+
+仕様書とは分離して管理する。
+
+- [docs/research/README.md](docs/research/README.md) — 置き場の説明
+- [docs/research/edge-catalog.md](docs/research/edge-catalog.md) — エッジ仮説カタログ
+- [docs/research/phase0-stats.md](docs/research/phase0-stats.md) — Phase0 統計定義
+- [docs/research/phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) — 検証記入用シート
