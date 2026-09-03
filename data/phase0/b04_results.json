@@ -1,0 +1,68 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B04",
+  "batch_verdict": "reject",
+  "metrics": {
+    "P0-HB2-DIR": {
+      "n": 910,
+      "hit_rate": 0.47802197802197804,
+      "mean_edge": 0.0002338840728573266,
+      "median_edge": -0.0002717569089304428,
+      "p25": -0.004215224403548379,
+      "p75": 0.003909936915832024,
+      "mean_abs_move": 0.006289966202904499,
+      "vs_baseline": null,
+      "verdict": "weak",
+      "notes": "squeeze_n=910"
+    },
+    "P0-HB2-FAKE": {
+      "n": 910,
+      "hit_rate": 0.2043956043956044,
+      "mean_edge": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "pass",
+      "notes": "fake_rate=0.2043956043956044"
+    },
+    "P0-HB2-FREQ": {
+      "n": 910,
+      "mean_edge": 28.46906474820144,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "per_month=28.5"
+    },
+    "P0-HB3-CONT": {
+      "n": 7595,
+      "hit_rate": 0.45714285714285713,
+      "mean_edge": -0.0008447025868192872,
+      "median_edge": -0.000626022945589666,
+      "p25": -0.005219334089857364,
+      "p75": 0.003735880091586541,
+      "mean_abs_move": 0.006853363969654466,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "swing_chain_n=7598"
+    },
+    "P0-HB3-3RD": {
+      "n": 7598,
+      "hit_rate": 0.45643590418531194,
+      "mean_edge": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "third_reach=3468/7598"
+    }
+  }
+}

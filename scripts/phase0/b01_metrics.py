@@ -245,6 +245,9 @@ def compute_b01(df: pd.DataFrame) -> dict[str, dict]:
     return results
 
 
+compute = compute_b01
+
+
 def batch_verdict(results: dict[str, dict]) -> str:
     passes = sum(1 for r in results.values() if r.get("verdict") == "pass")
     weaks = sum(1 for r in results.values() if r.get("verdict") == "weak")

@@ -1,1 +1,3 @@
 data/btc_jpy_5m.parquet
+__pycache__/
+*.pyc

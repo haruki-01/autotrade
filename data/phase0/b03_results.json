@@ -1,0 +1,80 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B03",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P0-HB-EARLY": {
+      "n": 13685,
+      "hit_rate": 0.4794300328827183,
+      "mean_edge": -2.892439791536365e-08,
+      "median_edge": -0.0003066953023278529,
+      "p25": -0.005280529172320136,
+      "p75": 0.0048903058440039615,
+      "mean_abs_move": 0.007884292941732308,
+      "vs_baseline": 0.0003721400272389412,
+      "verdict": "pass",
+      "notes": "vs LATE diff=0.0003721400272389412"
+    },
+    "P0-HB-LATE": {
+      "n": 3679,
+      "hit_rate": 0.4767599891274803,
+      "mean_edge": -0.0003721689516368566,
+      "median_edge": -0.0006754057190692109,
+      "p25": -0.008580944821730885,
+      "p75": 0.007494090025871092,
+      "mean_abs_move": 0.01126933033028895,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "late_n=3679"
+    },
+    "P0-HB-PULL": {
+      "n": 10087,
+      "hit_rate": 0.47843759294140975,
+      "mean_edge": -0.0002128287724857859,
+      "median_edge": -0.0003903192450771531,
+      "p25": -0.006117757113034861,
+      "p75": 0.005412629758355325,
+      "mean_abs_move": 0.008542939830531764,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "pull_n=10087"
+    },
+    "P0-HB-FREQ": {
+      "n": 13689,
+      "hit_rate": NaN,
+      "mean_edge": 428.2560739979445,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "ignites/month=428.3"
+    },
+    "P0-HB-BODY": {
+      "n": 13689,
+      "mean_edge": NaN,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "high_body_mean=-2.892439791536365e-08"
+    },
+    "P0-HB5-SPLIT": {
+      "n": 13689,
+      "mean_edge": NaN,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "fail",
+      "notes": "high vs low body ignite"
+    }
+  }
+}

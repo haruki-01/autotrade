@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -15,6 +15,9 @@ JST = ZoneInfo("Asia/Tokyo")
 GMO_PUBLIC = "https://api.coin.z.com/public"
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 CACHE_PATH = DATA_DIR / "btc_jpy_5m.parquet"
+
+SAMPLE_START = date(2024, 1, 1)
+SAMPLE_END = date(2026, 8, 31)
 
 SESSIONS = {
     "TOKYO": (9, 15),
@@ -141,7 +144,117 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
         np.nan,
     )
     out["spike_cont_fail"] = cont_fail
+
+    out["fwd_ret_3"] = out["close"].shift(-3) / out["close"] - 1
+    out["fwd_ret_24"] = out["close"].shift(-24) / out["close"] - 1
+    out["fwd_ret_48"] = out["close"].shift(-48) / out["close"] - 1
+    out["body_med100"] = out["body"].rolling(100, min_periods=100).median()
+    out["rv_20"] = out["ret"].rolling(20, min_periods=20).std()
+
+    delta = out["close"].diff()
+    gain = delta.clip(lower=0)
+    loss = (-delta).clip(lower=0)
+    avg_gain = gain.rolling(14, min_periods=14).mean()
+    avg_loss = loss.rolling(14, min_periods=14).mean()
+    rs = avg_gain / avg_loss.replace(0, np.nan)
+    out["rsi14"] = 100 - (100 / (1 + rs))
+
     return out
+
+
+def resample_ohlc(df: pd.DataFrame, freq: str) -> pd.DataFrame:
+    tmp = df.set_index("open_time")
+    ohlc = tmp.resample(freq).agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    ohlc = ohlc.dropna(subset=["open"]).reset_index()
+    ohlc["range"] = ohlc["high"] - ohlc["low"]
+    ohlc["ret"] = ohlc["close"].pct_change()
+    ohlc["body"] = (ohlc["close"] - ohlc["open"]).abs()
+    return ohlc
+
+
+def merge_htf(df: pd.DataFrame) -> pd.DataFrame:
+    """Attach 1h and 12h EMA regime to 5m bars."""
+    out = df.copy()
+    h1 = resample_ohlc(out, "1h")
+    h12 = resample_ohlc(out, "12h")
+    h1["ema20"] = h1["close"].ewm(span=20, adjust=False).mean()
+    h1["ema50"] = h1["close"].ewm(span=50, adjust=False).mean()
+    h12["ema20"] = h12["close"].ewm(span=20, adjust=False).mean()
+    h12["ema50"] = h12["close"].ewm(span=50, adjust=False).mean()
+    h1["regime"] = np.where(h1["ema20"] > h1["ema50"], 1, np.where(h1["ema20"] < h1["ema50"], -1, 0))
+    h12["regime"] = np.where(h12["ema20"] > h12["ema50"], 1, np.where(h12["ema20"] < h12["ema50"], -1, 0))
+
+    out = pd.merge_asof(
+        out.sort_values("open_time"),
+        h1[["open_time", "ema20", "ema50", "regime"]].rename(
+            columns={"ema20": "h1_ema20", "ema50": "h1_ema50", "regime": "h1_regime"}
+        ),
+        on="open_time",
+        direction="backward",
+    )
+    out = pd.merge_asof(
+        out.sort_values("open_time"),
+        h12[["open_time", "close", "ema20", "ema50", "regime"]].rename(
+            columns={
+                "close": "h12_close",
+                "ema20": "h12_ema20",
+                "ema50": "h12_ema50",
+                "regime": "h12_regime",
+            }
+        ),
+        on="open_time",
+        direction="backward",
+    )
+    return out
+
+
+def spike_revert_edge(df: pd.DataFrame, horizon: str = "h60", mask: pd.Series | None = None) -> pd.Series:
+    col = {"h15": "fwd_ret_3", "h60": "fwd_ret_12", "h120": "fwd_ret_24" if "fwd_ret_24" in df else "fwd_ret_12", "h240": "fwd_ret_48"}.get(
+        horizon, "fwd_ret_12"
+    )
+    sub = df.loc[df["is_spike"]] if mask is None else df.loc[df["is_spike"] & mask]
+    edge = np.where(sub["spike_dir"] == 1, -sub[col], sub[col])
+    return pd.Series(edge, index=sub.index).dropna()
+
+
+def spike_cont_edge(df: pd.DataFrame, horizon: str = "h60", mask: pd.Series | None = None) -> pd.Series:
+    col = {"h15": "fwd_ret_3", "h60": "fwd_ret_12", "h240": "fwd_ret_48"}.get(horizon, "fwd_ret_12")
+    sub = df.loc[df["is_spike"]] if mask is None else df.loc[df["is_spike"] & mask]
+    edge = np.where(sub["spike_dir"] == 1, sub[col], -sub[col])
+    return pd.Series(edge, index=sub.index).dropna()
+
+
+def metric_from_series(r: pd.Series, vs_baseline: float | None = None, min_n: int = 100, notes: str = "") -> dict:
+    stats = summarize_returns(r)
+    stats["vs_baseline"] = vs_baseline
+    stats["verdict"] = verdict_from_stats(stats, vs_baseline, min_n=min_n)
+    stats["notes"] = notes
+    return stats
+
+
+def detect_ignite(df: pd.DataFrame) -> pd.DataFrame:
+    """Mark IGNITE events at 3rd bar of 3 consecutive same-direction candles."""
+    out = df.copy()
+    up = (out["close"] > out["open"]) & (out["body"] >= out["body_med100"] * 1.5)
+    down = (out["close"] < out["open"]) & (out["body"] >= out["body_med100"] * 1.5)
+    out["up_streak"] = up.groupby((~up).cumsum()).cumcount() + 1
+    out["down_streak"] = down.groupby((~down).cumsum()).cumcount() + 1
+    out["is_ignite_up"] = up & (out["up_streak"] == 3)
+    out["is_ignite_down"] = down & (out["down_streak"] == 3)
+    out["is_ignite"] = out["is_ignite_up"] | out["is_ignite_down"]
+    out["ignite_dir"] = np.where(out["is_ignite_up"], 1, np.where(out["is_ignite_down"], -1, 0))
+    return out
+
+
+def ignite_edge(df: pd.DataFrame, indices: pd.Index, col: str = "fwd_ret_48") -> pd.Series:
+    sub = df.loc[indices]
+    edge = np.where(sub["ignite_dir"] == 1, sub[col], -sub[col])
+    return pd.Series(edge, index=indices).dropna()
+
+
+def months_in_sample(df: pd.DataFrame) -> float:
+    days = (df["open_time"].max() - df["open_time"].min()).days
+    return max(days / 30.44, 1)
 
 
 def in_time_range(ts: pd.Timestamp, start_h: int, start_m: int, end_h: int, end_m: int) -> bool:

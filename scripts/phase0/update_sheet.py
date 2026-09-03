@@ -1,14 +1,14 @@
-"""Update phase0-verification-sheet.csv from B01 JSON results."""
+"""Update phase0-verification-sheet.csv from batch JSON results."""
 
 from __future__ import annotations
 
 import csv
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SHEET = ROOT / "docs/research/phase0-verification-sheet.csv"
-RESULTS = ROOT / "data/phase0/b01_results.json"
 
 
 def fmt(v) -> str:
@@ -21,8 +21,8 @@ def fmt(v) -> str:
     return str(v)
 
 
-def main() -> None:
-    payload = json.loads(RESULTS.read_text(encoding="utf-8"))
+def update_sheet_from_json(results_path: Path) -> None:
+    payload = json.loads(results_path.read_text(encoding="utf-8"))
     metrics = payload["metrics"]
     sample_period = payload["sample_period"]
 
@@ -31,6 +31,7 @@ def main() -> None:
         fieldnames = reader.fieldnames
         rows = list(reader)
 
+    updated = 0
     for row in rows:
         mid = row["metric_id"]
         if mid not in metrics:
@@ -47,16 +48,23 @@ def main() -> None:
         row["vs_baseline"] = fmt(m.get("vs_baseline"))
         row["verdict"] = m.get("verdict", "")
         row["sample_period"] = sample_period
-        extra = m.get("notes", "")
-        if extra:
-            row["notes"] = extra
+        if m.get("notes"):
+            row["notes"] = m["notes"]
+        updated += 1
 
     with SHEET.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
         w.writerows(rows)
 
-    print(f"Updated {SHEET} with B01 results ({len(metrics)} metrics)")
+    print(f"Updated {updated} rows in {SHEET}")
+
+
+def main() -> None:
+    if len(sys.argv) < 2:
+        print("Usage: python3 -m scripts.phase0.update_sheet data/phase0/b02_results.json")
+        sys.exit(1)
+    update_sheet_from_json(Path(sys.argv[1]))
 
 
 if __name__ == "__main__":

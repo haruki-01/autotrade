@@ -1,0 +1,68 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B02",
+  "batch_verdict": "promote",
+  "metrics": {
+    "P0-HA-REVERT": {
+      "n": 4692,
+      "hit_rate": 0.5415601023017903,
+      "mean_edge": -0.00011830514555256008,
+      "median_edge": 0.00045531491611211505,
+      "p25": -0.0030865902612836615,
+      "p75": 0.0034744585125007776,
+      "mean_abs_move": 0.005371596920754253,
+      "vs_baseline": -0.00023661029110512015,
+      "verdict": "fail",
+      "notes": "vs CONT diff=-0.000237"
+    },
+    "P0-HA-CONT": {
+      "n": 4692,
+      "hit_rate": 0.4584398976982097,
+      "mean_edge": 0.00011830514555256008,
+      "median_edge": -0.00045531491611211505,
+      "p25": -0.0034744585125007776,
+      "p75": 0.0030865902612836615,
+      "mean_abs_move": 0.005371596920754253,
+      "vs_baseline": 0.00023661029110512015,
+      "verdict": "pass",
+      "notes": ""
+    },
+    "P0-HA-REVERT15": {
+      "n": 4693,
+      "hit_rate": 0.5514596207116983,
+      "mean_edge": -4.743720873677322e-06,
+      "median_edge": 0.0003036200118613497,
+      "p25": -0.0016694124252534248,
+      "p75": 0.002125795938697772,
+      "mean_abs_move": 0.003083415306639415,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "h15 revert after SPIKE"
+    },
+    "P0-HA-PATH": {
+      "n": 4692,
+      "hit_rate": 0.8113810741687979,
+      "mean_edge": 0.6229752770673487,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "pass",
+      "notes": "revert_first=3807 cont_first=884 neither=1"
+    },
+    "P0-HA-BY-SESS": {
+      "n": 3570,
+      "hit_rate": 0.5288515406162465,
+      "mean_edge": -0.00019170048490581106,
+      "median_edge": 0.00035629427902950095,
+      "p25": -0.0036885015454132253,
+      "p75": 0.003926715244348344,
+      "mean_abs_move": 0.005994400973222914,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "WD-only | TOKYO:n=871,mean=-0.000275 | EUROPE_US:n=2142,mean=-0.000097 | OFF:n=1679,mean=-0.000064"
+    }
+  }
+}

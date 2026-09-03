@@ -1,0 +1,44 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B05",
+  "batch_verdict": "reject",
+  "metrics": {
+    "P0-HF1-RESUME": {
+      "n": 7,
+      "hit_rate": 1.0,
+      "mean_edge": 0.021354107250749915,
+      "median_edge": 0.017342060825584094,
+      "p25": 0.014720657804968118,
+      "p75": 0.02744441163382838,
+      "mean_abs_move": 0.021354107250749915,
+      "vs_baseline": 0.015571876847000957,
+      "verdict": "insufficient_n",
+      "notes": "vs CTRL=0.015571876847000957"
+    },
+    "P0-HF1-CTRL": {
+      "n": 427,
+      "hit_rate": 0.6651053864168618,
+      "mean_edge": 0.005782230403748958,
+      "median_edge": 0.004234494110486153,
+      "p25": -0.002313601636555418,
+      "p75": 0.011875641886893884,
+      "mean_abs_move": 0.010338677221639527,
+      "vs_baseline": null,
+      "verdict": "pass",
+      "notes": ""
+    },
+    "P0-HF1-FREQ": {
+      "n": 7,
+      "mean_edge": 0.2189928057553957,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "events/month=0.2"
+    }
+  }
+}

@@ -109,15 +109,23 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 
 ---
 
-## 検証ステータス（B01 以降）
+## 検証ステータス（Phase0 完了）
 
-| ID | B01 結果 | 備考 |
-|---|---|---|
-| H-E | weak | FEE_WINDOW に差はあるが単体 Phase1 見送り |
-| H-C | weak | セッション差小。フィルタ補助のみ |
-| H-C4 | conditional | 土日フィルタ（H-M4）採用候補 |
-| H-M4 | conditional | WE 偽ブレイク率 58% |
+| ID | バッチ | 結果 | 備考 |
+|---|---|---|---|
+| H-E | B01 | weak | 単体 Phase1 見送り |
+| H-C | B01 | weak | フィルタ補助のみ |
+| H-C4 / H-M4 | B01 | conditional | 土日ゲート採用候補 |
+| H-A | B02 | reject | REVERT edge なし |
+| H-A2 | B02 | **promote** | SPIKE 継続 Phase1 候補 |
+| H-B | B03 | conditional | 早期性あり、絶対 edge 弱い |
+| H-B2 | B04 | reject | — |
+| H-B3 | B04 | reject | — |
+| H-F1 | B05 | reject | RESUME n 不足 |
+| H-D | B06 | conditional | PULL 執行ルール付き候補 |
+| H-A3, H-A4, H-B4 | B07 | reject | — |
+| H-C2 | B07 | weak | 参考記録 |
 
-詳細: [knowledge-log.md](knowledge-log.md) KB-B01-20260903
+詳細: [knowledge-log.md](knowledge-log.md) KB-B01〜KB-B07 / [phase0-summary.md](phase0-summary.md)
 
 改訂: 2026-09-03
