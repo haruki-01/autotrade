@@ -10,8 +10,8 @@ from scripts.phase0.common import add_features
 from scripts.phase1.common import RR_RATIO, Signal
 
 
-def _risk_width(entry: float, atr: float) -> float:
-    return max(entry * 0.008, 0.5 * atr)
+def _risk_width(entry: float, atr: float, pct_risk: float = 0.008, atr_mult: float = 0.5) -> float:
+    return max(entry * pct_risk, atr_mult * atr)
 
 
 def generate_hd_pull_signals(
@@ -19,6 +19,9 @@ def generate_hd_pull_signals(
     weekend_filter: bool = False,
     cooldown: int = 48,
     mode: str = "pull",
+    pct_risk: float = 0.008,
+    atr_mult: float = 0.5,
+    max_bars: int = 48,
 ) -> list[Signal]:
     """
     mode: pull = wait for first pull (H-D), raw = enter on RSI exit bar (control).
@@ -49,7 +52,7 @@ def generate_hd_pull_signals(
         atr = df["atr14"].iloc[entry_i]
         if np.isnan(atr) or atr <= 0:
             continue
-        r = _risk_width(entry, atr)
+        r = _risk_width(entry, atr, pct_risk=pct_risk, atr_mult=atr_mult)
         signals.append(
             Signal(
                 bar_idx=entry_i,
@@ -57,7 +60,7 @@ def generate_hd_pull_signals(
                 entry_price=entry,
                 sl_price=entry - r,
                 tp_price=entry + RR_RATIO * r,
-                max_bars=48,
+                max_bars=max_bars,
                 tag="hd_pull" if mode == "pull" else "hd_raw",
             )
         )

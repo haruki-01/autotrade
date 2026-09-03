@@ -1,0 +1,356 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P1-R",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P1R-BASELINE": {
+      "params": {
+        "pct_risk": 0.008,
+        "atr_mult": 0.5,
+        "max_bars": 48,
+        "cooldown": 48
+      },
+      "IS": {
+        "n": 890,
+        "w": 0.5730337078651685,
+        "ev": 23.005163325223176,
+        "monthly_n": 49.61831501831502,
+        "p": 1141.4774409187112,
+        "max_dd": 742.4079483713904,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "OOS1": {
+        "n": 400,
+        "w": 0.5475,
+        "ev": 11.472476793335767,
+        "monthly_n": 50.31404958677686,
+        "p": 577.2267662630426,
+        "max_dd": 493.41225425918844,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "OOS2": {
+        "n": 321,
+        "w": 0.5545171339563862,
+        "ev": 15.841569184476606,
+        "monthly_n": 53.39475409836066,
+        "p": 845.8566911372961,
+        "max_dd": 531.9236763878216,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "oos_avg_p": 711.5417287001694,
+      "gate1_both_oos": true,
+      "gate2_any_oos": false,
+      "gate2_both_oos": false,
+      "notes": "P1-A default R width (executed)"
+    },
+    "P1R-BEST": {
+      "params": {
+        "pct_risk": 0.008,
+        "atr_mult": 1.5,
+        "max_bars": 96,
+        "cooldown": 48
+      },
+      "IS": {
+        "n": 746,
+        "w": 0.5040214477211796,
+        "ev": 22.648746599337912,
+        "monthly_n": 41.59018315018315,
+        "p": 941.9655191885515,
+        "max_dd": 1219.0129117281394,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "OOS1": {
+        "n": 330,
+        "w": 0.4727272727272727,
+        "ev": 10.301012619837591,
+        "monthly_n": 41.509090909090915,
+        "p": 427.58566929253135,
+        "max_dd": 1149.4600575826103,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "OOS2": {
+        "n": 261,
+        "w": 0.5747126436781609,
+        "ev": 21.364189963431098,
+        "monthly_n": 43.4144262295082,
+        "p": 927.5140491205789,
+        "max_dd": 823.2074272204945,
+        "gate1": true,
+        "gate2": false,
+        "fee_breakeven_w": 0.35
+      },
+      "oos_avg_p": 677.5498592065551,
+      "gate1_both_oos": true,
+      "gate2_any_oos": false,
+      "gate2_both_oos": false,
+      "notes": "top validated executed"
+    },
+    "P1R-GRID-STATS": {
+      "n_combos": 72,
+      "n_validated_executed": 15,
+      "gate2_any_count": 0,
+      "gate1_both_count": 3,
+      "notes": "screen=theoretical validate_top=15"
+    }
+  },
+  "gate2_combos": [],
+  "gate1_combos": [
+    {
+      "params": {
+        "pct_risk": 0.008,
+        "atr_mult": 1.5,
+        "max_bars": 96,
+        "cooldown": 48
+      },
+      "theoretical": {
+        "IS": {
+          "n": 1012,
+          "w": 0.5207509881422925,
+          "ev": 28.356083115247877,
+          "monthly_n": 56.419926739926744,
+          "p": 1599.848131993559,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 427,
+          "w": 0.5128805620608899,
+          "ev": 17.535749944298317,
+          "monthly_n": 53.710247933884304,
+          "p": 941.8494772148605,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 334,
+          "w": 0.5479041916167665,
+          "ev": 19.104627047972713,
+          "monthly_n": 55.55715846994536,
+          "p": 1061.3987924134244,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "executed": {
+        "IS": {
+          "n": 746,
+          "w": 0.5040214477211796,
+          "ev": 22.648746599337912,
+          "monthly_n": 41.59018315018315,
+          "p": 941.9655191885515,
+          "max_dd": 1219.0129117281394,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 330,
+          "w": 0.4727272727272727,
+          "ev": 10.301012619837591,
+          "monthly_n": 41.509090909090915,
+          "p": 427.58566929253135,
+          "max_dd": 1149.4600575826103,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 261,
+          "w": 0.5747126436781609,
+          "ev": 21.364189963431098,
+          "monthly_n": 43.4144262295082,
+          "p": 927.5140491205789,
+          "max_dd": 823.2074272204945,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "oos_avg_p": 677.5498592065551,
+      "gate1_both_oos": true,
+      "gate2_any_oos": false,
+      "gate2_both_oos": false
+    },
+    {
+      "params": {
+        "pct_risk": 0.008,
+        "atr_mult": 0.5,
+        "max_bars": 96,
+        "cooldown": 48
+      },
+      "theoretical": {
+        "IS": {
+          "n": 1016,
+          "w": 0.5216535433070866,
+          "ev": 27.742780626403835,
+          "monthly_n": 56.64293040293041,
+          "p": 1571.4323922051583,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 428,
+          "w": 0.514018691588785,
+          "ev": 18.104646133874574,
+          "monthly_n": 53.836033057851246,
+          "p": 974.6823277639703,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 334,
+          "w": 0.5479041916167665,
+          "ev": 19.124677214519693,
+          "monthly_n": 55.55715846994536,
+          "p": 1062.5127226936238,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "executed": {
+        "IS": {
+          "n": 749,
+          "w": 0.5193591455273698,
+          "ev": 25.559818583779084,
+          "monthly_n": 41.7574358974359,
+          "p": 1067.3124860622459,
+          "max_dd": 1219.0129117281394,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 332,
+          "w": 0.4789156626506024,
+          "ev": 12.174878689959227,
+          "monthly_n": 41.7606611570248,
+          "p": 508.43098359926927,
+          "max_dd": 1102.2127066941234,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 257,
+          "w": 0.5447470817120622,
+          "ev": 18.1535555067303,
+          "monthly_n": 42.749071038251365,
+          "p": 776.0476339540528,
+          "max_dd": 823.2074272204945,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "oos_avg_p": 642.239308776661,
+      "gate1_both_oos": true,
+      "gate2_any_oos": false,
+      "gate2_both_oos": false
+    },
+    {
+      "params": {
+        "pct_risk": 0.008,
+        "atr_mult": 1.0,
+        "max_bars": 96,
+        "cooldown": 48
+      },
+      "theoretical": {
+        "IS": {
+          "n": 1016,
+          "w": 0.5206692913385826,
+          "ev": 27.651137461037813,
+          "monthly_n": 56.64293040293041,
+          "p": 1566.2414547674266,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 428,
+          "w": 0.514018691588785,
+          "ev": 17.954370022656473,
+          "monthly_n": 53.836033057851246,
+          "p": 966.5920580726273,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 334,
+          "w": 0.5479041916167665,
+          "ev": 19.124677214519693,
+          "monthly_n": 55.55715846994536,
+          "p": 1062.5127226936238,
+          "max_dd": NaN,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "executed": {
+        "IS": {
+          "n": 751,
+          "w": 0.5126498002663116,
+          "ev": 23.89906940224366,
+          "monthly_n": 41.86893772893773,
+          "p": 1000.6286485821009,
+          "max_dd": 1219.0129117281394,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS1": {
+          "n": 332,
+          "w": 0.4789156626506024,
+          "ev": 11.981226721659425,
+          "monthly_n": 41.7606611570248,
+          "p": 500.34394936871035,
+          "max_dd": 1166.5051601696573,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        },
+        "OOS2": {
+          "n": 257,
+          "w": 0.5447470817120622,
+          "ev": 18.1535555067303,
+          "monthly_n": 42.749071038251365,
+          "p": 776.0476339540528,
+          "max_dd": 823.2074272204945,
+          "gate1": true,
+          "gate2": false,
+          "fee_breakeven_w": 0.35
+        }
+      },
+      "oos_avg_p": 638.1957916613816,
+      "gate1_both_oos": true,
+      "gate2_any_oos": false,
+      "gate2_both_oos": false
+    }
+  ]
+}

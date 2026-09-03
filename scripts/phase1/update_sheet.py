@@ -30,6 +30,14 @@ METRIC_MAP = {
         "P1-COMPOSITE_OOS1": ("P1-COMPOSITE", "OOS1"),
         "P1-COMPOSITE_OOS2": ("P1-COMPOSITE", "OOS2"),
     },
+    "P1-R": {
+        ("P1R-BEST", "IS"): ("P1R-BEST", "IS"),
+        ("P1R-BEST", "OOS1"): ("P1R-BEST", "OOS1"),
+        ("P1R-BEST", "OOS2"): ("P1R-BEST", "OOS2"),
+        ("P1R-BASELINE", "IS"): ("P1R-BASELINE", "IS"),
+        ("P1R-BASELINE", "OOS1"): ("P1R-BASELINE", "OOS1"),
+        ("P1R-BASELINE", "OOS2"): ("P1R-BASELINE", "OOS2"),
+    },
 }
 
 
@@ -54,23 +62,48 @@ def update_sheet_from_json(results_path: Path, batch_id: str) -> None:
         rows = list(reader)
 
     updated = 0
-    for row in rows:
-        for json_key, (mid, split) in mapping.items():
-            if row["metric_id"] != mid or row["split"] != split:
+    if batch_id.upper() == "P1-R":
+        for row in rows:
+            mid, split = row["metric_id"], row["split"]
+            key = (mid, split)
+            if key not in mapping:
                 continue
-            if json_key not in metrics:
+            src = metrics.get(mid, {})
+            if split not in src:
                 continue
-            m = metrics[json_key]
-            for col in ("theoretical_ev", "executed_ev", "degradation", "n", "w", "monthly_n", "p", "max_dd", "random_w", "fee_breakeven_w"):
+            m = src[split]
+            for col in ("executed_ev", "n", "w", "monthly_n", "p", "max_dd", "fee_breakeven_w"):
                 if col in m:
-                    row[col] = fmt(m[col])
+                    val = m[col]
+                    if col == "executed_ev":
+                        row["executed_ev"] = fmt(val)
+                    else:
+                        row[col] = fmt(val)
             row["gate1"] = fmt(m.get("gate1"))
             row["gate2"] = fmt(m.get("gate2"))
-            row["verdict"] = m.get("verdict", "")
+            row["verdict"] = "pass" if m.get("gate2") else ("conditional" if m.get("gate1") else "fail")
             row["sample_period"] = payload.get("sample_period", "")
-            if m.get("notes"):
-                row["notes"] = m["notes"]
+            if src.get("params"):
+                row["notes"] = str(src["params"])
             updated += 1
+    else:
+        for row in rows:
+            for json_key, (mid, split) in mapping.items():
+                if row["metric_id"] != mid or row["split"] != split:
+                    continue
+                if json_key not in metrics:
+                    continue
+                m = metrics[json_key]
+                for col in ("theoretical_ev", "executed_ev", "degradation", "n", "w", "monthly_n", "p", "max_dd", "random_w", "fee_breakeven_w"):
+                    if col in m:
+                        row[col] = fmt(m[col])
+                row["gate1"] = fmt(m.get("gate1"))
+                row["gate2"] = fmt(m.get("gate2"))
+                row["verdict"] = m.get("verdict", "")
+                row["sample_period"] = payload.get("sample_period", "")
+                if m.get("notes"):
+                    row["notes"] = m["notes"]
+                updated += 1
 
     with SHEET.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)

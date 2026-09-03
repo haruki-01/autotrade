@@ -569,4 +569,46 @@
 
 ---
 
+### KB-P1-R-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-R |
+| date | 2026-09-03 |
+| purpose | H-D + H-M4 の SL/TP 幅グリッドで Gate2 到達可否 |
+| decision_question | R 幅変更で執行込み月次 P≥¥10,000（Gate2）に届くか？ |
+| hypotheses | H-D + H-M4 |
+| metrics | P1R-BASELINE, P1R-BEST, 72 組グリッド |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**（Gate1 のみ。Gate2 は全組み合わせ fail）
+- グリッド: 72 組（理論値スクリーン）→ 上位 15 組を執行込み再検証
+- **gate2_any_count = 0**（Gate2 到達組み合わせなし）
+- **P1R-BASELINE**（pct=0.8%, atr×0.5, 48bar）: OOS Gate1 pass、月次 P≈¥712（OOS 平均）
+- **P1R-BEST**（pct=0.8%, atr×1.5, 96bar）: OOS Gate1 pass、月次 P≈¥678（baseline より劣る）
+- 理論値スクリーン最高でも月次 P≈¥1,600 程度（Gate2 遠隔）
+
+**batch_verdict:** conditional
+
+**learnings**
+
+- SL/TP 幅を広げても **Gate2（月次 +¥10,000）は到達不能**
+- R 拡大は W 低下とトレードオフし、OOS 平均 P は baseline 超えず
+- **H-M4 + 初押し待ち** は Gate1（取引可能エッジ）としては維持
+- 目標 EV ¥200/回には、現 Q=¥10,000・RR 1:2・H-D 単体では不足
+
+**next_actions**
+
+- H-D 単体での Gate2 追求は **停止**（Phase1-R 結論）
+- 選択肢: (1) 目標 P の再ベースライン検討 (2) 別仮説探索 (3) H-D をフィルタとして別エントリーと合成
+- 実装フェーズには **Gate2 pass 候補なし** のため進まない
+
+**catalog_updates**
+
+- H-D: Phase1 conditional 維持（Gate1 のみ）。Gate2 未達を明記
+
+---
+
 改訂: 2026-09-03

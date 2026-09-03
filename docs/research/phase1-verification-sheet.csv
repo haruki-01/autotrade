@@ -12,3 +12,9 @@ P1-B,SPIKE継続の取引可能エッジ,SPIKE継続は執行込みでも優位�
 P1-C,合成ロジック,pass候補+H-M4合成でGate1/2 passか？,P1-COMPOSITE,composite,IS,27.3427,25.5489,0.9344,850,0.5882,47.3883,1210.7200,687.7353,0.4674,0.3500,True,False,conditional,2024-01-01..2026-08-31,
 P1-C,合成ロジック,pass候補+H-M4合成でGate1/2 passか？,P1-COMPOSITE,composite,OOS1,16.6061,15.2945,0.9210,385,0.5636,48.4273,740.6713,696.2279,0.4758,0.3500,True,False,conditional,2024-01-01..2026-08-31,
 P1-C,合成ロジック,pass候補+H-M4合成でGate1/2 passか？,P1-COMPOSITE,composite,OOS2,18.5018,17.5454,0.9483,303,0.5743,50.4007,884.3011,480.5450,0.4613,0.3500,True,False,conditional,2024-01-01..2026-08-31,
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BEST,H-D,IS,,,,746,0.5040,41.5902,941.9655,1219.0129,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 1.5, 'max_bars': 96, 'cooldown': 48}"
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BEST,H-D,OOS1,,,,330,0.4727,41.5091,427.5857,1149.4601,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 1.5, 'max_bars': 96, 'cooldown': 48}"
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BEST,H-D,OOS2,,,,261,0.5747,43.4144,927.5140,823.2074,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 1.5, 'max_bars': 96, 'cooldown': 48}"
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,IS,,,,890,0.5730,49.6183,1141.4774,742.4079,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,OOS1,,,,400,0.5475,50.3140,577.2268,493.4123,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"
+P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,OOS2,,,,321,0.5545,53.3948,845.8567,531.9237,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"

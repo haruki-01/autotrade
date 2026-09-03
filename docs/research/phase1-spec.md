@@ -15,6 +15,7 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | **P1-A** | H-D | RSI + 初押し待ちは RR 1:2・執行込みで Gate1 pass か？ | 1 |
 | **P1-B** | H-A2 | SPIKE 継続は執行込みでも Phase0 promote が再現するか？ | 2 |
 | **P1-C** | 合成 | P1-A/B pass 候補 + H-M4 を合成して Gate1/2 を満たすか？ | 3（ゲート付き） |
+| **P1-R** | H-D + H-M4 | SL/TP 幅グリッドで Gate2（月次 P≥¥10,000）到達可能か？ | 4（P1-C 後） |
 
 ---
 
@@ -51,6 +52,19 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | シグナル | Gate1 pass した H-D / H-A2。同一 bar 冲突時 **SPIKE 優先** |
 | H-M4 | 土日新規停止 ON |
 | H-M5 | 起点 +1.5% 超の遅入禁止（IGNITE 系、P1-C のみ参考） |
+
+### 2.4 再検証（P1-R）
+
+| 項目 | 定義 |
+|---|---|
+| 対象 | P1-C conditional（H-D + H-M4） |
+| グリッド | `pct_risk` × `atr_mult` × `max_bars` × `cooldown` |
+| pct_risk | 0.008, 0.012, 0.016, 0.020, 0.025, 0.030 |
+| atr_mult | 0.5, 1.0, 1.5 |
+| max_bars | 48, 96 |
+| cooldown | 48, 96 |
+| 手法 | 理論値全組み合わせスクリーニング → 上位15を執行込み再検証 |
+| 選定 | OOS 平均 P 最大かつ Gate1/2 優先 |
 
 ---
 
@@ -113,6 +127,7 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | `data/phase1/p1a_results.json` | P1-A 結果 |
 | `data/phase1/p1b_results.json` | P1-B 結果 |
 | `data/phase1/p1c_results.json` | P1-C 結果 |
+| `data/phase1/p1r_results.json` | P1-R グリッド結果 |
 | [phase1-verification-sheet.csv](phase1-verification-sheet.csv) | 記入シート |
 | [knowledge-log.md](knowledge-log.md) | KB-P1-A/B/C |
 

@@ -31,7 +31,7 @@ python3 -m scripts.phase0.run_batch B02   # B01–B07 任意バッチ
 ## Phase1 実行
 
 ```bash
-python3 -m scripts.phase1.run_batch P1-A   # P1-A → P1-B → P1-C
+python3 -m scripts.phase1.run_batch P1-A   # P1-A → P1-B → P1-C → P1-R
 ```
 
 データは GMO 公開 API から取得し `data/btc_jpy_5m.parquet` にキャッシュ（git 除外）。

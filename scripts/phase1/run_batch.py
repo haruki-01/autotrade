@@ -19,6 +19,7 @@ BATCH_MODULES = {
     "P1-A": "scripts.phase1.p1a_hd",
     "P1-B": "scripts.phase1.p1b_ha2",
     "P1-C": "scripts.phase1.p1c_composite",
+    "P1-R": "scripts.phase1.p1r_grid",
 }
 
 
@@ -32,17 +33,31 @@ def run_batch(batch_id: str, df=None) -> dict:
         print(f"Loaded {len(df)} bars")
     results = mod.compute(df)
     verdict_fn = getattr(mod, "batch_verdict", None)
-    batch_verdict = verdict_fn(results) if verdict_fn else "unknown"
+
+    if batch_id.upper() == "P1-R":
+        metrics = results["metrics"]
+        extra = {k: results[k] for k in ("grid", "gate2_combos", "gate1_combos") if k in results}
+    else:
+        metrics = results
+        extra = {}
+
+    batch_verdict = verdict_fn(results if batch_id.upper() == "P1-R" else metrics) if verdict_fn else "unknown"
     payload = {
         "sample_period": f"{SAMPLE_START}..{SAMPLE_END}",
         "n_bars": len(df),
         "batch_id": batch_id.upper(),
         "batch_verdict": batch_verdict,
-        "metrics": results,
+        "metrics": metrics,
+        **extra,
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     slug = batch_id.lower().replace("-", "")
     out_path = OUT_DIR / f"{slug}_results.json"
+    if batch_id.upper() == "P1-R" and "grid" in payload:
+        grid = payload.pop("grid")
+        grid_path = OUT_DIR / "p1r_grid_full.json"
+        grid_path.write_text(json.dumps({"grid": grid}, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+        print(f"Wrote {grid_path} ({len(grid)} combos)")
     out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     print(f"Wrote {out_path}")
     update_sheet_from_json(out_path, batch_id)

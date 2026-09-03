@@ -118,7 +118,7 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | H-A | reject | — | — |
 | H-A2 | promote | **reject** | RR 1:2 執行込み EV 負 |
 | H-B | conditional | filter-only | B03-R 後 |
-| H-D | conditional | **conditional** | PULL + H-M4 で Gate1 pass |
+| H-D | conditional | **conditional** | Gate1 pass（H-M4 必須）。**Gate2 未達**（P1-R） |
 | H-B2/H-B3/H-F1/稀イベント | reject | — | — |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / KB-P1-A〜C / [knowledge-log.md](knowledge-log.md)
