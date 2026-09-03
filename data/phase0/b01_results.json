@@ -1,0 +1,140 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276718,
+  "batch_id": "B01",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P0-HE-RET": {
+      "n": 975,
+      "hit_rate": 0.5066666666666667,
+      "mean_edge": 0.0001935779809415478,
+      "median_edge": 3.1980703263823074e-05,
+      "p25": -0.002031290842921918,
+      "p75": 0.002196862704213154,
+      "mean_abs_move": 0.0032648357524993764,
+      "vs_baseline": 0.0003514857927779811,
+      "verdict": "weak",
+      "notes": "Daily FEE_WINDOW 05:30-06:30 return (first open -> last close)"
+    },
+    "P0-HE-VS": {
+      "n": 975,
+      "mean_edge": 0.0003514857927779811,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": 0.0,
+      "verdict": "pass",
+      "notes": "fee_mean=0.000194 baseline_mean=-0.000158"
+    },
+    "P0-HE-VOL": {
+      "n": 11675,
+      "mean_edge": -0.0011977684593380555,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": 22014.209336188436,
+      "vs_baseline": -26.399546143864427,
+      "verdict": "fail",
+      "notes": "fee_range_mean=22014 other_range_mean=22041"
+    },
+    "P0-HE-DIR": {
+      "n": 975,
+      "hit_rate": 0.5066666666666667,
+      "mean_edge": 0.0001935779809415478,
+      "median_edge": 3.1980703263823074e-05,
+      "p25": -0.002031290842921918,
+      "p75": 0.002196862704213154,
+      "mean_abs_move": 0.0032648357524993764,
+      "vs_baseline": 0.0003514857927779811,
+      "verdict": "fail",
+      "notes": "Directional bias in FEE_WINDOW daily returns"
+    },
+    "P0-HE-PREPOST": {
+      "n": 974,
+      "mean_edge": -0.00013246622438364039,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": -0.00013246622438364039,
+      "verdict": "weak",
+      "notes": "pre_mean=8.488458052123363e-05 post_mean=0.000217350804904874"
+    },
+    "P0-HC4-WDWE": {
+      "n": 276706,
+      "hit_rate": -0.0022579012020191858,
+      "mean_edge": 4.0077452585100625e-05,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": 8395.554645075337,
+      "vs_baseline": 4.0077452585100625e-05,
+      "verdict": "pass",
+      "notes": "WD mean_fwd=5.658117811797505e-05 WE mean_fwd=1.6503725532874432e-05"
+    },
+    "P0-HC4-FAKEBRK": {
+      "n": 1122,
+      "hit_rate": 0.5819964349376114,
+      "mean_edge": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "pass",
+      "notes": "WE spike continuation fail rate (h60)"
+    },
+    "P0-HC-RET": {
+      "n": 276706,
+      "hit_rate": 0.5088180234617247,
+      "mean_edge": 4.5531367361540745e-05,
+      "median_edge": 6.0556124974797676e-05,
+      "p25": -0.0020737006425738946,
+      "p75": 0.0022087624006505435,
+      "mean_abs_move": 0.0033263510589062796,
+      "vs_baseline": -6.630197731684459e-06,
+      "verdict": "weak",
+      "notes": "TOKYO:0.000034 | EUROPE_US:0.000027 | OFF:0.000067"
+    },
+    "P0-HC-VOL": {
+      "n": 276718,
+      "mean_edge": 0.09075857763693262,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "TOKYO:19953 | EUROPE_US:21764 | OFF:23448"
+    },
+    "P0-HC-TREND": {
+      "n": 276718,
+      "mean_edge": -0.008293919585828702,
+      "hit_rate": NaN,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": -0.008293919585828702,
+      "verdict": "weak",
+      "notes": "TOKYO_run=1.96 | EUROPE_US_run=1.95 | OFF_run=1.96"
+    },
+    "P0-HC-REVERT": {
+      "n": 871,
+      "hit_rate": 0.5430539609644087,
+      "mean_edge": -0.00027514574555804946,
+      "median_edge": 0.0004714201532115547,
+      "p25": -0.00264595796730438,
+      "p75": 0.0034831066534153354,
+      "mean_abs_move": 0.004925903753343163,
+      "vs_baseline": -0.00017675330836841092,
+      "verdict": "weak",
+      "notes": "TOKYO_revert_mean=-0.000275 | EUROPE_US_revert_mean=-0.000098 | OFF_revert_mean=-0.000064"
+    }
+  }
+}

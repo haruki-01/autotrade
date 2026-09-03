@@ -133,9 +133,50 @@
 
 ## 記録済みカード
 
-（検証開始後、上記テンプレでここに追記していく）
+### KB-B01-20260903
 
-_（まだ記録なし）_
+| 項目 | 内容 |
+|---|---|
+| batch_id | B01 |
+| date | 2026-09-03 |
+| purpose | 時間構造の歪みを低コストで確認し、フィルタ採用可否を決める |
+| decision_question | 時間帯・6:00・土日で statistically 説明力のある歪みはあるか？ |
+| hypotheses | H-E, H-C, H-C4 |
+| metrics | P0-HE-* (5), P0-HC4-* (2), P0-HC-* (4) |
+| sample_period | 2024-01-01..2026-08-31 |
+| data_source | GMO Coin public API BTC_JPY 5min (276,718 bars) |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- H-E: FEE_WINDOW 日次リターンはランダム1h窓より +0.035%/日 優位（P0-HE-VS pass）だが、方向バイアス・ボラ差は弱い/ fail
+- H-C4: 平日 fwd h60 が土日よりわずかに大きい（pass）。土日 SPIKE 継続失敗率 58%（pass）→ 土日は偽ブレイク多め
+- H-C: セッション間 fwd 差は小さい（weak）。EUROPE_US の run length は TOKYO より短い（weak）。TOKYO の spike 回帰 edge は弱い
+
+**batch_verdict:** conditional
+
+**learnings**
+
+- 6:00 前後（FEE_WINDOW）に統計的に detectable なリターン差はあるが、hit_rate≈51% でトレード単体エッジとしては弱い
+- 土日はブレイク継続が失敗しやすく、**土日新規停止フィルタ（H-M4）** の採用候補
+- セッション別の追随/回帰の差は小さく、単独では Phase1 エントリー本体にしない
+- 平日 vs 土日の差は方向としては平日有利だが effect size は極小
+
+**next_actions**
+
+- H-M4（土日ゲート）を後続バッチ B02–B07 の分割条件として記録
+- H-E は Phase1 単体候補にしない（6:00 前後イベント専用は defer）
+- **B02（スパイク分岐）** へ進行。SESSION 分割は P0-HA-BY-SESS で再確認
+
+**spawned_hypotheses**
+
+- なし
+
+**catalog_updates**
+
+- H-C4 / H-M4: 探索中 → **条件付き採用（土日フィルタ）**
+- H-E: 探索中 → weak（単体 Phase1 見送り）
+- H-C: 探索中 → weak（フィルタ補助のみ）
 
 ---
 

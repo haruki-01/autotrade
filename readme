@@ -18,3 +18,13 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 - [docs/research/edge-catalog.md](docs/research/edge-catalog.md) — エッジ仮説カタログ
 - [docs/research/phase0-stats.md](docs/research/phase0-stats.md) — Phase0 統計定義
 - [docs/research/phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) — 検証記入用シート
+
+## Phase0 実行
+
+```bash
+pip install -r requirements.txt
+python3 -m scripts.phase0.b01_metrics      # B01 計測
+python3 -m scripts.phase0.update_sheet   # CSV 反映
+```
+
+データは GMO 公開 API から取得し `data/btc_jpy_5m.parquet` にキャッシュ（git 除外）。
