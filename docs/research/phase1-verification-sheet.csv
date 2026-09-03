@@ -18,3 +18,7 @@ P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BEST
 P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,IS,,,,850,0.5882,47.3883,1210.7200,687.7353,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"
 P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,OOS1,,,,385,0.5636,48.4273,740.6713,696.2279,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"
 P1-R,H-D+M4のR幅グリッド,SL/TP幅変更でGate2到達可能か？,P1R-BASELINE,H-D,OOS2,,,,303,0.5743,50.4007,884.3011,480.5450,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"{'pct_risk': 0.008, 'atr_mult': 0.5, 'max_bars': 48, 'cooldown': 48}"
+P1-N,N感度（cooldown調整）,各N帯でGate1/2に届くか？,P1N-N10,H-D,OOS,,12.7907,,,0.5498,10.7093,135.5448,,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"cooldown=432, w_star=1.3917"
+P1-N,N感度（cooldown調整）,各N帯でGate1/2に届くか？,P1N-N20,H-D,OOS,,14.9344,,,0.5860,21.0027,314.4033,,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"cooldown=180, w_star=0.8708"
+P1-N,N感度（cooldown調整）,各N帯でGate1/2に届くか？,P1N-N50,H-D,OOS,,13.2931,,,0.5531,53.0026,709.1926,,,0.3500,True,False,conditional,2024-01-01..2026-08-31,"cooldown=36, w_star=0.5583"
+P1-N,N感度（cooldown調整）,各N帯でGate1/2に届くか？,P1N-N100,H-D,OOS,,17.8581,,,0.5725,62.4805,1121.0540,,,0.3500,False,False,fail,2024-01-01..2026-08-31,"cooldown=12, w_star=0.4542"

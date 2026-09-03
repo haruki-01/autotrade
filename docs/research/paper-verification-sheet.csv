@@ -1,0 +1,2 @@
+batch_id,purpose,decision_question,metric_id,hypothesis_id,split,executed_ev,n,w,monthly_n,p,max_dd,gate1,gate2,verdict,sample_period,notes
+PT-A,フォワードsim paper trade,H-D+M4はforward+複利でGate1再現か？,PT-A-FORWARD,H-D+M4,OOS-FWD,14.1286,686,0.5539,49.0000,692.3023,764.2794,True,False,conditional,2024-01-01..2026-08-31,"degradation=0.86, final_BR=59692"

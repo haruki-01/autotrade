@@ -1,0 +1,59 @@
+{
+  "gate2_p_target": 2500,
+  "n_candidates": [
+    10,
+    20,
+    50,
+    100
+  ],
+  "rows": [
+    {
+      "n_target": 10,
+      "n_band_low": 8,
+      "n_band_high": 12,
+      "p_star_jpy": 2500,
+      "ev_star_jpy": 250.0,
+      "ev_star_pct_of_q": 2.5,
+      "fee_breakeven_w": 0.35,
+      "w_star_gate2": 1.3917,
+      "position_q": 10000,
+      "bankroll": 50000
+    },
+    {
+      "n_target": 20,
+      "n_band_low": 16,
+      "n_band_high": 24,
+      "p_star_jpy": 2500,
+      "ev_star_jpy": 125.0,
+      "ev_star_pct_of_q": 1.25,
+      "fee_breakeven_w": 0.35,
+      "w_star_gate2": 0.8708,
+      "position_q": 10000,
+      "bankroll": 50000
+    },
+    {
+      "n_target": 50,
+      "n_band_low": 40,
+      "n_band_high": 60,
+      "p_star_jpy": 2500,
+      "ev_star_jpy": 50.0,
+      "ev_star_pct_of_q": 0.5,
+      "fee_breakeven_w": 0.35,
+      "w_star_gate2": 0.5583,
+      "position_q": 10000,
+      "bankroll": 50000
+    },
+    {
+      "n_target": 100,
+      "n_band_low": 80,
+      "n_band_high": 120,
+      "p_star_jpy": 2500,
+      "ev_star_jpy": 25.0,
+      "ev_star_pct_of_q": 0.25,
+      "fee_breakeven_w": 0.35,
+      "w_star_gate2": 0.4542,
+      "position_q": 10000,
+      "bankroll": 50000
+    }
+  ]
+}

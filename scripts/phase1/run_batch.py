@@ -20,6 +20,7 @@ BATCH_MODULES = {
     "P1-B": "scripts.phase1.p1b_ha2",
     "P1-C": "scripts.phase1.p1c_composite",
     "P1-R": "scripts.phase1.p1r_grid",
+    "P1-N": "scripts.phase1.p1n_sensitivity",
 }
 
 
@@ -52,6 +53,10 @@ def run_batch(batch_id: str, df=None) -> dict:
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     slug = batch_id.lower().replace("-", "")
+    if batch_id.upper() == "P1-N":
+        from scripts.phase1.n_targets import write_n_targets_table
+
+        write_n_targets_table()
     out_path = OUT_DIR / f"{slug}_results.json"
     if batch_id.upper() == "P1-R" and "grid" in payload:
         grid = payload.pop("grid")

@@ -40,6 +40,39 @@ METRIC_MAP = {
     },
 }
 
+P1N_ROW_TEMPLATE = {
+    "batch_id": "P1-N",
+    "purpose": "N感度（cooldown調整）",
+    "decision_question": "各N帯でGate1/2に届くか？",
+    "hypothesis_id": "H-D",
+    "split": "OOS",
+}
+
+
+def _append_p1n_rows(rows: list[dict], fieldnames: list[str], payload: dict) -> int:
+    metrics = payload["metrics"]
+    added = 0
+    existing = {(r["metric_id"], r.get("split")) for r in rows}
+    for key, m in metrics.items():
+        if key in existing:
+            continue
+        row = {fn: "" for fn in fieldnames}
+        row.update(P1N_ROW_TEMPLATE)
+        row["metric_id"] = key
+        row["executed_ev"] = fmt(m.get("oos_avg_ev"))
+        row["w"] = fmt(m.get("oos_avg_w"))
+        row["monthly_n"] = fmt(m.get("oos_avg_n"))
+        row["p"] = fmt(m.get("oos_avg_p"))
+        row["fee_breakeven_w"] = fmt(m.get("fee_breakeven_w"))
+        row["gate1"] = fmt(m.get("gate1"))
+        row["gate2"] = fmt(m.get("gate2"))
+        row["verdict"] = m.get("verdict", "")
+        row["sample_period"] = payload.get("sample_period", "")
+        row["notes"] = f"cooldown={m.get('cooldown')}, w_star={m.get('w_star_gate2')}"
+        rows.append(row)
+        added += 1
+    return added
+
 
 def fmt(v) -> str:
     if v is None or v is True or v is False:
@@ -62,7 +95,9 @@ def update_sheet_from_json(results_path: Path, batch_id: str) -> None:
         rows = list(reader)
 
     updated = 0
-    if batch_id.upper() == "P1-R":
+    if batch_id.upper() == "P1-N":
+        updated = _append_p1n_rows(rows, fieldnames, payload)
+    elif batch_id.upper() == "P1-R":
         for row in rows:
             mid, split = row["metric_id"], row["split"]
             key = (mid, split)

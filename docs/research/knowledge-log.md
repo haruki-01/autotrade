@@ -650,7 +650,7 @@
 
 **next_actions**（PM 判断待ち）
 
-- (A) Gate1 候補（H-D + H-M4）で paper trade を開始するか
+- (A) Gate1 候補（H-D + H-M4）で paper trade を開始するか → **実施済み [KB-PT-A](#kb-pt-a-20260903)**
 - (B) 新 L1 仮説探索へ移行するか
 - (C) P1-R2（N 削減・シグナル厳格化で EV/trade 向上）を試すか
 - 実装フェーズには **Gate2 pass 候補なし** のため、明示的 PM 決定なしでは進まない
@@ -662,4 +662,77 @@
 
 ---
 
-改訂: 2026-09-03（Gate2 5% re-baseline）
+### KB-PT-A-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | PT-A |
+| date | 2026-09-03 |
+| purpose | H-D + H-M4 のフォワード sim paper trade（複利 BR） |
+| decision_question | Phase1 Gate1 が forward 逐次処理で再現するか？ |
+| hypotheses | H-D + H-M4（P1-C 同一） |
+| metrics | PT-A-FORWARD（OOS1+OOS2） |
+| sample_period | 2025-07-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- PT-Gate1 **pass**: EV=+¥14.1, N=49/月, W=55.4%
+- PT-Gate2 **fail**: 月次 P≈¥692（目標 ¥2,500 の 28%）
+- 複利 BR: ¥50,000 → ¥59,692（+19.4% / 14ヶ月）
+- Phase1 参照劣化率: 0.86（≥0.7 pass）
+
+**learnings**
+
+- Paper trade sim でも Gate1（取引可能エッジ）は **再現**
+- Gate2 未到達は Phase1 backtest と一致
+- 複利運用でも月次 +5% には届かない
+
+**next_actions**
+
+- N 感度検証（P1-N）へ → [KB-P1-N](#kb-p1-n-20260903)
+
+---
+
+### KB-P1-N-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-N |
+| date | 2026-09-03 |
+| purpose | N=10/20/50/100 の感度検証 + 必要 EV/W* 整理 |
+| decision_question | 各 N 帯で Gate1/2 に届くか？ |
+| hypotheses | H-D + H-M4（cooldown 調整） |
+| metrics | P1N-N10/20/50/100 |
+| sample_period | OOS1+OOS2 |
+
+**必要エッジ（Gate2 = ¥2,500/月）**
+
+| N | EV* | W*（Gate2） | 実測 W | 実測 P | Gate1 | Gate2 |
+|---:|---:|---:|---:|---:|:---:|:---:|
+| 10 | ¥250 | 139%（不可） | 55.0% | ¥136 | pass | fail |
+| 20 | ¥125 | 87.1% | 58.6% | ¥314 | pass | fail |
+| 50 | ¥50 | 55.8% | 55.3% | ¥709 | pass | fail |
+| 100 | ¥25 | 45.4% | 57.3% | ¥1,121 | fail | fail |
+
+**batch_verdict:** conditional（N=10/20/50 で Gate1 pass、全 N で Gate2 fail）
+
+**learnings**
+
+- **N=10 は RR 1:2 では Gate2 構造的に不可**（1回最大 EV ≈ ¥156 @ W=100%）
+- N を下げても EV/trade は ¥13–18 程度で、Gate2 必要 EV に遠い
+- N=100 は cooldown 最小でも N 帯 80–120 に届かず（max ≈62/月）
+- 損益分岐 W=35% は全 N でクリア。Gate2 には **W* または EV/trade の大幅改善**が必要
+
+**next_actions**
+
+- Gate2 到達には RR 1:2 以外（幅拡大・別 L1）を検討
+- 現 Gate1 候補を live paper（GMO API）へ進めるか PM 判断
+
+**catalog_updates**
+
+- H-D: PT-A conditional 確認。N 感度結果を edge-catalog に反映
+
+---
+
+改訂: 2026-09-03（PT-A + P1-N）

@@ -118,9 +118,11 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | H-A | reject | — | — |
 | H-A2 | promote | **reject** | RR 1:2 執行込み EV 負 |
 | H-B | conditional | filter-only | B03-R 後 |
-| H-D | conditional | **conditional** | Gate1 pass（H-M4 必須）。**Gate2 未達**（新基準 ¥2,500 でも P≈¥740–1,013） |
+| H-D | conditional | **conditional** | Gate1 pass（H-M4 必須）。PT-A forward 再現。Gate2 未達（全 N 帯） |
 | H-B2/H-B3/H-F1/稀イベント | reject | — | — |
 
-Phase1 詳細: [phase1-spec.md](phase1-spec.md) / KB-P1-A〜C / [knowledge-log.md](knowledge-log.md)
+Phase1 詳細: [phase1-spec.md](phase1-spec.md) / KB-P1-A〜C / [knowledge-log.md](knowledge-log.md)  
+Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  
+N 感度: [n-sensitivity-spec.md](n-sensitivity-spec.md) / KB-P1-N
 
-改訂: 2026-09-03（Gate2 5% re-baseline）
+改訂: 2026-09-03（PT-A + P1-N）
