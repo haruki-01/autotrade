@@ -1,14 +1,24 @@
 # リサーチ成果物（仕様書とは分離）
 
-このディレクトリは **仮説カタログ・検証シート・ナレッジ** を置く場所です。
+このディレクトリは **仮説カタログ・検証フロー・検証シート・ナレッジ** を置く場所です。
 
 | 文書 | 役割 | 更新方針 |
 |---|---|---|
 | [`../SPEC.md`](../SPEC.md) | プロジェクト正本（資金・目標・変数構造・検証ルール） | **安易に追記しない。状態を維持** |
 | [`edge-catalog.md`](edge-catalog.md) | エッジ仮説の網羅カタログ | 仮説の追加・棄却・Phase移動で更新 |
+| [`verification-workflow.md`](verification-workflow.md) | 検証バッチの進め方・評価・spawn ルール | 運用改善時のみ更新 |
+| [`knowledge-log.md`](knowledge-log.md) | バッチごとの Knowledge Card 蓄積 | 検証のたびに追記 |
 | [`phase0-stats.md`](phase0-stats.md) | Phase0 記述統計の定義書 | 統計項目の定義変更時のみ更新 |
 | [`phase0-verification-sheet.csv`](phase0-verification-sheet.csv) | Phase0 検証用シート（記入用） | 計測結果・判定を記入 |
 | [`phase0-verification-sheet.md`](phase0-verification-sheet.md) | 同上の閲覧用テーブル | CSV と同期 |
+
+## 読む順序
+
+1. [edge-catalog.md](edge-catalog.md) — 何を検証するか
+2. [verification-workflow.md](verification-workflow.md) — どう進めるか（バッチ B01〜B07）
+3. [phase0-stats.md](phase0-stats.md) — どう測るか
+4. [phase0-verification-sheet.csv](phase0-verification-sheet.csv) — 記入
+5. [knowledge-log.md](knowledge-log.md) — 結果の蓄積
 
 ## Phase の意味
 

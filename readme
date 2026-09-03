@@ -8,11 +8,13 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 
 - [docs/SPEC.md](docs/SPEC.md)
 
-## リサーチ（仮説・検証シート）
+## リサーチ（仮説・検証）
 
 仕様書とは分離して管理する。
 
-- [docs/research/README.md](docs/research/README.md) — 置き場の説明
+- [docs/research/README.md](docs/research/README.md) — 置き場・読む順序
+- [docs/research/verification-workflow.md](docs/research/verification-workflow.md) — 検証フロー（バッチ B01〜B07）
+- [docs/research/knowledge-log.md](docs/research/knowledge-log.md) — ナレッジ蓄積
 - [docs/research/edge-catalog.md](docs/research/edge-catalog.md) — エッジ仮説カタログ
 - [docs/research/phase0-stats.md](docs/research/phase0-stats.md) — Phase0 統計定義
 - [docs/research/phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) — 検証記入用シート
