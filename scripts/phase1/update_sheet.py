@@ -1,0 +1,90 @@
+"""Update phase1-verification-sheet.csv from batch JSON."""
+
+from __future__ import annotations
+
+import csv
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+SHEET = ROOT / "docs/research/phase1-verification-sheet.csv"
+
+METRIC_MAP = {
+    "P1-A": {
+        "P1-HD-PULL_IS": ("P1-HD-PULL", "IS"),
+        "P1-HD-PULL_OOS1": ("P1-HD-PULL", "OOS1"),
+        "P1-HD-PULL_OOS2": ("P1-HD-PULL", "OOS2"),
+        "P1-HD-RAW-CTRL": ("P1-HD-RAW-CTRL", "IS"),
+        "P1-HD-RANDOM": ("P1-HD-RANDOM", "ALL"),
+    },
+    "P1-B": {
+        "P1-HA2-CONT_IS": ("P1-HA2-CONT", "IS"),
+        "P1-HA2-CONT_OOS1": ("P1-HA2-CONT", "OOS1"),
+        "P1-HA2-CONT_OOS2": ("P1-HA2-CONT", "OOS2"),
+        "P1-HA-REVERT-CTRL": ("P1-HA-REVERT-CTRL", "IS"),
+        "P1-HA2-RANDOM": ("P1-HA2-RANDOM", "ALL"),
+    },
+    "P1-C": {
+        "P1-COMPOSITE_IS": ("P1-COMPOSITE", "IS"),
+        "P1-COMPOSITE_OOS1": ("P1-COMPOSITE", "OOS1"),
+        "P1-COMPOSITE_OOS2": ("P1-COMPOSITE", "OOS2"),
+    },
+}
+
+
+def fmt(v) -> str:
+    if v is None or v is True or v is False:
+        return str(v) if isinstance(v, bool) else ""
+    if isinstance(v, float):
+        if v != v:
+            return ""
+        return f"{v:.4f}"
+    return str(v)
+
+
+def update_sheet_from_json(results_path: Path, batch_id: str) -> None:
+    payload = json.loads(results_path.read_text(encoding="utf-8"))
+    metrics = payload["metrics"]
+    mapping = METRIC_MAP.get(batch_id.upper(), {})
+
+    with SHEET.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames
+        rows = list(reader)
+
+    updated = 0
+    for row in rows:
+        for json_key, (mid, split) in mapping.items():
+            if row["metric_id"] != mid or row["split"] != split:
+                continue
+            if json_key not in metrics:
+                continue
+            m = metrics[json_key]
+            for col in ("theoretical_ev", "executed_ev", "degradation", "n", "w", "monthly_n", "p", "max_dd", "random_w", "fee_breakeven_w"):
+                if col in m:
+                    row[col] = fmt(m[col])
+            row["gate1"] = fmt(m.get("gate1"))
+            row["gate2"] = fmt(m.get("gate2"))
+            row["verdict"] = m.get("verdict", "")
+            row["sample_period"] = payload.get("sample_period", "")
+            if m.get("notes"):
+                row["notes"] = m["notes"]
+            updated += 1
+
+    with SHEET.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        w.writerows(rows)
+    print(f"Updated {updated} rows in {SHEET}")
+
+
+def main() -> None:
+    if len(sys.argv) < 3:
+        print("Usage: python3 -m scripts.phase1.update_sheet P1-A data/phase1/p1a_results.json")
+        sys.exit(1)
+    update_sheet_from_json(Path(sys.argv[2]), sys.argv[1])
+
+
+if __name__ == "__main__":
+    main()

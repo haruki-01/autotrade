@@ -451,4 +451,122 @@
 
 ---
 
+### KB-P1-A-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-A |
+| date | 2026-09-03 |
+| purpose | H-D（RSI + 初押し待ち）の取引可能エッジ検証 |
+| decision_question | RSI+PULL は RR 1:2・執行込みで Gate1 pass か？ |
+| hypotheses | H-D（主）, RAW 対照 |
+| metrics | P1-HD-PULL（IS/OOS1/OOS2）, P1-HD-PULL_M4 |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- 平日フィルタ（H-M4）あり: 執行込み EV=+¥21.3, W=57.6%, N=47.6/月 → **Gate1 pass**
+- フィルタなし: N=63–78/月で Gate1 fail（N 帯超過）。EV は正だが頻度過多
+- RAW 即入り対照: EV=−¥4.9 → PULL 優位を再確認
+- ランダム W≈46.5% vs 戦略 W≈57.7%
+- **Gate2 fail**（月次 P≈¥1,013 << ¥10,000 目標）
+
+**batch_verdict:** conditional
+
+**learnings**
+
+- Phase0 の PULL 優位は RR 1:2 バックテストでも再現（執行込み EV 正）
+- **H-M4 土日停止が N 帯調整に必須**（47.6/月 ≈ 目標 50）
+- Gate2（月次 +¥10,000）には未到達。EV 絶対値が小さい
+
+**next_actions**
+
+- H-D + H-M4 を Phase1 候補として **conditional 継続**
+- Gate2 到達には SL/TP 幅・保有時間の感度分析（Phase1-R）
+- P1-B へ進行
+
+**catalog_updates**
+
+- H-D: Phase0 conditional → **Phase1 conditional（H-M4 必須）**
+
+---
+
+### KB-P1-B-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-B |
+| date | 2026-09-03 |
+| purpose | H-A2 SPIKE 継続の取引可能エッジ検証 |
+| decision_question | SPIKE 継続は執行込みでも Phase0 promote が再現するか？ |
+| hypotheses | H-A2（主）, H-A 回帰対照 |
+| metrics | P1-HA2-CONT（IS/OOS1/OOS2） |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- 執行込み EV=−¥6.0（IS）、W≈21%、N 帯も超過
+- 回帰対照も EV 負 → Phase0 の微小 edge は RR 1:2 では再現せず
+- ランダム W≈44% > 戦略 W≈21%
+
+**batch_verdict:** reject
+
+**learnings**
+
+- Phase0 promote（mean_edge +0.012%）は **Phase1 執行込みでは棄却**
+- ATR ベース SL/TP（0.3/0.6）では継続方向が機能しない
+- N 過多（65–78/月）も Gate1 阻害要因
+
+**next_actions**
+
+- H-A2 を **Phase1 棄却**
+- P1-C は H-D のみで合成（H-A2 除外）
+
+**catalog_updates**
+
+- H-A2: Phase0 promote → **Phase1 reject**
+
+---
+
+### KB-P1-C-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-C |
+| date | 2026-09-03 |
+| purpose | Gate1 pass 候補 + H-M4 の合成ロジック |
+| decision_question | 合成で Gate1/2 を満たすか？ |
+| hypotheses | H-D + H-M4（H-A2 は Gate1 fail のため除外） |
+| metrics | P1-COMPOSITE（IS/OOS1/OOS2） |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- OOS2: 執行込み EV=+¥17.5, N=50.4/月, W=57.4% → **Gate1 pass**
+- IS/OOS1 も Gate1 pass
+- Gate2 fail（月次 P≈¥740–1,211）
+
+**batch_verdict:** conditional
+
+**learnings**
+
+- H-D + H-M4 合成は OOS で Gate1 を安定 pass
+- H-A2 除外でも N 帯・EV 符号は維持
+- 月次 +¥10,000 目標には RR/幅の再設計が必要
+
+**next_actions**
+
+- **Phase1-R**: SL/TP 幅グリッド + Gate2 到達可否を探索
+- 採用確定前に実装フェーズへは進まない
+- H-B（遅入禁止）フィルタは B03-R 後に合成候補
+
+**catalog_updates**
+
+- composite: Phase1 conditional（H-D + H-M4）
+
+---
+
 改訂: 2026-09-03

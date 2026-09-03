@@ -1,0 +1,91 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P1-A",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P1-HD-PULL_IS": {
+      "theoretical_ev": 24.378059998970514,
+      "executed_ev": 21.119323813927558,
+      "degradation": 0.8663250404182871,
+      "n": 1140,
+      "w": 0.5894736842105263,
+      "monthly_n": 63.55604395604396,
+      "p": 1342.2606726399058,
+      "max_dd": 845.3874706751885,
+      "random_w": 0.46737500000000004,
+      "fee_breakeven_w": 0.35,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "IS",
+      "weekend_filter": false
+    },
+    "P1-HD-PULL_OOS1": {
+      "theoretical_ev": 16.24573314229448,
+      "executed_ev": 13.814064853495534,
+      "degradation": 0.8503195720685397,
+      "n": 513,
+      "w": 0.5730994152046783,
+      "monthly_n": 64.52776859504132,
+      "p": 891.3907802232533,
+      "max_dd": 835.946987244919,
+      "random_w": 0.47581249999999997,
+      "fee_breakeven_w": 0.35,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "weekend_filter": false
+    },
+    "P1-HD-PULL_OOS2": {
+      "theoretical_ev": 17.536954305293047,
+      "executed_ev": 11.8235135662267,
+      "degradation": 0.674205643716486,
+      "n": 415,
+      "w": 0.5542168674698795,
+      "monthly_n": 69.03060109289618,
+      "p": 816.1842485066416,
+      "max_dd": 458.3675431050169,
+      "random_w": 0.4613125,
+      "fee_breakeven_w": 0.35,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "weekend_filter": false
+    },
+    "P1-HD-RAW-CTRL": {
+      "split": "ALL",
+      "executed_ev": -4.938520895606036,
+      "w": 0.44543429844098,
+      "n": 2245,
+      "verdict": "fail",
+      "notes": "RAW immediate entry control"
+    },
+    "P1-HD-RANDOM": {
+      "split": "ALL",
+      "random_w": 0.4651875,
+      "w": 0.577126381547333,
+      "verdict": "reference",
+      "notes": "strategy W vs random W"
+    },
+    "P1-HD-PULL_M4": {
+      "theoretical_ev": 22.93733834530716,
+      "executed_ev": 21.283470728219122,
+      "degradation": 0.9278962714770953,
+      "n": 1521,
+      "w": 0.5759368836291914,
+      "monthly_n": 47.584008221993834,
+      "p": 1012.7528461241437,
+      "max_dd": 912.9992418148431,
+      "random_w": 0.4651875,
+      "fee_breakeven_w": 0.35,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "ALL",
+      "weekend_filter": true
+    }
+  }
+}

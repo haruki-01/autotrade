@@ -19,6 +19,7 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 - [docs/research/phase0-stats.md](docs/research/phase0-stats.md) — Phase0 統計定義
 - [docs/research/phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) — 検証記入用シート
 - [docs/research/phase0-summary.md](docs/research/phase0-summary.md) — Phase0 総括（Phase1 候補一覧）
+- [docs/research/phase1-spec.md](docs/research/phase1-spec.md) — Phase1 検証仕様
 
 ## Phase0 実行
 
@@ -27,5 +28,11 @@ pip install -r requirements.txt
 python3 -m scripts.phase0.run_batch B02   # B01–B07 任意バッチ
 ```
 
+## Phase1 実行
+
+```bash
+python3 -m scripts.phase1.run_batch P1-A   # P1-A → P1-B → P1-C
+```
+
 データは GMO 公開 API から取得し `data/btc_jpy_5m.parquet` にキャッシュ（git 除外）。
-結果 JSON は `data/phase0/b0x_results.json`。
+結果 JSON は `data/phase0/b0x_results.json`、`data/phase1/p1x_results.json`。

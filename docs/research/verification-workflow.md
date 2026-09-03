@@ -72,6 +72,16 @@ Phase0 ではロジックを組まない。Phase1 では **理論値と執行込
 | **B06** | 群集シグナルは「即入り」より「押し待ち・上位整合」か | H-D 系 | RAW vs PULL / ALIGN | P0-HD-* , P0-HD2〜5 | 執行ルール（押し待ち・12h 整合）を葉に固定するか |
 | **B07** | 稀イベントに Phase1 載せる価値があるか | H-A3, H-A4, H-C2, H-B4 | — | P0-HA3/4, P0-HC2, P0-HB4 | 載せる / defer / 棄却 |
 
+### Phase1 バッチ（Phase0 完了後）
+
+| batch_id | purpose | 主仮説 | 対照 | バッチで決めること |
+|---|---|---|---|---|
+| **P1-A** | H-D の取引可能エッジ | H-D | RAW / ランダム | Gate1/2 pass か |
+| **P1-B** | H-A2 SPIKE 継続の取引可能エッジ | H-A2 | H-A 回帰 / ランダム | Gate1/2 pass か |
+| **P1-C** | 合成ロジック | composite | — | P1-A/B pass 候補 + H-M4 |
+
+定義: [phase1-spec.md](phase1-spec.md)
+
 **バッチ完了の定義**: 対象 metric の計測完了 + バッチ判定 + Knowledge Card 記入 + [edge-catalog.md](edge-catalog.md) の status 更新。
 
 ---
