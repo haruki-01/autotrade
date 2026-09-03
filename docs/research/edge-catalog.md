@@ -107,4 +107,17 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | Phase0外 | H-C3, H-G*, H-H*（データ待ち） |
 | 乗算器 | H-M* は単体統計ではなく、主仮説の条件付き分割で評価 |
 
+---
+
+## 検証ステータス（B01 以降）
+
+| ID | B01 結果 | 備考 |
+|---|---|---|
+| H-E | weak | FEE_WINDOW に差はあるが単体 Phase1 見送り |
+| H-C | weak | セッション差小。フィルタ補助のみ |
+| H-C4 | conditional | 土日フィルタ（H-M4）採用候補 |
+| H-M4 | conditional | WE 偽ブレイク率 58% |
+
+詳細: [knowledge-log.md](knowledge-log.md) KB-B01-20260903
+
 改訂: 2026-09-03
