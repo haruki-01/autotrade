@@ -12,39 +12,42 @@
         "cooldown": 48
       },
       "IS": {
-        "n": 890,
-        "w": 0.5730337078651685,
-        "ev": 23.005163325223176,
-        "monthly_n": 49.61831501831502,
-        "p": 1141.4774409187112,
-        "max_dd": 742.4079483713904,
+        "n": 850,
+        "w": 0.5882352941176471,
+        "ev": 25.548934317912526,
+        "monthly_n": 47.388278388278394,
+        "p": 1210.7200119810784,
+        "max_dd": 687.7352529494019,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
       "OOS1": {
-        "n": 400,
-        "w": 0.5475,
-        "ev": 11.472476793335767,
-        "monthly_n": 50.31404958677686,
-        "p": 577.2267662630426,
-        "max_dd": 493.41225425918844,
+        "n": 385,
+        "w": 0.5636363636363636,
+        "ev": 15.294508185760064,
+        "monthly_n": 48.42727272727273,
+        "p": 740.6713191413079,
+        "max_dd": 696.2278578921787,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
       "OOS2": {
-        "n": 321,
-        "w": 0.5545171339563862,
-        "ev": 15.841569184476606,
-        "monthly_n": 53.39475409836066,
-        "p": 845.8566911372961,
-        "max_dd": 531.9236763878216,
+        "n": 303,
+        "w": 0.5742574257425742,
+        "ev": 17.545428589793495,
+        "monthly_n": 50.400655737704916,
+        "p": 884.3011061246674,
+        "max_dd": 480.54503557249745,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
-      "oos_avg_p": 711.5417287001694,
+      "oos_avg_p": 812.4862126329876,
       "gate1_both_oos": true,
       "gate2_any_oos": false,
       "gate2_both_oos": false,
@@ -53,304 +56,62 @@
     "P1R-BEST": {
       "params": {
         "pct_risk": 0.008,
-        "atr_mult": 1.5,
-        "max_bars": 96,
+        "atr_mult": 1.25,
+        "max_bars": 72,
         "cooldown": 48
       },
       "IS": {
-        "n": 746,
-        "w": 0.5040214477211796,
-        "ev": 22.648746599337912,
-        "monthly_n": 41.59018315018315,
-        "p": 941.9655191885515,
-        "max_dd": 1219.0129117281394,
+        "n": 775,
+        "w": 0.5535483870967742,
+        "ev": 23.257486766925307,
+        "monthly_n": 43.20695970695971,
+        "p": 1004.8852936236904,
+        "max_dd": 1143.6335236168725,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
       "OOS1": {
-        "n": 330,
-        "w": 0.4727272727272727,
-        "ev": 10.301012619837591,
-        "monthly_n": 41.509090909090915,
-        "p": 427.58566929253135,
-        "max_dd": 1149.4600575826103,
+        "n": 337,
+        "w": 0.5252225519287834,
+        "ev": 16.615421876021653,
+        "monthly_n": 42.38958677685951,
+        "p": 704.3208674477497,
+        "max_dd": 773.415683704171,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
       "OOS2": {
-        "n": 261,
-        "w": 0.5747126436781609,
-        "ev": 21.364189963431098,
-        "monthly_n": 43.4144262295082,
-        "p": 927.5140491205789,
-        "max_dd": 823.2074272204945,
+        "n": 258,
+        "w": 0.562015503875969,
+        "ev": 17.149885159248075,
+        "monthly_n": 42.91540983606558,
+        "p": 735.99435025059,
+        "max_dd": 624.6143278241075,
         "gate1": true,
         "gate2": false,
-        "fee_breakeven_w": 0.35
+        "fee_breakeven_w": 0.35,
+        "verdict": "conditional"
       },
-      "oos_avg_p": 677.5498592065551,
+      "oos_avg_p": 720.1576088491698,
       "gate1_both_oos": true,
       "gate2_any_oos": false,
       "gate2_both_oos": false,
       "notes": "top validated executed"
     },
     "P1R-GRID-STATS": {
-      "n_combos": 72,
+      "n_combos": 360,
       "n_validated_executed": 15,
       "gate2_any_count": 0,
-      "gate1_both_count": 3,
+      "gate1_both_count": 0,
       "notes": "screen=theoretical validate_top=15"
     }
   },
   "gate2_combos": [],
-  "gate1_combos": [
-    {
-      "params": {
-        "pct_risk": 0.008,
-        "atr_mult": 1.5,
-        "max_bars": 96,
-        "cooldown": 48
-      },
-      "theoretical": {
-        "IS": {
-          "n": 1012,
-          "w": 0.5207509881422925,
-          "ev": 28.356083115247877,
-          "monthly_n": 56.419926739926744,
-          "p": 1599.848131993559,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 427,
-          "w": 0.5128805620608899,
-          "ev": 17.535749944298317,
-          "monthly_n": 53.710247933884304,
-          "p": 941.8494772148605,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 334,
-          "w": 0.5479041916167665,
-          "ev": 19.104627047972713,
-          "monthly_n": 55.55715846994536,
-          "p": 1061.3987924134244,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "executed": {
-        "IS": {
-          "n": 746,
-          "w": 0.5040214477211796,
-          "ev": 22.648746599337912,
-          "monthly_n": 41.59018315018315,
-          "p": 941.9655191885515,
-          "max_dd": 1219.0129117281394,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 330,
-          "w": 0.4727272727272727,
-          "ev": 10.301012619837591,
-          "monthly_n": 41.509090909090915,
-          "p": 427.58566929253135,
-          "max_dd": 1149.4600575826103,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 261,
-          "w": 0.5747126436781609,
-          "ev": 21.364189963431098,
-          "monthly_n": 43.4144262295082,
-          "p": 927.5140491205789,
-          "max_dd": 823.2074272204945,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "oos_avg_p": 677.5498592065551,
-      "gate1_both_oos": true,
-      "gate2_any_oos": false,
-      "gate2_both_oos": false
-    },
-    {
-      "params": {
-        "pct_risk": 0.008,
-        "atr_mult": 0.5,
-        "max_bars": 96,
-        "cooldown": 48
-      },
-      "theoretical": {
-        "IS": {
-          "n": 1016,
-          "w": 0.5216535433070866,
-          "ev": 27.742780626403835,
-          "monthly_n": 56.64293040293041,
-          "p": 1571.4323922051583,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 428,
-          "w": 0.514018691588785,
-          "ev": 18.104646133874574,
-          "monthly_n": 53.836033057851246,
-          "p": 974.6823277639703,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 334,
-          "w": 0.5479041916167665,
-          "ev": 19.124677214519693,
-          "monthly_n": 55.55715846994536,
-          "p": 1062.5127226936238,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "executed": {
-        "IS": {
-          "n": 749,
-          "w": 0.5193591455273698,
-          "ev": 25.559818583779084,
-          "monthly_n": 41.7574358974359,
-          "p": 1067.3124860622459,
-          "max_dd": 1219.0129117281394,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 332,
-          "w": 0.4789156626506024,
-          "ev": 12.174878689959227,
-          "monthly_n": 41.7606611570248,
-          "p": 508.43098359926927,
-          "max_dd": 1102.2127066941234,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 257,
-          "w": 0.5447470817120622,
-          "ev": 18.1535555067303,
-          "monthly_n": 42.749071038251365,
-          "p": 776.0476339540528,
-          "max_dd": 823.2074272204945,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "oos_avg_p": 642.239308776661,
-      "gate1_both_oos": true,
-      "gate2_any_oos": false,
-      "gate2_both_oos": false
-    },
-    {
-      "params": {
-        "pct_risk": 0.008,
-        "atr_mult": 1.0,
-        "max_bars": 96,
-        "cooldown": 48
-      },
-      "theoretical": {
-        "IS": {
-          "n": 1016,
-          "w": 0.5206692913385826,
-          "ev": 27.651137461037813,
-          "monthly_n": 56.64293040293041,
-          "p": 1566.2414547674266,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 428,
-          "w": 0.514018691588785,
-          "ev": 17.954370022656473,
-          "monthly_n": 53.836033057851246,
-          "p": 966.5920580726273,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 334,
-          "w": 0.5479041916167665,
-          "ev": 19.124677214519693,
-          "monthly_n": 55.55715846994536,
-          "p": 1062.5127226936238,
-          "max_dd": NaN,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "executed": {
-        "IS": {
-          "n": 751,
-          "w": 0.5126498002663116,
-          "ev": 23.89906940224366,
-          "monthly_n": 41.86893772893773,
-          "p": 1000.6286485821009,
-          "max_dd": 1219.0129117281394,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS1": {
-          "n": 332,
-          "w": 0.4789156626506024,
-          "ev": 11.981226721659425,
-          "monthly_n": 41.7606611570248,
-          "p": 500.34394936871035,
-          "max_dd": 1166.5051601696573,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        },
-        "OOS2": {
-          "n": 257,
-          "w": 0.5447470817120622,
-          "ev": 18.1535555067303,
-          "monthly_n": 42.749071038251365,
-          "p": 776.0476339540528,
-          "max_dd": 823.2074272204945,
-          "gate1": true,
-          "gate2": false,
-          "fee_breakeven_w": 0.35
-        }
-      },
-      "oos_avg_p": 638.1957916613816,
-      "gate1_both_oos": true,
-      "gate2_any_oos": false,
-      "gate2_both_oos": false
-    }
-  ]
+  "gate1_combos": [],
+  "gate2_target": 2500,
+  "rescore_note": "Gate2 re-baseline: P*=2500 JPY/month"
 }

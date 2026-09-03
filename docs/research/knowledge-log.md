@@ -470,7 +470,7 @@
 - フィルタなし: N=63–78/月で Gate1 fail（N 帯超過）。EV は正だが頻度過多
 - RAW 即入り対照: EV=−¥4.9 → PULL 優位を再確認
 - ランダム W≈46.5% vs 戦略 W≈57.7%
-- **Gate2 fail**（月次 P≈¥1,013 << ¥10,000 目標）
+- **Gate2 fail**（月次 P≈¥1,013 << 旧 ¥10,000 / 新 ¥2,500 目標）→ [KB-P1-REBASELINE](#kb-p1-rebaseline-20260903) で再評価
 
 **batch_verdict:** conditional
 
@@ -478,7 +478,7 @@
 
 - Phase0 の PULL 優位は RR 1:2 バックテストでも再現（執行込み EV 正）
 - **H-M4 土日停止が N 帯調整に必須**（47.6/月 ≈ 目標 50）
-- Gate2（月次 +¥10,000）には未到達。EV 絶対値が小さい
+- Gate2（月次 +5% = ¥2,500）にも未到達（再採点後も fail）。EV 絶対値が小さい
 
 **next_actions**
 
@@ -547,7 +547,7 @@
 - batch_verdict: **conditional**
 - OOS2: 執行込み EV=+¥17.5, N=50.4/月, W=57.4% → **Gate1 pass**
 - IS/OOS1 も Gate1 pass
-- Gate2 fail（月次 P≈¥740–1,211）
+- Gate2 fail（月次 P≈¥740–1,211；新基準 ¥2,500 でも未達）
 
 **batch_verdict:** conditional
 
@@ -555,7 +555,7 @@
 
 - H-D + H-M4 合成は OOS で Gate1 を安定 pass
 - H-A2 除外でも N 帯・EV 符号は維持
-- 月次 +¥10,000 目標には RR/幅の再設計が必要
+- 月次 +5%（¥2,500）目標にも RR/幅の再設計だけでは不足 → [KB-P1-REBASELINE](#kb-p1-rebaseline-20260903)
 
 **next_actions**
 
@@ -576,7 +576,7 @@
 | batch_id | P1-R |
 | date | 2026-09-03 |
 | purpose | H-D + H-M4 の SL/TP 幅グリッドで Gate2 到達可否 |
-| decision_question | R 幅変更で執行込み月次 P≥¥10,000（Gate2）に届くか？ |
+| decision_question | R 幅変更で執行込み月次 P≥¥10,000（旧 Gate2）に届くか？ → 新 Gate2 ¥2,500 は [KB-P1-REBASELINE](#kb-p1-rebaseline-20260903) |
 | hypotheses | H-D + H-M4 |
 | metrics | P1R-BASELINE, P1R-BEST, 72 組グリッド |
 | sample_period | 2024-01-01..2026-08-31 |
@@ -607,8 +607,59 @@
 
 **catalog_updates**
 
-- H-D: Phase1 conditional 維持（Gate1 のみ）。Gate2 未達を明記
+- H-D: Phase1 conditional 維持（Gate1 のみ）。Gate2 未達を明記（新基準 ¥2,500 でも fail）
 
 ---
 
-改訂: 2026-09-03
+### KB-P1-REBASELINE-20260903
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-REBASELINE |
+| date | 2026-09-03 |
+| purpose | L0 目標を月次 +20%（¥10,000）→ **+5%（¥2,500）** へ再ベースライン |
+| decision_question | 既存 Phase1 結果を新 Gate2 で再採点すると pass するか？ |
+| hypotheses | H-D + H-M4（P1-A/C/R 既存結果） |
+| metrics | P1-A M4, P1-C composite, P1-R baseline/best（gate 再採点のみ） |
+| sample_period | 2024-01-01..2026-08-31（バックテスト再実行なし） |
+
+**L0 変更（SPEC §2.3）**
+
+| 項目 | 旧 | 新 |
+|---|---|---|
+| Gate2 月次目標 | +20%（¥10,000） | **+5%（¥2,500）** |
+| 必要 EV（N≈50） | ¥200/回（+2.0%） | **¥50/回（+0.5%）** |
+| サイジング | 固定表記 | **margin = B/10、Q = B/5**（複利） |
+| Stretch | — | +20%（Gate 対象外） |
+
+**result_summary**
+
+- **gate2_any_count = 0**（全 Phase1 結果で新 Gate2 も fail）
+- P1-A H-M4（ALL）: 月次 P≈¥1,013（新目標の **41%**）
+- P1-C composite OOS 平均: 月次 P≈¥812（**32%**）
+- P1-R baseline OOS 平均: 月次 P≈¥812（**32%**）
+- Gate1（EV>0、N 40–60/月）は **維持**
+
+**batch_verdict:** conditional（Gate1 のみ。Gate2 は新基準でも全 fail）
+
+**learnings**
+
+- 目標を 1/4 に下げても、OOS P は新目標の **約 1/3** にとどまる
+- H-D 単体 + RR 1:2 + H-M4 では **Gate2 到達不可**（SL/TP グリッドでも同様）
+- 初期 BR ¥50,000 では固定 Q=¥10,000 = B/5 のため、再採点は gate フラグのみで完結
+
+**next_actions**（PM 判断待ち）
+
+- (A) Gate1 候補（H-D + H-M4）で paper trade を開始するか
+- (B) 新 L1 仮説探索へ移行するか
+- (C) P1-R2（N 削減・シグナル厳格化で EV/trade 向上）を試すか
+- 実装フェーズには **Gate2 pass 候補なし** のため、明示的 PM 決定なしでは進まない
+
+**catalog_updates**
+
+- SPEC §2.3 Gate2 = +5%
+- edge-catalog / phase1-spec / common.py 定数を同期
+
+---
+
+改訂: 2026-09-03（Gate2 5% re-baseline）

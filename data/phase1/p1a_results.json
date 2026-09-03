@@ -61,7 +61,9 @@
       "w": 0.44543429844098,
       "n": 2245,
       "verdict": "fail",
-      "notes": "RAW immediate entry control"
+      "notes": "RAW immediate entry control",
+      "gate1": false,
+      "gate2": false
     },
     "P1-HD-RANDOM": {
       "split": "ALL",
@@ -87,5 +89,7 @@
       "split": "ALL",
       "weekend_filter": true
     }
-  }
+  },
+  "gate2_target": 2500,
+  "rescore_note": "Gate2 re-baseline: P*=2500 JPY/month"
 }

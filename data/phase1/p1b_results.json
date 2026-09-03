@@ -57,7 +57,9 @@
       "executed_ev": -4.2911617167623675,
       "w": 0.27902707664066084,
       "n": 2179,
-      "verdict": "reference"
+      "verdict": "fail",
+      "gate1": false,
+      "gate2": false
     },
     "P1-HA2-RANDOM": {
       "split": "ALL",
@@ -65,5 +67,7 @@
       "w": 0.2057877813504823,
       "verdict": "reference"
     }
-  }
+  },
+  "gate2_target": 2500,
+  "rescore_note": "Gate2 re-baseline: P*=2500 JPY/month"
 }

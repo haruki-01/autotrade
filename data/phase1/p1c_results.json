@@ -64,5 +64,7 @@
         "ha2": false
       }
     }
-  }
+  },
+  "gate2_target": 2500,
+  "rescore_note": "Gate2 re-baseline: P*=2500 JPY/month"
 }

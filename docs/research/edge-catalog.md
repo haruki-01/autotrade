@@ -3,7 +3,7 @@
 仕様書 §6 の初期5本を含む、メカニズム単位の網羅一覧。  
 **検証の進捗・統計結果は本ファイルではなく Phase0 シート側に書く。**
 
-共通前提: BTC/JPY / 分足以上 / N帯≈50 / 必要EV≈+2%（詳細は SPEC）。
+共通前提: BTC/JPY / 分足以上 / N帯≈50 / 必要EV≈+0.5%（Gate2、詳細は SPEC）。Stretch +2.0%（+20%/月）は参考。
 
 ## 仮説カード必須項目
 
@@ -118,9 +118,9 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | H-A | reject | — | — |
 | H-A2 | promote | **reject** | RR 1:2 執行込み EV 負 |
 | H-B | conditional | filter-only | B03-R 後 |
-| H-D | conditional | **conditional** | Gate1 pass（H-M4 必須）。**Gate2 未達**（P1-R） |
+| H-D | conditional | **conditional** | Gate1 pass（H-M4 必須）。**Gate2 未達**（新基準 ¥2,500 でも P≈¥740–1,013） |
 | H-B2/H-B3/H-F1/稀イベント | reject | — | — |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / KB-P1-A〜C / [knowledge-log.md](knowledge-log.md)
 
-改訂: 2026-09-03
+改訂: 2026-09-03（Gate2 5% re-baseline）

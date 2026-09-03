@@ -7,12 +7,15 @@ from datetime import date
 
 import pandas as pd
 
-POSITION_Q = 10_000  # JPY per trade (SPEC §2)
+INITIAL_BANKROLL = 50_000
+MARGIN_RATIO = 0.10  # margin = B * MARGIN_RATIO
+POSITION_Q = INITIAL_BANKROLL // 5  # Q = 2 * margin = B/5 (SPEC §2)
 RR_RATIO = 2.0
 N_TARGET = 50
 N_BAND_LOW = 40
 N_BAND_HIGH = 60
-GATE2_P_TARGET = 10_000  # JPY/month
+GATE2_PCT = 0.05
+GATE2_P_TARGET = int(INITIAL_BANKROLL * GATE2_PCT)  # 2_500 JPY/month
 
 LIMIT_ENTRY_FILL = 0.70
 LIMIT_TP_FILL = 0.85
