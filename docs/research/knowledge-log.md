@@ -777,4 +777,155 @@
 
 ---
 
-改訂: 2026-09-04（P1-NR 10iter）
+### KB-L1-A-20260904
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-A |
+| date | 2026-09-04 |
+| purpose | H-B EARLY + H-M4 + H-M5 の Phase1 同等検証 |
+| decision_question | 点火3本目 + 遅入禁止で Gate1/2 pass か？ |
+| hypotheses | H-B EARLY（主）, RR 1:3 感度 |
+| metrics | P2-HB-EARLY（IS/OOS1/OOS2）, RR3, M4 |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**（OOS2 Gate1 pass のみ）
+- OOS2: 執行 EV=+¥3.7, W=46.6%, N=48.6/月, P≈¥181 → Gate1 pass / Gate2 fail
+- IS/OOS1: 執行 EV 負（P≈−¥123〜−¥135）
+- ALL: 執行 EV 負、劣化率 −0.98
+- 初回 run は pullback フィルタ bug（wick ベース）で n=0 → close ベース修正後再実行
+
+**batch_verdict:** conditional（OOS 安定性なし）
+
+**learnings**
+
+- Phase0 EARLY>LATE は RR 1:2 執行込みでは再現せず
+- W≈44–47% < ランダム W≈49% — 勝率優位なし
+- OOS2 のみ pass は過学習リスク
+
+**next_actions**
+
+- H-B EARLY 単体は **Gate2 不可** → reject 方向
+- H-M5 フィルタ有効性は P2-B LATE 対照で確認済み
+
+**catalog_updates**
+
+- H-B: Phase1 **reject**（Gate2 不可、OOS 不安定）
+
+---
+
+### KB-L1-B-20260904
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-B |
+| date | 2026-09-04 |
+| purpose | H-B PULL（20–40% 戻し）+ LATE 対照 |
+| decision_question | 初押し執行は EARLY より優位か？ |
+| hypotheses | H-B PULL（主）, H-B LATE（対照） |
+| metrics | P2-HB-PULL, P2-HB-LATE-CTRL |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- PULL 全 split 執行 EV 負（OOS P≈−¥301〜−¥329）
+- LATE 対照: 執行 EV=+¥4.1, P≈¥113, N=27.2/月 → EV 正だが N 帯不足
+
+**batch_verdict:** reject
+
+**learnings**
+
+- PULL は EARLY より劣る — 初押し待ちは H-B では機能しない
+- LATE（+1.5% 遅入）は EV 正 → **H-M5 遅入禁止の根拠を再確認**
+- LATE はエントリーとして不採用（N 不足 + 戦略矛盾）
+
+**next_actions**
+
+- H-B PULL 棄却
+- H-M5 を他 L1 候補のフィルタとして継続利用
+
+**catalog_updates**
+
+- H-B PULL: reject
+
+---
+
+### KB-L1-C-20260904
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-C |
+| date | 2026-09-04 |
+| purpose | H-B EARLY + H-D PULL 合成 |
+| decision_question | 合成で Gate2 到達可能か？ |
+| hypotheses | H-B + H-D + H-M4 |
+| metrics | P2-HBD-COMPOSITE（IS/OOS1/OOS2） |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- OOS1: P≈¥386, W=51.4%, N=58.2/月 → Gate1 pass / Gate2 fail
+- OOS2: P≈¥363, N=61.4/月 → Gate1 fail（N 帯超過）
+- **P1-C（H-D のみ）OOS P≈¥741–884 より大幅劣化**（劣化率 0.44–0.57）
+
+**batch_verdict:** conditional（合成メリットなし）
+
+**learnings**
+
+- H-B 追加は H-D 単体の執行 P を **半減以下に劣化**
+- 同一 bar H-B 優先ルールでも H-D の edge を H-B が希薄化
+- Gate2 到達には寄与せず
+
+**next_actions**
+
+- H-B + H-D 合成は **不採用**
+- H-D + H-M4（P1-C）を引き続き最良候補として維持
+
+**catalog_updates**
+
+- composite H-B+H-D: reject
+
+---
+
+### KB-L1-D-20260904
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-D |
+| date | 2026-09-04 |
+| purpose | H-B × セッション（EU_US / TOKYO） |
+| decision_question | セッション限定で edge 増幅するか？ |
+| hypotheses | H-B EARLY × H-C セッション |
+| metrics | P2-HB-EU, P2-HB-TOKYO |
+| sample_period | OOS1+OOS2 |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- N≈14–16/月に激減（Gate1 N 帯不可）
+- EU OOS2 のみ P≈¥105（W=52.6%）—  pocket だが N 不足
+- TOKYO / EU OOS1 は EV 負またはゼロ
+
+**batch_verdict:** reject
+
+**learnings**
+
+- セッション分割は N を 1/3 に削減、edge 増幅なし
+- Phase0 H-C conditional との合成は H-B では機能しない
+
+**next_actions**
+
+- H-B × セッション分割は停止
+- H-C は H-D 等別 L1 との組み合わせを別途検討
+
+**catalog_updates**
+
+- H-B session split: reject
+
+---
+
+改訂: 2026-09-04（L1 H-B 探索）

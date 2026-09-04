@@ -1,0 +1,68 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P2-C",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P2-HBD-COMPOSITE_IS": {
+      "theoretical_ev": 21.705550695583877,
+      "executed_ev": 17.222445428625466,
+      "degradation": 0.7934581190851553,
+      "n": 1064,
+      "w": 0.5357142857142857,
+      "monthly_n": 59.318974358974366,
+      "p": 1021.6177987794694,
+      "max_dd": 1150.3614057190207,
+      "random_w": 0.46737500000000004,
+      "fee_breakeven_w": 0.35,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "IS",
+      "components": {
+        "hb_early": true,
+        "hd_pull": true
+      }
+    },
+    "P2-HBD-COMPOSITE_OOS1": {
+      "theoretical_ev": 11.713181199782587,
+      "executed_ev": 6.633617419915367,
+      "degradation": 0.5663378126548999,
+      "n": 463,
+      "w": 0.5140388768898488,
+      "monthly_n": 58.23851239669422,
+      "p": 386.3320103446678,
+      "max_dd": 1081.6938836617933,
+      "random_w": 0.47581249999999997,
+      "fee_breakeven_w": 0.35,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "OOS1",
+      "components": {
+        "hb_early": true,
+        "hd_pull": true
+      }
+    },
+    "P2-HBD-COMPOSITE_OOS2": {
+      "theoretical_ev": 13.519329141016458,
+      "executed_ev": 5.917596260032658,
+      "degradation": 0.43771375031318605,
+      "n": 369,
+      "w": 0.5149051490514905,
+      "monthly_n": 61.379016393442626,
+      "p": 363.2162378543193,
+      "max_dd": 1323.572663806866,
+      "random_w": 0.4613125,
+      "fee_breakeven_w": 0.35,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "components": {
+        "hb_early": true,
+        "hd_pull": true
+      }
+    }
+  }
+}
