@@ -1,0 +1,92 @@
+{
+  "iteration": 6,
+  "hypothesis": "H6: 保有時間延長（max_bars↑）で TP 到達率とレバ手数料のバランス",
+  "learning": "最良: N50_RR3_R0.006_cd12 — 執行込み P≈¥1073, W=50.4%, 劣化率=0.84 → Gate2 遠隔 (43%)。W*=47.5% vs W=50.4%。 → W ≥ W* 達成。EV 不足がボトルネック。 → max_bars 変更はレバ手数料と TP fill に両方効く。",
+  "gate2_count": 0,
+  "gate1_count": 2,
+  "best_label": "N50_RR3_R0.006_cd12",
+  "best_oos_executed_p": 1072.9319479271448,
+  "configs_tested": 2,
+  "results": [
+    {
+      "config": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "pct_risk": 0.006,
+        "atr_mult": 1.0,
+        "max_bars": 72,
+        "cooldown": 12
+      },
+      "label": "N50_RR3_R0.006_cd12",
+      "target": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "n_band_low": 40,
+        "n_band_high": 60,
+        "sl_pct": 0.006,
+        "tp_pct": 0.018000000000000002,
+        "p_star_jpy": 2500,
+        "ev_star_jpy": 50.0,
+        "ev_star_pct_of_q": 0.5,
+        "fee_breakeven_w": 0.2667,
+        "w_star_gate2": 0.475,
+        "w_star_feasible": true,
+        "max_ev_at_w100_jpy": 176.0,
+        "gate2_feasible_at_w100": true,
+        "position_q": 10000
+      },
+      "oos_theoretical_ev": 22.38605967244703,
+      "oos_theoretical_p": 1649.6321299743995,
+      "oos_executed_ev": 18.85015834707472,
+      "oos_executed_w": 0.5037234903674923,
+      "oos_executed_n": 56.88340107483178,
+      "oos_executed_p": 1072.9319479271448,
+      "degradation": 0.8420489636358681,
+      "fee_breakeven_w": 0.26666666666666666,
+      "gate1": true,
+      "gate2": false,
+      "w_check": true,
+      "verdict": "conditional"
+    },
+    {
+      "config": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "pct_risk": 0.006,
+        "atr_mult": 1.0,
+        "max_bars": 96,
+        "cooldown": 12
+      },
+      "label": "N50_RR3_R0.006_cd12",
+      "target": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "n_band_low": 40,
+        "n_band_high": 60,
+        "sl_pct": 0.006,
+        "tp_pct": 0.018000000000000002,
+        "p_star_jpy": 2500,
+        "ev_star_jpy": 50.0,
+        "ev_star_pct_of_q": 0.5,
+        "fee_breakeven_w": 0.2667,
+        "w_star_gate2": 0.475,
+        "w_star_feasible": true,
+        "max_ev_at_w100_jpy": 176.0,
+        "gate2_feasible_at_w100": true,
+        "position_q": 10000
+      },
+      "oos_theoretical_ev": 21.708702064598754,
+      "oos_theoretical_p": 1479.342788424306,
+      "oos_executed_ev": 14.81786077533764,
+      "oos_executed_w": 0.46320301221853466,
+      "oos_executed_n": 53.06345120354062,
+      "oos_executed_p": 786.1319358313638,
+      "degradation": 0.682577002127719,
+      "fee_breakeven_w": 0.26666666666666666,
+      "gate1": true,
+      "gate2": false,
+      "w_check": false,
+      "verdict": "conditional"
+    }
+  ]
+}

@@ -735,4 +735,46 @@
 
 ---
 
-改訂: 2026-09-03（PT-A + P1-N）
+### KB-P1-NR-20260904
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-NR（10 iter loop） |
+| date | 2026-09-04 |
+| purpose | N=20/50 × RR=1:3/1:5 + R 幅探索（10 サイクル verify→update→verify） |
+| decision_question | 3変数（N, RR, R）で執行込み Gate2 に届くか？ |
+| hypotheses | H-D + H-M4 |
+| metrics | 全局 best: N50, RR1:3, pct_risk=0.006, cd=12 |
+| sample_period | OOS1+OOS2 |
+
+**10 イテレーション要約**
+
+| Iter | 仮説 | Best 執行P |
+|---:|---|---:|
+| 1 | N×RR core grid | ¥726 |
+| 2 | cooldown + RR1:4 | ¥867 |
+| 3 | R 拡大 | ¥983 |
+| 4 | R 縮小 | ¥1,119 |
+| 5–10 | ATR/max_bars/N 汎化/再確認 | ¥1,127 |
+
+**batch_verdict:** conditional（Gate2 fail、W≥W* 達成、EV 不足がボトルネック）
+
+**learnings**
+
+- RR 1:3 > RR 1:5（執行込み OOS P）。TP 遠いほど劣化率悪化
+- R 縮小（0.6%）が R 拡大より執行込み P 改善 — P1-R 教訓と整合
+- 理論 P≈¥1,644 vs 執行 P≈¥1,127（劣化率 0.90）
+- Gate2 最良でも目標の 45%。**H-D 単体では L3 限界**
+
+**next_actions**
+
+- H-D をエントリーフィルタとし別 L1（H-B 等）と合成
+- 新 L1 仮説探索へ移行（Gate2 到達の主戦場）
+
+**catalog_updates**
+
+- H-D: Phase1/PT conditional 確定。Gate2 未到達を P1-NR で蓋然性高く確認
+
+---
+
+改訂: 2026-09-04（P1-NR 10iter）

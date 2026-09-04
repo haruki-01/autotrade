@@ -1,0 +1,92 @@
+{
+  "iteration": 8,
+  "hypothesis": "H8: 上位2設定の執行込み再確認 — 劣化率 <0.7 のセルは hold",
+  "learning": "最良: N50_RR3_R0.006_cd12 — 執行込み P≈¥1127, W=53.5%, 劣化率=0.90 → Gate2 遠隔 (45%)。W*=47.5% vs W=53.5%。 → W ≥ W* 達成。EV 不足がボトルネック。",
+  "gate2_count": 0,
+  "gate1_count": 1,
+  "best_label": "N50_RR3_R0.006_cd12",
+  "best_oos_executed_p": 1126.9108767891366,
+  "configs_tested": 2,
+  "results": [
+    {
+      "config": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "pct_risk": 0.006,
+        "atr_mult": 1.0,
+        "max_bars": 48,
+        "cooldown": 12
+      },
+      "label": "N50_RR3_R0.006_cd12",
+      "target": {
+        "n_target": 50,
+        "rr_ratio": 3.0,
+        "n_band_low": 40,
+        "n_band_high": 60,
+        "sl_pct": 0.006,
+        "tp_pct": 0.018000000000000002,
+        "p_star_jpy": 2500,
+        "ev_star_jpy": 50.0,
+        "ev_star_pct_of_q": 0.5,
+        "fee_breakeven_w": 0.2667,
+        "w_star_gate2": 0.475,
+        "w_star_feasible": true,
+        "max_ev_at_w100_jpy": 176.0,
+        "gate2_feasible_at_w100": true,
+        "position_q": 10000
+      },
+      "oos_theoretical_ev": 19.458874965735426,
+      "oos_theoretical_p": 1643.843649716404,
+      "oos_executed_ev": 17.522091536264654,
+      "oos_executed_w": 0.5350462228267715,
+      "oos_executed_n": 64.48274714356683,
+      "oos_executed_p": 1126.9108767891366,
+      "degradation": 0.9004678619457087,
+      "fee_breakeven_w": 0.26666666666666666,
+      "gate1": false,
+      "gate2": false,
+      "w_check": true,
+      "verdict": "fail"
+    },
+    {
+      "config": {
+        "n_target": 20,
+        "rr_ratio": 3.0,
+        "pct_risk": 0.006,
+        "atr_mult": 1.0,
+        "max_bars": 48,
+        "cooldown": 180
+      },
+      "label": "N20_RR3_R0.006_cd180",
+      "target": {
+        "n_target": 20,
+        "rr_ratio": 3.0,
+        "n_band_low": 16,
+        "n_band_high": 24,
+        "sl_pct": 0.006,
+        "tp_pct": 0.018000000000000002,
+        "p_star_jpy": 2500,
+        "ev_star_jpy": 125.0,
+        "ev_star_pct_of_q": 1.25,
+        "fee_breakeven_w": 0.2667,
+        "w_star_gate2": 0.7875,
+        "w_star_feasible": true,
+        "max_ev_at_w100_jpy": 176.0,
+        "gate2_feasible_at_w100": true,
+        "position_q": 10000
+      },
+      "oos_theoretical_ev": 18.873307989045554,
+      "oos_theoretical_p": 561.4942173162751,
+      "oos_executed_ev": 13.682459475154356,
+      "oos_executed_w": 0.5469376208213494,
+      "oos_executed_n": 21.065571512441856,
+      "oos_executed_p": 288.3841697343878,
+      "degradation": 0.7249635031175208,
+      "fee_breakeven_w": 0.26666666666666666,
+      "gate1": true,
+      "gate2": false,
+      "w_check": false,
+      "verdict": "conditional"
+    }
+  ]
+}

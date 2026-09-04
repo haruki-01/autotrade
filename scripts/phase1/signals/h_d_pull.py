@@ -22,10 +22,12 @@ def generate_hd_pull_signals(
     pct_risk: float = 0.008,
     atr_mult: float = 0.5,
     max_bars: int = 48,
+    rr_ratio: float | None = None,
 ) -> list[Signal]:
     """
     mode: pull = wait for first pull (H-D), raw = enter on RSI exit bar (control).
     """
+    rr = rr_ratio if rr_ratio is not None else RR_RATIO
     df = add_features(df)
     rsi_idx = rsi_exit_os(df)
     signals: list[Signal] = []
@@ -59,7 +61,7 @@ def generate_hd_pull_signals(
                 direction=1,
                 entry_price=entry,
                 sl_price=entry - r,
-                tp_price=entry + RR_RATIO * r,
+                tp_price=entry + rr * r,
                 max_bars=max_bars,
                 tag="hd_pull" if mode == "pull" else "hd_raw",
             )

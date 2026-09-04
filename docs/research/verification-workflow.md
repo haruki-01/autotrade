@@ -80,7 +80,17 @@ Phase0 ではロジックを組まない。Phase1 では **理論値と執行込
 | **P1-B** | H-A2 SPIKE 継続の取引可能エッジ | H-A2 | H-A 回帰 / ランダム | Gate1/2 pass か |
 | **P1-C** | 合成ロジック | composite | — | P1-A/B pass 候補 + H-M4 |
 | **P1-R** | SL/TP 幅グリッド | H-D + H-M4 | P1-A baseline | Gate2（月次 P≥¥2,500 = 5% of BR）到達可能な葉を選定 |
-| **P1-N** | N 感度 | H-D + H-M4 | cooldown 調整 | N=10/20/50/100 各帯で Gate1/2 と必要 W* |
+| **P1-NR** | N×RR×R 10iter loop | H-D + H-M4 | P1-N 後 | N=20/50 × RR1:3/1:5 + R 探索 |
+
+定義: [p1nr-spec.md](p1nr-spec.md) / [p1nr-research-report.md](p1nr-research-report.md)
+
+### Paper Trade（Phase1 後）
+
+| batch_id | purpose | 主仮説 | 対照 | バッチで決めること |
+|---|---|---|---|---|
+| **PT-A** | フォワード sim | H-D + H-M4 | Phase1 P1-C | Gate1 forward 再現 + 複利 BR |
+
+定義: [paper-trade-spec.md](paper-trade-spec.md) / [n-sensitivity-spec.md](n-sensitivity-spec.md)
 
 定義: [phase1-spec.md](phase1-spec.md)
 
