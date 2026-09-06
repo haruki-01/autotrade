@@ -1431,4 +1431,49 @@
 
 ---
 
-改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA）
+### KB-P2-E-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-E |
+| date | 2026-09-06 |
+| purpose | H-C2 週明けギャップ Phase1（PM 次 L1 探索） |
+| decision_question | gap 方向継続は執行込みで Gate1/2 pass か？ |
+| hypotheses | H-C2 cont / revert |
+| metrics | P2-HC2-CONT/REVERT_{IS,OOS1,OOS2}, gap filters |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- 週次イベント **139**（Phase0 dedup 修正: 40k→139）
+- monthly N≈**3** — Gate1 帯（40–60）構造的未到達
+- CONT: IS EV≈−¥0.9, VAL EV≈+¥11（n=22）, TEST EV≈−¥30（n=14）— split 不安定
+- REVERT: IS EV≈+¥2.3, TEST EV≈+¥9.8 — cont と方向矛盾、n 小
+- gap フィルタ（0.5%/1.0%/p75）: Gate2 未到達、n さらに減少
+
+**batch_verdict:** reject
+
+**learnings**
+
+- 週明け gap は detectable（mean≈0.08%）だが **執行込み edge は split 間で不安定**
+- continuation vs reversion が IS/TEST で逆転 — 単体 L1 として不採用
+- 稀イベント（≈4/月）は Gate1 N 帯と両立しない
+
+**next_actions**
+
+- H-C2 → **closed**（edge-catalog）
+- 次 L1 候補: **H-D4**（Phase0 weak、Phase1 未実施）
+- H-D canonical hold 継続、PT-B 月次監視継続
+
+**spawned_hypotheses**
+
+- なし
+
+**catalog_updates**
+
+- H-C2: todo → **closed / reject**
+
+---
+
+改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E**）

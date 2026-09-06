@@ -8,9 +8,11 @@ H-D 単体で Gate2 未到達のため、新 L1 仮説を Phase1 同等の執行
 | **P2-B** | H-B PULL | 初押し（20–40%戻し）執行は EARLY より優位か？ |
 | **P2-C** | H-B + H-D | 合成で Gate2 到達可能か？ |
 | **P2-D** | H-B × セッション | EU_US / TOKYO 限定で edge 増幅するか？ |
+| **P2-E** | H-C2 週明けギャップ | gap 方向継続は執行込みで edge あるか？（N≈4/月） |
 
 ```bash
 python3 -m scripts.phase1.run_l1_batch ALL
+python3 -m scripts.phase1.run_l1_batch P2-E
 ```
 
-改訂: 2026-09-04（pullback フィルタ修正・再実行結果反映）
+改訂: 2026-09-06（P2-E H-C2 追加）

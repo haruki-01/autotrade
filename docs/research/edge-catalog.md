@@ -124,7 +124,7 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | **H-F2** | conditional | **closed** | B08→P3-A reject |
 | **H-F3** | **promote** | **hold** | Gate1 fail（N）。合成 defer |
 | **P3-C** | — | **hold** | OOS2 +22%。Gate1 fail |
-| **H-C2** | weak | **todo** | **次 L1 推奨**（PM-20260906） |
+| **H-C2** | weak | **closed** | P2-E reject（N≈3/月、split 不安定） |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / [validation-spec.md](validation-spec.md)  
 Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  

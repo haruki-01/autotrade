@@ -81,6 +81,20 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | Research Gate | VALIDATION のみ再計測（config は P1-R2 で確定済み） |
 | 判定 | TEST で Gate1 pass + EV>0 → Paper 継続。Gate2 は TEST の **結果** として記録 |
 
+### 2.6 H-C2 週明けギャップ（P2-E / L1 探索）
+
+| 項目 | 定義 |
+|---|---|
+| トリガー | 週初 **最初の月曜 5m bar**（金曜終値→月曜 open の gap） |
+| エントリー | 月曜 open、gap 方向（**cont**） |
+| 対照 | gap 逆方向（**revert**） |
+| SL / TP | 固定 pct: SL = 0.5%, TP = 1.0%（H-D canonical 同等） |
+| 時間切れ | 48 本（h240） |
+| 頻度 | ≈1 回/週（**Gate1 N 帯 40–60/月 は構造的に未到達**） |
+| 探索 | `min_gap` フィルタ（0.5%, 1.0%, TRAIN p75）は VALIDATION のみ |
+
+コード: `scripts/phase1/signals/h_c2_gap.py`, `scripts/phase1/p2e_hc2_gap.py`
+
 ---
 
 ## 3. 執行モデル（SPEC §7.3 仮置き）

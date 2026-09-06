@@ -20,6 +20,7 @@ BATCH_MODULES = {
     "P2-B": "scripts.phase1.p2b_hb_pull",
     "P2-C": "scripts.phase1.p2c_hbd_composite",
     "P2-D": "scripts.phase1.p2d_hc_session",
+    "P2-E": "scripts.phase1.p2e_hc2_gap",
 }
 
 
@@ -85,7 +86,7 @@ def run_all(df=None) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run L1 exploration batch")
-    parser.add_argument("batch_id", nargs="?", default="ALL", help="P2-A, P2-B, P2-C, P2-D, or ALL")
+    parser.add_argument("batch_id", nargs="?", default="ALL", help="P2-A, P2-B, P2-C, P2-D, P2-E, or ALL")
     args = parser.parse_args()
     if args.batch_id.upper() == "ALL":
         run_all()

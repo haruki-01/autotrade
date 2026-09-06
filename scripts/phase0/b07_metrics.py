@@ -47,10 +47,16 @@ def failed_edge_reversal(df: pd.DataFrame) -> pd.Index:
 
 
 def week_open_events(df: pd.DataFrame) -> pd.DataFrame:
+    """One event per calendar week: first Monday bar after prior Friday close."""
     rows = []
     times = df["open_time"].reset_index(drop=True)
+    seen_weeks: set[tuple[int, int]] = set()
     for i in range(1, len(df)):
         if times.iloc[i].weekday() != 0:
+            continue
+        iso = times.iloc[i].isocalendar()
+        week_key = (iso.year, iso.week)
+        if week_key in seen_weeks:
             continue
         j = i - 1
         while j >= 0 and times.iloc[j].weekday() != 4:
@@ -60,7 +66,18 @@ def week_open_events(df: pd.DataFrame) -> pd.DataFrame:
         if (times.iloc[i].date() - times.iloc[j].date()).days > 4:
             continue
         gap = (df["open"].iloc[i] - df["close"].iloc[j]) / df["close"].iloc[j]
-        rows.append({"idx": df.index[i], "gap": gap, "gap_dir": 1 if gap > 0 else -1})
+        if gap == 0:
+            continue
+        seen_weeks.add(week_key)
+        rows.append(
+            {
+                "idx": df.index[i],
+                "bar_i": i,
+                "gap": gap,
+                "gap_abs": abs(gap),
+                "gap_dir": 1 if gap > 0 else -1,
+            }
+        )
     return pd.DataFrame(rows)
 
 

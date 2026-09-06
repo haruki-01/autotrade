@@ -55,10 +55,8 @@ Product Manager（春希）の正式判断を記録する正本。エージェ�
 
 - H-D / H-F3 / P3 合成の **新規 tuning 禁止**
 - **新メカニズム L1** を Phase0→Phase1 で探索
-- **エージェント推奨次候補**: **H-C2**（週明けギャップ）
-  - Phase0: weak（n≈40k、継続方向 edge 弱 positive）
-  - Phase1: **未実施**
-  - 代替: H-D4（％水準ブレイク継続、Phase0 weak）
+- **次 L1 候補**: **H-D4**（％水準ブレイク継続、Phase0 weak）
+- ~~H-C2~~: P2-E reject → closed
 
 ### 5. 棄却クローズ（推奨理由付き）
 
