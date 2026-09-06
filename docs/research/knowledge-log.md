@@ -1333,7 +1333,39 @@
 
 ---
 
-改訂: 2026-09-06（Gate2 3% 再ベースライン）
+改訂: 2026-09-06（P1-L レバー検証）
+
+---
+
+### KB-P1-L-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-L |
+| purpose | Gate2@3% 向け 3 レバー検証（H-D uplift / N帯 EV / L1 filter） |
+| decision_question | いずれかのレバーで VALIDATION P≥¥1,500 + Gate1 pass するか？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**（VALIDATION +10% 改善、Gate2・TEST Gate1 未達）
+- **L1** cooldown=24: VAL P=¥1,096 (+6%) — TEST N=62.5 → **Gate1 fail**
+- **L2** cd24 sl0.6%/tp1.0%: VAL P=**¥1,136 (+10%)** — 全局 best、Gate2 あと¥364
+- **L3** session/fee filter: **全 reject**（TOKYO/EU/US/OFF P<¥310、fee回避 P=¥826）
+
+**learnings**
+
+1. cooldown 短縮は VALIDATION P を上げるが **N 帯超過**で TEST 不安定 — canonical 変更不可
+2. sl0.6%/tp1.0% は P1-R2 canonical より +10% だが Gate2@3% 未到達
+3. H-C session / H-E fee 窓フィルタは H-D に **有害** — 新 L1 合成候補から除外
+4. H-D パラメータ alone では Gate2@3% 限界 — **新メカニズム L1** が必要
+
+**next_actions**
+
+- canonical は **cd48 sl0.5%/tp1.0% 維持**（P1-R2C 確定）
+- Paper PT-B 継続
+- 新 L1: Phase0 未検証/weak 以外（H-G 等 Phase2 defer）— H-D2/D3/D4 は Phase0 weak/fail 済み
+
+---
 
 ---
 

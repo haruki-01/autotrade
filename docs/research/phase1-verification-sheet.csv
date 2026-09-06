@@ -25,3 +25,4 @@ P1-N,N感度（cooldown調整）,各N帯でGate1/2に届くか？,P1N-N100,H-D,O
 P1-R2C,H-D canonical固定Exit,P1-R2 bestを固定して全split再現するか？,P1R2C-HD,H-D+M4,TRAIN,28.2999,24.5333,0.8669,839,0.5852,46.8,1147.5,515.3,0.4217,0.3600,True,False,conditional,2024-01-01..2026-08-31,sl0.5% tp1.0% locked
 P1-R2C,H-D canonical固定Exit,P1-R2 bestを固定して全split再現するか？,P1R2C-HD,H-D+M4,VALIDATION,20.8852,21.1771,1.0140,387,0.5762,48.7,1030.9,252.6,0.4268,0.3600,True,False,conditional,2024-01-01..2026-08-31,sl0.5% tp1.0% Research Gate pass
 P1-R2C,H-D canonical固定Exit,P1-R2 bestを固定して全split再現するか？,P1R2C-HD,H-D+M4,TEST,17.2452,14.1409,0.8200,309,0.5405,51.4,726.8,410.4,0.4217,0.3600,True,False,conditional,2024-01-01..2026-08-31,sl0.5% tp1.0% TEST Gate1 pass
+P1-L,Gate2レバー検証,L1/L2/L3でP≥¥1500届くか？,P1L-L2-N,H-D+M4,VALIDATION,19.22,470,0.583,59.1,1136,403,,,,True,False,conditional,2024-01-01..2026-08-31,L2 best cd24 sl0.6% +10% vs P1-R2C Gate2 fail

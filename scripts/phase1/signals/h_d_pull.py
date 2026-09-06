@@ -50,10 +50,14 @@ def generate_hd_pull_signals(
     rr_ratio: float | None = None,
     sl_pct: float | None = None,
     tp_pct: float | None = None,
+    session_filter: str | None = None,
+    avoid_fee_window: bool = False,
 ) -> list[Signal]:
     """
     mode: pull = wait for first pull (H-D), raw = enter on RSI exit bar (control).
     sl_pct/tp_pct: fixed percentage exits (P1-R2). Overrides R-based SL/TP when both set.
+    session_filter: TOKYO | EUROPE_US | OFF — entry bar must match session.
+    avoid_fee_window: skip entries in 05:30–06:30 JST (H-E lever).
     """
     rr = rr_ratio if rr_ratio is not None else RR_RATIO
     df = add_features(df)
@@ -67,6 +71,13 @@ def generate_hd_pull_signals(
             continue
         if weekend_filter and df["is_weekend"].iloc[i]:
             continue
+        if session_filter and df["session"].iloc[i] != session_filter:
+            continue
+        if avoid_fee_window:
+            t = df["open_time"].iloc[i]
+            mins = t.hour * 60 + t.minute
+            if 5 * 60 + 30 <= mins <= 6 * 60 + 30:
+                continue
 
         if mode == "raw":
             entry_i = i

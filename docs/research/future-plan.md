@@ -107,8 +107,8 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 | 優先 | バッチ | 理由 |
 |---:|---|---|
 | 1 | **Paper 継続（PT-B）** | **継続中** — monitoring_status=continue |
-| 2 | P3-NR research loop | H-F3 N 帯改善（defer） |
-| 3 | Gate2 L0 再ベースライン | PM 判断 |
+| 2 | **新 L1 探索** | P1-L で H-D レバー限界確認 — H-G 等 Phase2 へ |
+| 3 | Paper 継続（PT-B） | canonical 維持 |
 
 ### 探索停止リスト（変更なし）
 
