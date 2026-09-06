@@ -115,14 +115,16 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 |---|---|---|---|
 | H-E | weak | — | 単体見送り |
 | H-C / H-C4 / H-M4 | conditional | **M4 必須** | 土日ゲート Phase1 で N 帯調整に有効 |
-| H-A | reject | — | — |
-| H-A2 | promote | **reject** | RR 1:2 執行込み EV 負 |
-| H-B | conditional | **reject** | L1 P2-A/B/D: Gate2 不可。OOS2 のみ Gate1 pass（不安定）。H-M5 フィルタ有効 |
-| H-D | conditional | **conditional（canonical）** | P1-R2C: TRAIN/VAL/TEST 全 Gate1 pass。sl0.5%/tp1.0% + H-M4。**Research Gate pass**（PF=2.17）。Paper 継続 |
-| H-B2/H-B3/H-F1/稀イベント | reject | — | — |
-| H-F2 | conditional | **reject** | B08→P3-A 執行 EV 負 |
-| **H-F3** | **promote** | **conditional** | P3-B-NR Gate1 pass。**V1 Research Gate pass**（PF=1.53）。Gate2 不可 |
-| **P3-C** | — | **conditional** | H-D zone + H-F3。OOS2 P≈¥339（+22% vs 単体） |
+| H-D | conditional | **hold（canonical）** | **tuning 停止**（PM-20260906）。sl0.5%/tp1.0% cd48 + H-M4。P1-R2C Gate1 全 split。Research Gate pass。Paper 継続 |
+| H-A / H-A2 | reject | **closed** | 再探索禁止 |
+| H-B | conditional | **closed** | L1 reject。再探索禁止 |
+| H-F2 / H-F4 | reject / reject | **closed** | 再探索禁止 |
+| P3-C-R | — | **closed** | zone 厳格化停止 |
+| H-B2/H-B3/H-F1/稀イベント | reject | **closed** | — |
+| **H-F2** | conditional | **closed** | B08→P3-A reject |
+| **H-F3** | **promote** | **hold** | Gate1 fail（N）。合成 defer |
+| **P3-C** | — | **hold** | OOS2 +22%。Gate1 fail |
+| **H-C2** | weak | **todo** | **次 L1 推奨**（PM-20260906） |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / [validation-spec.md](validation-spec.md)  
 Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  
@@ -131,6 +133,7 @@ P1-NR 10iter: [p1nr-research-report.md](p1nr-research-report.md) / KB-P1-NR
 L1 H-B 探索: [l1-exploration-report.md](l1-exploration-report.md) / KB-L1-A〜D  
 P3 H-F2/F3: [p3-exploration-report.md](p3-exploration-report.md) / KB-B08〜P3-B  
 **全体レビュー**: [project-review.md](project-review.md) / [future-plan.md](future-plan.md)  
+**PM 判断**: [pm-decisions.md](pm-decisions.md)  
 検証ロードマップ: [verification-roadmap.md](verification-roadmap.md)
 
-改訂: 2026-09-06（Hybrid Validation — V1/B10/P3-C）
+改訂: 2026-09-06（PM-20260906 判断反映）

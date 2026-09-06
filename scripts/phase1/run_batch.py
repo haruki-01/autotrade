@@ -22,6 +22,7 @@ BATCH_MODULES = {
     "P1-R": "scripts.phase1.p1r_grid",
     "P1-R2": "scripts.phase1.p1r2_exit_grid",
     "P1-R2C": "scripts.phase1.p1r2_confirm",
+    "P1-L": "scripts.phase1.p1l_levers",
     "P1-HA": "scripts.phase1.p1ha_revert",
     "P1-N": "scripts.phase1.p1n_sensitivity",
 }
@@ -38,12 +39,12 @@ def run_batch(batch_id: str, df=None) -> dict:
     results = mod.compute(df)
     verdict_fn = getattr(mod, "batch_verdict", None)
 
-    structured = batch_id.upper() in ("P1-R", "P1-R2", "P1-R2C")
+    structured = batch_id.upper() in ("P1-R", "P1-R2", "P1-R2C", "P1-L")
     if structured:
         metrics = results["metrics"]
         extra = {
             k: results[k]
-            for k in ("grid", "gate2_combos", "gate1_combos", "tuning_split", "fixed_config")
+            for k in ("grid", "gate2_combos", "gate1_combos", "tuning_split", "fixed_config", "levers", "p1r2c_validation_p", "improvement_vs_p1r2c_pct")
             if k in results
         }
     else:
