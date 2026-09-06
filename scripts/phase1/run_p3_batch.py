@@ -18,6 +18,7 @@ OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "phase3"
 BATCH_MODULES = {
     "P3-A": "scripts.phase1.p3a_hf2",
     "P3-B": "scripts.phase1.p3b_hf3",
+    "P3-C": "scripts.phase1.p3c_composite",
 }
 
 

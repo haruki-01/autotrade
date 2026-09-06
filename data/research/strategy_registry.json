@@ -1,0 +1,52 @@
+{
+  "version": "1.1",
+  "updated_at": "2026-09-06",
+  "strategies": [
+    {
+      "strategy_id": "HD-M4",
+      "name": "H-D RSI Pull + H-M4 Weekend Filter",
+      "hypothesis": "群集 RSI シグナル後の初押し待ちに執行込み edge",
+      "status": "VALIDATION",
+      "lifecycle": "OOS_PASS",
+      "config": {"mode": "pull", "weekend_filter": true, "rr": "1:2"},
+      "validation_ev": 15.3,
+      "validation_p": 741,
+      "profit_factor": 1.64,
+      "sharpe": 4.83,
+      "wf_pass_rate": 1.0,
+      "gate1": true,
+      "gate2": false,
+      "research_gate": "pass"
+    },
+    {
+      "strategy_id": "HF3-cd4_q40_at20",
+      "name": "H-F3 Range Revert (N-expanded)",
+      "hypothesis": "レンジ境界タッチ後の平均回帰",
+      "status": "VALIDATION",
+      "lifecycle": "OOS_PASS",
+      "config": {"cooldown": 4, "range_quantile": 0.40, "atr_touch_mult": 0.20, "rr": "1:2"},
+      "validation_ev": 7.1,
+      "validation_p": 234,
+      "validation_n": 33.1,
+      "profit_factor": 1.53,
+      "sharpe": 3.01,
+      "wf_pass_rate": 1.0,
+      "gate1": false,
+      "gate2": false,
+      "research_gate": "pass"
+    },
+    {
+      "strategy_id": "P3C-HD-HF3",
+      "name": "H-D Zone Filter + H-F3 Composite",
+      "hypothesis": "RSI 押し目 zone 内のみ H-F3 エントリーで edge 増幅",
+      "status": "CONDITIONAL",
+      "lifecycle": "BACKTESTED",
+      "config": {"hf3": "cd4_q40_at20", "hd_zone_lookback": 48},
+      "oos2_p": 339,
+      "oos2_ev": 9.4,
+      "gate1": false,
+      "gate2": false,
+      "research_gate": "pending"
+    }
+  ]
+}

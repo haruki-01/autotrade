@@ -318,14 +318,49 @@ Stretch（Gate 対象外）: N=50 で EV ¥200（+2.0%）→ 月次 +20%（¥10,
 5. 採用: 複数 OOS で執行込み \(P\) が安定して \(P^*\) に近い、または明確に正の EV  
 6. 棄却時は理由をナレッジに残し、次の L1 へ  
 
-### 8.3 合格判定
+### 8.3 合格判定（二層）
+
+#### Research Gate（研究品質 — promote 判定の主指標）
+
+Research Loop の stop/go に使用。**月次 P は最適化目標にしない。**
+
+| 指標 | 基準 |
+|---|---|
+| 執行込み EV | > 0（VALIDATION 期間） |
+| Profit Factor | ≥ 1.15 |
+| maxDD | ≤ 15% BR（¥7,500） |
+| Walk Forward pass rate | ≥ 60% |
+| Monte Carlo p95 DD | ≤ ¥7,500 |
+| Monte Carlo ruin prob | ≤ 5% |
+| Robustness | fee/slip +20% でも PF ≥ 1.0 |
+
+詳細: [validation-spec.md](research/validation-spec.md)
+
+#### Business Gate（実運用 KPI — Gate1 / Gate2）
 
 | 優先 | 指標 | 基準 |
 |---|---|---|
-| 主 | 執行込みの月次 P | ≥ \(0.05 \times B\)（初期 ¥2,500） |
-| 主 | 執行込みの N | およそ 50 ± 20% |
-| 副 | maxDD、破産確率、パラメータ感度 | 過学習・脆弱でないこと |
-| 参考 | 理論値 | 上限の把握用（単独では合格にしない） |
+| Gate1 | 執行込み EV + N | EV > 0、N ≈ 50 ± 20% |
+| Gate2 | 執行込み月次 P | ≥ \(0.05 \times B\)（初期 ¥2,500） |
+| 副 | maxDD、パラメータ感度 | 過学習・脆弱でないこと |
+| 参考 | 理論値 | 上限把握用（単独合格にしない） |
+
+#### データ分割
+
+| 名称 | 期間 | 用途 |
+|---|---|---|
+| TRAIN（IS） | 2024-01 .. 2025-06 | 戦略開発 |
+| VALIDATION（OOS1） | 2025-07 .. 2026-02 | パラメータ調整（記録必須） |
+| TEST（OOS2） | 2026-03 .. 2026-08 | **最終判定のみ**（ロック） |
+
+#### 評価優先順位
+
+1. OOS（VALIDATION）で期待値が残るか  
+2. Walk Forward / Monte Carlo で過学習でないか  
+3. DD に対して収益が十分か  
+4. Sharpe / PF  
+5. 手数料・Slippage 込み  
+6. 月次 P（**結果**。Research Loop では最適化しない）
 
 ---
 

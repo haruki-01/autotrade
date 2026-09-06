@@ -1,0 +1,100 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P3-C",
+  "batch_verdict": "conditional",
+  "preflight": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "preflight",
+        "ok": true,
+        "level": "info",
+        "detail": "no checks defined"
+      }
+    ]
+  },
+  "metrics": {
+    "P3C-COMPOSITE_IS": {
+      "theoretical_ev": 7.981683320593622,
+      "executed_ev": 4.880735720064689,
+      "degradation": 0.611492027937497,
+      "n": 633,
+      "w": 0.5355450236966824,
+      "monthly_n": 35.290329670329676,
+      "p": 172.24277259483677,
+      "max_dd": 720.3837464572507,
+      "random_w": 0.5005625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "IS",
+      "hf3_raw_signals": 2245,
+      "filtered_signals": 1553,
+      "filter_ratio": 0.6917594654788418,
+      "config": "cd4_q40_at20_RR2_R0.01"
+    },
+    "P3C-COMPOSITE_OOS1": {
+      "theoretical_ev": 10.830631409730238,
+      "executed_ev": 6.920592309962858,
+      "degradation": 0.6389832732877788,
+      "n": 201,
+      "w": 0.5671641791044776,
+      "monthly_n": 25.282809917355372,
+      "p": 174.97201988830227,
+      "max_dd": 392.20595383156933,
+      "random_w": 0.4999375,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "hf3_raw_signals": 697,
+      "filtered_signals": 488,
+      "filter_ratio": 0.7001434720229556,
+      "config": "cd4_q40_at20_RR2_R0.01"
+    },
+    "P3C-COMPOSITE_OOS2": {
+      "theoretical_ev": 9.532763830999043,
+      "executed_ev": 9.403534872437358,
+      "degradation": 0.9864437050101407,
+      "n": 217,
+      "w": 0.576036866359447,
+      "monthly_n": 36.09551912568306,
+      "p": 339.4254728370903,
+      "max_dd": 263.44424267560225,
+      "random_w": 0.49237499999999995,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "hf3_raw_signals": 738,
+      "filtered_signals": 531,
+      "filter_ratio": 0.7195121951219512,
+      "config": "cd4_q40_at20_RR2_R0.01"
+    },
+    "P3C-HF3-REF": {
+      "notes": "H-F3 single reference (cd4_q40_at20)",
+      "OOS1": {
+        "n": 263,
+        "w": 0.5703422053231939,
+        "ev": 7.061185309916856,
+        "monthly_n": 33.08148760330579,
+        "p": 233.5945142946594,
+        "max_dd": 572.7523814001709
+      },
+      "OOS2": {
+        "n": 284,
+        "w": 0.5669014084507042,
+        "ev": 5.884261871343933,
+        "monthly_n": 47.24021857923498,
+        "p": 277.97381697974566,
+        "max_dd": 348.8663038476435
+      }
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "4e60cafcca2c6a5d8bbf161797803de0653126b5"
+}

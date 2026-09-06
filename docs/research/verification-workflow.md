@@ -90,7 +90,16 @@ Phase0 ではロジックを組まない。Phase1 では **理論値と執行込
 |---|---|---|---|---|
 | **B08** | ボラ急騰後の平均回帰 edge | H-F2 | CONT 継続 | P3-A へ promote するか |
 | **P3-A** | H-F2 執行込み検証 | H-F2 MID | CONT | Gate1/2 pass か |
-| **P3-C** | H-D フィルタ合成 | H-F2 + H-D | H-F2 単体 | 合成メリット（defer） |
+| **P3-C** | H-D フィルタ + H-F3 合成 | H-F3 + H-D zone | H-F3 単体 | edge 増幅するか |
+
+### Hybrid Validation（Research Gate）
+
+| batch_id | purpose | 対象 | バッチで決めること |
+|---|---|---|---|
+| **V1** | WF + MC + Robustness | H-D, H-F3 Gate1 pass 設定 | Research Gate pass か |
+| **B10** | MFE/MAE Exit 分析 | H-D, H-F3 | TP/SL 再設計候補 |
+
+定義: [validation-spec.md](validation-spec.md)
 
 定義: [phase3-spec.md](phase3-spec.md) / [verification-roadmap.md](verification-roadmap.md)
 

@@ -33,6 +33,19 @@ SPLITS = {
     "ALL": (date(2024, 1, 1), date(2026, 8, 31)),
 }
 
+# Hybrid validation aliases (validation-spec.md)
+SPLIT_ALIASES = {
+    "TRAIN": "IS",
+    "VALIDATION": "OOS1",
+    "TEST": "OOS2",
+}
+
+RESEARCH_GATE_PF_MIN = 1.15
+RESEARCH_GATE_DD_MAX = INITIAL_BANKROLL * 0.15  # 15% of BR
+RESEARCH_GATE_WF_PASS_RATE = 0.60
+RESEARCH_GATE_MC_DD_P95_MAX = INITIAL_BANKROLL * 0.15
+RESEARCH_GATE_MC_RUIN_MAX = 0.05
+
 
 @dataclass
 class Signal:
@@ -56,9 +69,18 @@ class Trade:
     executed_pnl: float
     theoretical_ret: float
     executed_ret: float
+    mfe_pct: float = 0.0
+    mae_pct: float = 0.0
+    mfe_jpy: float = 0.0
+    mae_jpy: float = 0.0
+
+
+def resolve_split(split: str) -> str:
+    return SPLIT_ALIASES.get(split, split)
 
 
 def filter_df_by_split(df: pd.DataFrame, split: str) -> pd.DataFrame:
+    split = resolve_split(split)
     start, end = SPLITS[split]
     ts_start = pd.Timestamp(start, tz=df["open_time"].dt.tz)
     ts_end = pd.Timestamp(end, tz=df["open_time"].dt.tz) + pd.Timedelta(hours=23, minutes=55)

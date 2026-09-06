@@ -80,8 +80,9 @@ flowchart LR
 | 3 | **B09** H-F3 Phase0 | **完了** — promote |
 | 4 | **P3-B** H-F3 Phase1 | **完了** — N 不足 conditional |
 | 5 | **P3-B-NR** H-F3 N 拡大 | **完了** — Gate1 pass（cd4_q40_at20） |
-| 6 | **P3-C** H-D filter + H-F3 | **次バッチ** |
-| hold | H-D + H-M4 paper | PT-A 継続 |
+| 6 | **V1** WF+MC+Robustness | **完了** — H-D/H-F3 Research Gate pass |
+| 7 | **B10** MFE/MAE | **完了** — conditional |
+| 8 | **P3-C** H-D filter + H-F3 | **完了** — conditional（OOS2 P+22%） |
 | hold | H-D + H-M4 paper | PT-A 継続監視 |
 
 ---

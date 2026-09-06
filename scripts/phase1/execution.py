@@ -67,10 +67,16 @@ def simulate_trade(
     exit_bar = i
     exit_price = entry
     reason = "timeout"
+    mfe_pct = 0.0
+    mae_pct = 0.0
 
     for j in range(i + 1, min(i + 1 + sig.max_bars, len(df))):
         row = df.iloc[j]
         if direction == 1:
+            fav = (row["high"] - entry) / entry
+            adv = (entry - row["low"]) / entry
+            mfe_pct = max(mfe_pct, fav)
+            mae_pct = max(mae_pct, adv)
             if row["low"] <= sig.sl_price:
                 exit_bar, exit_price, reason = j, sig.sl_price, "sl"
                 break
@@ -78,6 +84,10 @@ def simulate_trade(
                 exit_bar, exit_price, reason = j, sig.tp_price, "tp"
                 break
         else:
+            fav = (entry - row["low"]) / entry
+            adv = (row["high"] - entry) / entry
+            mfe_pct = max(mfe_pct, fav)
+            mae_pct = max(mae_pct, adv)
             if row["high"] >= sig.sl_price:
                 exit_bar, exit_price, reason = j, sig.sl_price, "sl"
                 break
@@ -93,11 +103,22 @@ def simulate_trade(
 
     exit_time = df["open_time"].iloc[exit_bar]
     th_pnl, th_ret = theoretical_pnl(direction, entry, exit_price, entry_time, exit_time)
+    mfe_jpy = POSITION_Q * mfe_pct
+    mae_jpy = POSITION_Q * mae_pct
 
     if apply_execution:
         ex_pnl, ex_ret, filled = executed_pnl(direction, entry, exit_price, reason, entry_time, exit_time, rng)
         if not filled:
-            return Trade(sig, False, exit_bar, exit_price, "no_fill", 0.0, 0.0, 0.0, 0.0)
-        return Trade(sig, True, exit_bar, exit_price, reason, th_pnl, ex_pnl, th_ret, ex_ret)
+            return Trade(
+                sig, False, exit_bar, exit_price, "no_fill", 0.0, 0.0, 0.0, 0.0,
+                mfe_pct, mae_pct, mfe_jpy, mae_jpy,
+            )
+        return Trade(
+            sig, True, exit_bar, exit_price, reason, th_pnl, ex_pnl, th_ret, ex_ret,
+            mfe_pct, mae_pct, mfe_jpy, mae_jpy,
+        )
 
-    return Trade(sig, True, exit_bar, exit_price, reason, th_pnl, th_pnl, th_ret, th_ret)
+    return Trade(
+        sig, True, exit_bar, exit_price, reason, th_pnl, th_pnl, th_ret, th_ret,
+        mfe_pct, mae_pct, mfe_jpy, mae_jpy,
+    )

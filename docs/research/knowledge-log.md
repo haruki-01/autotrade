@@ -1072,4 +1072,108 @@
 
 ---
 
-改訂: 2026-09-06（B09 / P3-B H-F3 + project review）
+### KB-V1-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | V1 |
+| date | 2026-09-06 |
+| purpose | Gate1 pass 候補の WF+MC+Robustness 検証 |
+| decision_question | H-D / H-F3 は Research Gate pass か？ |
+| hypotheses | H-D+M4, H-F3 cd4_q40_at20 |
+| metrics | WF, MC, PF, Sharpe, Research Gate |
+| sample_period | VALIDATION 2025-07-01..2026-02-28 |
+
+**result_summary**
+
+- H-D: Research Gate **pass**, Gate1 Y, Gate2 N, P≈¥741, WF 3/3, PF=1.64
+- H-F3: Research Gate **pass**, Gate1 N (N=33), Gate2 N, P≈¥234, WF 3/3, PF=1.53
+
+**learnings**
+
+- 両戦略とも Walk Forward 100% pass — 1 期間だけ強いパターンではない
+- Research Gate と Gate2 は独立 — edge ありでもビジネス目標未到達
+- MC ruin=0%（修正後）。初期バグ: `0.0 or 1.0` で ruin 判定が誤動作
+
+**next_actions**
+
+- H-D Paper 継続
+- B10 MFE/MAE で Exit 候補評価
+- P3-C 合成結果と比較
+
+**catalog_updates**
+
+- HD-M4: research_gate → **pass**
+- HF3-cd4_q40_at20: research_gate → **pass**
+
+---
+
+### KB-B10-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | B10 |
+| date | 2026-09-06 |
+| purpose | MFE/MAE Exit 分析 |
+| decision_question | 固定 RR 1:2 が edge を削っていないか？ |
+| hypotheses | H-D, H-F3 |
+| metrics | MFE, MAE, TP/SL grid hit rates |
+| sample_period | TRAIN + VALIDATION |
+
+**result_summary**
+
+- H-D VALIDATION: mfe_mae_ratio=2.06, avg MFE=0.81%, avg MAE=0.40%
+- H-F3 VALIDATION: mfe_mae_ratio=1.35, avg MFE=0.43%, avg MAE=0.32%
+- H-D: TP 0.5% hit=73%, SL 0.8% hit=25% — RR 1:2 より狭い TP 候補あり
+
+**learnings**
+
+- H-D は MFE >> MAE — Exit 再設計余地あり（TP 0.5% で 73% hit）
+- H-F3 は MFE/MAE 比は正だが絶対値小 — edge 薄い
+
+**next_actions**
+
+- H-D P1-R2: TP 0.5%/0.8% 候補を VALIDATION で grid（defer）
+- H-F3 Gate2 追求は停止（EV 上限）
+
+---
+
+### KB-P3-C-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P3-C |
+| date | 2026-09-06 |
+| purpose | H-D zone filter + H-F3 合成 |
+| decision_question | RSI 押し目 zone 内 H-F3 で edge 増幅するか？ |
+| hypotheses | H-F3 + H-D zone (lookback=48) |
+| metrics | P3C-COMPOSITE IS/OOS1/OOS2 |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- OOS2: P≈¥339 vs H-F3 単体 ¥278 — **+22% P 改善**
+- OOS2: EV≈¥9.4 vs H-F3 ¥5.9 — edge 増幅確認
+- Gate1 fail: N=36/mo（帯 40–60 未達）
+- filter_ratio≈70% — zone フィルタは緩すぎ
+
+**learnings**
+
+- 合成は H-F3 単体より OOS2 で P/EV 改善 — 方向性は正
+- N 帯不足が継続ボトルネック
+- zone lookback=48 は広すぎる可能性 — 24 で再検証 defer
+
+**next_actions**
+
+- H-D 単体 + Paper 継続（最良 Gate1 候補）
+- P3-C zone 厳格化（lookback 24）— defer
+- Gate2 未到達 → L1 探索継続
+
+**catalog_updates**
+
+- P3C-HD-HF3: status → conditional
+
+---
+
+改訂: 2026-09-06（V1 / B10 / P3-C hybrid validation）
