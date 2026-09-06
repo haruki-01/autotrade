@@ -93,35 +93,71 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | P | 月間純利益 ≈ EV × N |
 | maxDD | 累積損益の最大ドローダウン（円） |
 | 劣化率 | 執行込み EV / 理論 EV |
-| random_W | 同期間ランダムエントリー勝率（seed=42, 1000 trials 平均） |
+| random_W | 同期間ランダムエントリー勝率（seed=42, 200 trials 平均） |
 | fee_breakeven_W | RR 1:2 + コスト込み損益分岐勝率 |
+| **PF** | Profit Factor（Hybrid Validation 以降） |
+| **Sharpe** | トレード単位 Sharpe（Hybrid Validation 以降） |
+| **MFE / MAE** | 最大有利/不利 excursion（B10 以降） |
 
 **二列必須**: 理論値 / 執行込み
 
 ---
 
-## 5. OOS 分割
+## 5. データ分割
 
-| 窓 | 期間 |
-|---|---|
-| IS | 2024-01-01 .. 2025-06-30 |
-| OOS1 | 2025-07-01 .. 2026-02-28 |
-| OOS2 | 2026-03-01 .. 2026-08-31 |
+| 名称 | 旧名称 | 期間 | 用途 |
+|---|---|---|---|
+| **TRAIN** | IS | 2024-01-01 .. 2025-06-30 | 戦略開発 |
+| **VALIDATION** | OOS1 | 2025-07-01 .. 2026-02-28 | パラメータ調整（記録必須） |
+| **TEST** | OOS2 | 2026-03-01 .. 2026-08-31 | **最終判定のみ**（ロック） |
+
+コード上は `IS` / `OOS1` / `OOS2` も後方互換で使用可（`SPLIT_ALIASES`）。
+
+**ルール**: Research Loop の tuning は **VALIDATION のみ**。TEST は Gate2 候補の最終 1 回判定のみ（[validation-spec.md](validation-spec.md) §2）。
 
 ---
 
-## 6. 合格ゲート
+## 6. 合格ゲート（二層）
+
+### 6.1 Research Gate（研究品質 — promote / Paper 移行の主判定）
+
+[validation-spec.md](validation-spec.md) / [SPEC.md §8.3](../SPEC.md) 参照。
+
+| チェック | 基準 |
+|---|---|
+| 執行 EV | > 0（VALIDATION） |
+| PF | ≥ 1.15 |
+| maxDD | ≤ ¥7,500 |
+| Walk Forward pass rate | ≥ 60% |
+| MC p95 DD | ≤ ¥7,500 |
+| MC ruin prob | ≤ 5% |
+| Robustness | fee/slip +20% で PF ≥ 1.0 |
+
+**Research Loop の stop/go に使用。月次 P は最適化目標にしない。**
+
+バッチ **V1** で計測: `python3 -m scripts.phase1.run_validation_batch V1`
+
+### 6.2 Business Gate（Gate1 / Gate2）
 
 | ゲート | 条件 | 意味 |
 |---|---|---|
 | **Gate1** | 執行込み EV > 0 **かつ** N ≈ 50±20%/月（40–60） | 取引可能エッジの存在 |
-| **Gate2** | 執行込み月次 P ≥ ¥2,500（= 0.05 × 初期 BR、OOS 平均） | SPEC §8.3 本番採用 |
+| **Gate2** | 執行込み月次 P ≥ ¥2,500（= 0.05 × 初期 BR、OOS 平均） | 本番採用 KPI |
 
 理論値のみ pass → **hold**（promote しない）。
 
+### 6.3 評価優先順位
+
+1. OOS（VALIDATION）で期待値が残るか  
+2. Walk Forward / Monte Carlo で過学習でないか  
+3. DD に対して収益が十分か  
+4. PF / Sharpe  
+5. 手数料・Slippage 込み  
+6. 月次 P（**結果**）
+
 ---
 
-## 6.1 複利とバックテスト
+## 6.4 複利とバックテスト
 
 | フェーズ | サイジング | Gate2 判定 |
 |---|---|---|
@@ -140,7 +176,10 @@ Phase1 の P 値は固定 Q 前提のため、Gate2 再ベースライン時は 
 | `data/phase1/p1b_results.json` | P1-B 結果 |
 | `data/phase1/p1c_results.json` | P1-C 結果 |
 | `data/phase1/p1r_results.json` | P1-R グリッド結果 |
-| [phase1-verification-sheet.csv](phase1-verification-sheet.csv) | 記入シート |
-| [knowledge-log.md](knowledge-log.md) | KB-P1-A/B/C |
+| `data/validation/v1_*.json` | V1 Research Gate 結果 |
+| `data/validation/b10_*.json` | B10 MFE/MAE 結果 |
+| [phase1-verification-sheet.csv](phase1-verification-sheet.csv) | Phase1 記入シート |
+| [validation-verification-sheet.csv](validation-verification-sheet.csv) | V1/B10/P3-C 記入シート |
+| [knowledge-log.md](knowledge-log.md) | Knowledge Cards |
 
-改訂: 2026-09-03（Gate2 5% re-baseline）
+改訂: 2026-09-06（Hybrid Validation — Research Gate, TRAIN/VAL/TEST）

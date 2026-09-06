@@ -1,7 +1,7 @@
 # 今後のプラン
 
-生成: 2026-09-06  
-前提: [project-review.md](project-review.md) の全体レビュー
+生成: 2026-09-06（Hybrid Validation 反映）  
+前提: [project-review.md](project-review.md) / [v1-validation-report.md](v1-validation-report.md)
 
 ---
 
@@ -9,141 +9,143 @@
 
 **Gate2**: 執行込み OOS 平均で月次 P ≥ ¥2,500（+5% / BR ¥50,000）
 
-Gate2 候補が出るまで **実装・本番フェーズには進まない**（SPEC 方針）。
+Gate2 候補が出るまで **実装・本番フェーズには進まない**。
+
+**追加**: Research Gate pass は「統計的に信頼できる edge あり」と判断するが、Gate2 代替ではない。
 
 ---
 
-## 2. 現時点の最良候補（hold）
+## 2. 現時点の最良候補
 
-| 候補 | 状態 | 執行 OOS P | 次のアクション |
-|---|---|---:|---|
-| **H-D + H-M4** | Gate1 pass | ≈¥740–1,127 | Paper 継続監視 or live 小額試験（PM 判断） |
-| **H-F3 レンジ回帰** | Phase0 promote / P3-B N 不足 | ≈¥261（OOS2） | **N 拡大 research loop**（最優先 L1 探索） |
+| 候補 | Gate1 | Gate2 | Research Gate | 執行 VALIDATION P | 次アクション |
+|---|---|:---:|:---:|---:|---|
+| **H-D + H-M4** | Y | N | **pass** | ≈¥741 | **Paper 継続** |
+| **H-F3 cd4_q40_at20** | N (N=33) | N | **pass** | ≈¥234 | N 帯改善 defer |
+| **P3-C 合成** | N | N | pending | OOS2 ¥339 | zone 厳格化 defer |
 
 ---
 
-## 3. フェーズ別ロードマップ
+## 3. 今後の検証フロー（標準）
 
 ```mermaid
-gantt
-  title 検証ロードマップ（優先順）
-  dateFormat YYYY-MM-DD
-  section 短期
-  P3-B-NR_H-F3_N拡大     :a1, 2026-09-06, 14d
-  P3-C_H-D_filter_H-F3   :a2, after a1, 7d
-  section 中期
-  B10_H-A_revert_P1      :b1, after a2, 14d
-  PT-B_forward_H-D       :b2, after a1, 14d
-  section 判断
-  Gate2候補評価          :milestone, after a2, 0d
+flowchart TD
+  select[1_仮説選定_edge-catalog] --> p0[2_Phase0_記述統計]
+  p0 --> gate0{Gate0}
+  gate0 -->|pass/conditional| p1[3_Phase1_執行込みBT]
+  gate0 -->|reject| kb[knowledge_log]
+  p1 --> preflight[4_Preflight]
+  preflight -->|pass| g1{Gate1}
+  preflight -->|fail| fix[定義修正]
+  g1 -->|pass| v1[5_V1_ResearchGate]
+  g1 -->|fail| kb
+  v1 --> b10[6_B10_MFE_MAE_任意]
+  b10 --> rg{Research Gate}
+  rg -->|pass| paper[7_PaperTrade]
+  rg -->|fail| kb
+  paper --> g2{Gate2_forward}
+  g2 -->|pass| live[8_少額Live]
+  g2 -->|fail| kb
+  kb --> select
 ```
 
-※ 日付は目安。Cloud Agent では **技術的依存関係**で進める。
+### 各段のルール
+
+| 段 | バッチ例 | データ | stop/go |
+|---|---|---|---|
+| Phase0 | B01–B09 | ALL | metric verdict |
+| Phase1 | P1-A, P3-B | TRAIN + VALIDATION + TEST 計測 | Gate1 |
+| **V1** | V1 | VALIDATION + WF 全期間 | **Research Gate** |
+| B10 | B10 | TRAIN + VALIDATION | Exit 再設計判断 |
+| Paper | PT-A/B | forward | Gate1 再現 + Gate2 |
+| TEST 開封 | 最終 1 回 | TEST のみ | Gate2 候補時のみ |
+
+**重要**: パラメータ tuning は **VALIDATION のみ**。月次 P 最大化は Research Loop の目的にしない。
 
 ---
 
 ## 4. 短期（次 2–3 バッチ）
 
-### 4.1 P3-B-NR — H-F3 N 帯拡大（完了）
+### 4.1 PT-B — H-D forward 継続（最優先）
 
-**結果**: Gate1 pass 設定 `cd4_q40_at20`（OOS P≈¥256, N≈40/月）。Gate2 不可。
-
-→ 詳細: [p3bnr-research-report.md](p3bnr-research-report.md)
-
-### 4.2 P3-C — H-D フィルタ + H-F3（最優先）
-
-**問い**: cooldown / 検出条件緩和で N→50/月にしつつ OOS 執行 EV>0 を維持できるか？
-
-| 変数 | 探索方向 |
-|---|---|
-| cooldown | 12 → 6, 4（N 増） |
-| 12h range 閾値 | q20 → q30（イベント増） |
-| edge touch | 0.1 ATR → 0.15 ATR |
-| RR | 1:2 → 1:3 |
-
-**停止条件**: 3 iter 連続で OOS P < ¥500 または EV 符号反転
-
-**成功条件**: OOS Gate1 pass（EV>0, N=40–60）→ P3-C へ
-
-### 4.2 P3-C — H-D フィルタ + H-F3（条件付き）
-
-**前提**: P3-B-NR で H-F3 単体 OOS Gate1 pass
-
-**問い**: RSI 初押し zone 内のみ H-F3 エントリー許可で edge 増幅するか？
-
-**合成ルール**: H-F3 単体 Gate1 必須（P2-C 教訓）
-
-### 4.3 PT-B — H-D forward 継続
-
-PT-A と同型。Gate2 forward 再現は expect しないが、**執行劣化率の実測**を蓄積。
-
----
-
-## 5. 中期（Gate2 未到達が続く場合）
-
-### 5.1 L1 探索の追加候補
-
-| 優先 | 仮説 | 理由 |
-|---:|---|---|
-| 1 | H-F3 派生（N 拡大） | Phase0 promote、Phase1 edge 正（OOS2） |
-| 2 | H-A 回帰（Phase1 未実施） | Phase0 reject だが執行ルール未検証 |
-| 3 | H-F4 減速反転 | Phase0 未実行 |
-| 4 | H-C セッション + H-D | B01 conditional の Phase1 化 |
-
-### 5.2 探索停止リスト（再検証不要）
-
-- H-B EARLY/PULL/合成
-- H-A2 継続
-- H-F2 中点回帰
-- H-B + H-D 合成
-
-### 5.3 L0 再ベースライン検討（PM 判断）
-
-Gate2 に届かない場合の選択肢:
-
-| オプション | 内容 | リスク |
-|---|---|---|
-| A | Gate2 を +3%（¥1,500）に再定義 | 本番期待値の下方修正 |
-| B | Q / レバレッジ条件の見直し | L0 変更 → 全再検証 |
-| C | L2 探索継続（現方針） | 時間対効果 |
-
-**推奨**: オプション C を継続し、**P3-B-NR 完了後**に A/B を PM が判断。
-
----
-
-## 6. 検証運用（継続ルール）
-
-1. **5 段パイプライン**を全 Phase1/Phase3 batch で適用
-2. **preflight 必須** — fail 時は計測せず定義修正
-3. **Knowledge Card** — pass/fail 問わず 1 件
-4. **合成禁止** — 単体 OOS Gate1 未達コンポーネント
-5. **research loop** — 同一 L1 で max 10 iter、3 iter 無改善で pivot
-
----
-
-## 7. 成功シナリオ / 撤退シナリオ
-
-### 成功（Go 実装）
-
-- いずれか 1 ロジックが **OOS1 + OOS2 両方** Gate2 pass
-- Paper trade で 3 ヶ月 forward Gate2 維持
-- → Phase2 実装仕様ドラフト
-
-### 撤退 / ピボット
-
-- P3-B-NR + P3-C + 追加 L1 2 本でも Gate2 最大 < 50%
-- → PM 判断: (1) Gate2 再定義 (2) 銘柄/足変更 (3) プロジェクト pause
-
----
-
-## 8. 次の 1 手（Agent 実行待ち）
+Research Gate pass 済み。Paper で執行劣化率を蓄積。
 
 ```bash
-# 1. P3-B-NR research loop（H-F3 N 拡大）
-python3 -m scripts.research.p3b_nr_loop   # 実装予定
+# PT-A 相当の forward 継続監視
+```
 
-# 2. 結果を KB + project-review 更新
-# 3. Gate1 pass なら P3-C
+### 4.2 P1-R2 — H-D Exit 再設計（defer）
+
+B10 結果: TP 0.5% hit=73%。VALIDATION のみで grid。
+
+| 変数 | 候補 |
+|---|---|
+| TP | 0.5%, 0.8%, 1.0% |
+| SL | 0.5%, 0.8% |
+| RR | 1:1.5, 1:2 |
+
+**停止条件**: 3 iter 無改善 or Research Gate fail
+
+### 4.3 P3-C-R — zone 厳格化（defer）
+
+lookback 48 → 24。VALIDATION tuning のみ。
+
+---
+
+## 5. 中期
+
+| 優先 | バッチ | 理由 |
+|---:|---|---|
+| 1 | P1-R2 Exit grid | B10 MFE/MAE 示唆 |
+| 2 | H-A Phase1 | 執行ルール未検証 |
+| 3 | H-F4 Phase0 | 新 L1 |
+
+### 探索停止リスト（変更なし）
+
+H-B, H-A2, H-F2, H-B+H-D 合成
+
+### L0 再ベースライン（PM 判断）
+
+Gate2 最大 < 50% 継続時: Gate2 → +3% or Q 見直し
+
+---
+
+## 6. 検証運用（更新）
+
+1. **5 段パイプライン** + **V1 Research Gate**（Gate1 pass 候補必須）
+2. **VALIDATION のみ tuning** — TEST ロック（[AGENTS.md](../../AGENTS.md)）
+3. preflight 必須、Knowledge Card 必須
+4. 合成: 単体 Gate1 + Research Gate 確認後
+5. research loop: max 10 iter、3 iter 無改善 pivot
+6. 評価優先順位: EV → WF/MC → DD → PF/Sharpe → 月次 P
+
+---
+
+## 7. 成功 / 撤退
+
+### Go 実装
+
+- VALIDATION + TEST 両方 Gate2 pass
+- Research Gate pass
+- Paper 3 ヶ月 Gate2 維持
+
+### ピボット
+
+- 追加 L1 2 本でも Gate2 < 50%
+- PM: Gate2 再定義 / 銘柄変更 / pause
+
+---
+
+## 8. 実行コマンド
+
+```bash
+# 標準 Validation パイプライン
+python3 -m scripts.phase1.run_validation_batch V1 --strategy all
+python3 -m scripts.phase1.run_validation_batch B10 --strategy all
+python3 -m scripts.phase1.run_p3_batch P3-C
+
+# Phase0 / Phase1
+python3 -m scripts.phase0.run_batch B09
+python3 -m scripts.phase1.run_p3_batch P3-B
 ```
 
 改訂: 2026-09-06

@@ -1,0 +1,7 @@
+batch_id,purpose,decision_question,metric_id,hypothesis_id,split,executed_ev,n,w,monthly_n,p,max_dd,profit_factor,sharpe,wf_pass_rate,mc_p95_dd,research_gate,gate1,gate2,verdict,sample_period,notes
+V1,Research Gate検証,H-DはResearch Gate passか？,V1-HD,H-D+M4,VALIDATION,15.29,385,0.564,48.4,741,696,1.64,4.83,1.0,1053,pass,True,False,conditional,2025-07-01..2026-02-28,WF 3/3 MC ruin=0%
+V1,Research Gate検証,H-F3はResearch Gate passか？,V1-HF3,H-F3,VALIDATION,7.06,263,0.570,33.1,234,573,1.53,3.01,1.0,752,pass,False,False,conditional,2025-07-01..2026-02-28,Gate1 fail N帯
+B10,MFE/MAE Exit分析,H-DのExit再設計余地は？,B10-HD-MFE,H-D,VALIDATION,,850,0.588,,,,,2.06,,,,,,conditional,2025-07-01..2026-02-28,mfe_mae_ratio=2.06 TP0.5% hit=73%
+B10,MFE/MAE Exit分析,H-F3のExit再設計余地は？,B10-HF3-MFE,H-F3,VALIDATION,,,,,,,,1.35,,,,,,conditional,2025-07-01..2026-02-28,mfe_mae_ratio=1.35
+P3-C,H-D zone+H-F3合成,zone内H-F3でedge増幅するか？,P3C-COMPOSITE,H-F3+H-D,OOS1,6.92,201,0.567,25.3,175,392,,,,,,,False,False,fail,2025-07-01..2026-02-28,Gate1 fail N帯
+P3-C,H-D zone+H-F3合成,zone内H-F3でedge増幅するか？,P3C-COMPOSITE,H-F3+H-D,OOS2,9.40,217,0.576,36.1,339,263,,,,,,,False,False,conditional,2026-03-01..2026-08-31,P+22% vs HF3単体278

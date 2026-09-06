@@ -51,8 +51,27 @@ flowchart TD
 | Phase | 目的 | 問い | 進む条件 | 止める条件 |
 |---|---|---|---|---|
 | **0** | 歪みの存在確認（安い棄却） | 「このメカニズムは統計的に残っているか？」 | metric `verdict`: pass / 条件付き weak | fail / insufficient_n |
-| **1** | 取引可能なエッジ | 「執行込みで EV・N・P が目標帯に届くか？」 | 執行込み OOS で EV 正・P 安定（SPEC §8.3） | 理論のみ正 / 執行崩壊 / 過学習 |
+| **1** | 取引可能なエッジ | 「執行込みで EV・N・P が目標帯に届くか？」 | Gate1 pass（執行 EV>0, N 40–60） | 理論のみ正 / 執行崩壊 |
+| **1+** | 統計的ロバストネス | 「過学習でないか？」 | **Research Gate pass**（V1） | WF/MC fail |
 | **2** | 追加データが要る仮説 | 「外部系列・板でエッジが増幅するか？」 | Phase2 データ取得後に同型バッチ | データ不可・効果なし |
+| **Paper** | フォワード再現 | 「バックテストと live 乖離は許容か？」 | Gate1 forward 再現 | 執行崩壊 |
+
+### 二層 Gate（2026-09-06〜）
+
+| 層 | 判定 | 用途 |
+|---|---|---|
+| **Research Gate** | EV, PF, WF, MC, Robustness | promote / Paper 移行 |
+| **Gate1 / Gate2** | EV+N, 月次 P | ビジネス KPI |
+
+Research Loop は Research Gate で stop/go。**月次 P は最適化しない**（[validation-spec.md](validation-spec.md)）。
+
+### データ分割
+
+| 名称 | 用途 |
+|---|---|
+| TRAIN（IS） | 戦略開発 |
+| VALIDATION（OOS1） | パラメータ調整 |
+| TEST（OOS2） | 最終判定のみ（ロック） |
 
 Phase0 ではロジックを組まない。Phase1 では **理論値と執行込みの二列** を必ず出す（SPEC §7）。
 
@@ -146,9 +165,13 @@ Phase0 ではロジックを組まない。Phase1 では **理論値と執行込
 
 Phase1 への promote 条件（SPEC 接続）:
 
-- **主判定**: 執行込みの P, N, EV
-- **副**: maxDD、劣化率（理論/執行）、OOS 符号安定
+- **Gate1 pass** → **V1 Research Gate** 計測（必須）
+- **Research Gate pass** → Paper 移行可
+- **Gate2 pass** → 実装検討（北極星 KPI）
+- **主判定（研究）**: Research Gate（EV, PF, WF, MC, Robustness）
+- **主判定（ビジネス）**: Gate1/Gate2
 - 理論値だけ pass → **hold**（promote しない）
+- **月次 P は Research Loop の最適化目標にしない**
 
 ---
 

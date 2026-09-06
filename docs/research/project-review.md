@@ -10,9 +10,9 @@
 
 **ゴール（SPEC v0.2）**: 執行込みで月次 +5%（¥2,500 / BR ¥50,000）を OOS 平均で達成するロジックの発見。
 
-**現状**: **Gate2 pass 候補はゼロ**。Gate1（取引可能エッジ）を安定 pass するのは **H-D + H-M4 のみ**。全局執行 OOS 月次 P の最良値は **≈¥1,127**（P1-NR、Gate2 の 45%）。
+**現状**: **Gate2 pass 候補はゼロ**。Gate1 pass は **H-D + H-M4**。**Research Gate pass** は H-D / H-F3（V1 2026-09-06）。全局執行 OOS 月次 P 最良 ≈ **¥1,127**（P1-NR、Gate2 の 45%）。
 
-**プロジェクトの健全性**: 検証インフラ（Phase0→Phase1→Paper、KB、5 段パイプライン + preflight）は **機能している**。棄却・conditional の蓄積は「失敗」ではなく、**再現性の高い学習**として価値がある。
+**プロジェクトの健全性**: Hybrid Validation（Research Gate, WF, MC, MFE/MAE）導入済み。H-D は統計的に信頼できる edge あり → Paper 継続推奨。
 
 ---
 
@@ -137,6 +137,7 @@ flowchart TB
 | verification-roadmap | 5 段パイプライン | 今回確立 |
 | Knowledge Card | 全 batch 記録 | 良好 |
 | preflight | 符号・シグナル数 | **H-F2 で warn 捕捉、H-F3 で pass** |
+| **Hybrid Validation** | V1/B10/P3-C | **Research Gate 導入済み** |
 | 成果物 JSON | git_commit 付き | 再現性向上 |
 | Paper trade | PT-A 1本 | Gate2 未到達確認 |
 | 実装フェーズ | 未着手 | Gate2 候補なしのため妥当 |

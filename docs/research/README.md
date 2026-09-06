@@ -4,28 +4,48 @@
 
 | 文書 | 役割 | 更新方針 |
 |---|---|---|
-| [`../SPEC.md`](../SPEC.md) | プロジェクト正本（資金・目標・変数構造・検証ルール） | **安易に追記しない。状態を維持** |
+| [`../SPEC.md`](../SPEC.md) | プロジェクト正本（資金・目標・二層 Gate） | 構造変更時のみ |
+| [`../../AGENTS.md`](../../AGENTS.md) | Cursor / Agent 常時ルール | 運用ルール変更時 |
+| [`validation-spec.md`](validation-spec.md) | Research Gate / WF / MC / MFE/MAE 正本 | 検証レイヤー変更時 |
 | [`edge-catalog.md`](edge-catalog.md) | エッジ仮説の網羅カタログ | 仮説の追加・棄却・Phase移動で更新 |
 | [`verification-workflow.md`](verification-workflow.md) | 検証バッチの進め方・評価・spawn ルール | 運用改善時のみ更新 |
+| [`verification-roadmap.md`](verification-roadmap.md) | PM マスター計画・バッチキュー | バッチ完了時 |
+| [`future-plan.md`](future-plan.md) | 今後の検証フロー・優先順 | フェーズ完了時 |
 | [`knowledge-log.md`](knowledge-log.md) | バッチごとの Knowledge Card 蓄積 | 検証のたびに追記 |
-| [`phase0-stats.md`](phase0-stats.md) | Phase0 記述統計の定義書 | 統計項目の定義変更時のみ更新 |
-| [`phase0-verification-sheet.csv`](phase0-verification-sheet.csv) | Phase0 検証用シート（記入用） | 計測結果・判定を記入 |
-| [`phase0-verification-sheet.md`](phase0-verification-sheet.md) | 同上の閲覧用テーブル | CSV と同期 |
+| [`strategy-registry.md`](strategy-registry.md) | 全戦略 lifecycle | V1/Paper 更新時 |
+
+## 検証シート
+
+| シート | 対象バッチ |
+|---|---|
+| [`phase0-verification-sheet.csv`](phase0-verification-sheet.csv) | B01–B09 |
+| [`phase1-verification-sheet.csv`](phase1-verification-sheet.csv) | P1-A〜P1-NR |
+| [`validation-verification-sheet.csv`](validation-verification-sheet.csv) | **V1, B10, P3-C** |
+| [`paper-verification-sheet.csv`](paper-verification-sheet.csv) | PT-A/B |
 
 ## 読む順序
 
 1. [edge-catalog.md](edge-catalog.md) — 何を検証するか
-2. [verification-workflow.md](verification-workflow.md) — どう進めるか（バッチ B01〜B07）
-3. [phase0-stats.md](phase0-stats.md) — どう測るか
-4. [phase0-verification-sheet.csv](phase0-verification-sheet.csv) — 記入
+2. [verification-workflow.md](verification-workflow.md) — どう進めるか
+3. [validation-spec.md](validation-spec.md) — Research Gate / データ分割ルール
+4. [future-plan.md](future-plan.md) — 今後の流れ
 5. [knowledge-log.md](knowledge-log.md) — 結果の蓄積
 
 ## Phase の意味
 
 | Phase | 内容 |
 |---|---|
-| **0** | トレードしない。イベント後リターン等の記述統計だけで歪みの有無を見る |
-| 1 | OHLCV でロジック化。理論値／執行込みの二列で P を採点 |
-| 2 | 板・USDT先行・清算・指標カレンダーなど追加データが必要 |
+| **0** | トレードしない。記述統計で歪みの有無 |
+| **1** | OHLCV でロジック化。理論値／執行込み二列 |
+| **1+** | V1: Walk Forward + Monte Carlo + Research Gate |
+| **2** | 板・清算等、追加データが必要 |
+| **Paper** | フォワード sim。Gate1 再現 + Gate2 |
 
-資金・N・執行仮置きなどの定数は SPEC を参照し、ここでは繰り返して固定値を増やしすぎない。
+## 二層 Gate（2026-09-06〜）
+
+| 層 | 指標 | 用途 |
+|---|---|---|
+| Research Gate | EV, PF, WF, MC | promote / Paper |
+| Gate1 / Gate2 | EV+N, 月次 P | ビジネス KPI |
+
+定数は SPEC を参照。

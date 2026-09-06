@@ -10,9 +10,11 @@ L0 / Gate 定義: [SPEC.md](../SPEC.md)、運用: [verification-roadmap.md](veri
 | batch_id | 前提 | 主仮説 | 問い |
 |---|---|---|---|
 | **B08** | — | H-F2 | ボラ急騰後に平均回帰 edge が残るか？ |
+| **B09** | — | H-F3 | レンジ端タッチから回帰 edge があるか？ |
 | **P3-A** | B08 conditional+ | H-F2 MID | 中点回帰は執行込み Gate1/2 pass か？ |
 | **P3-B** | B09 promote | H-F3 REVERT | Gate1/2 pass か？ |
-| **P3-C** | P3-B Gate1 | H-F2 + H-D filter | 合成メリット（defer） |
+| **P3-B-NR** | P3-B N 不足 | H-F3 | N 帯 40–60 に到達できるか？ |
+| **P3-C** | P3-B-NR Gate1 | H-F3 + H-D zone | zone 内 H-F3 で edge 増幅するか？ |
 
 ---
 
@@ -27,6 +29,7 @@ L0 / Gate 定義: [SPEC.md](../SPEC.md)、運用: [verification-roadmap.md](veri
 
 ```bash
 python3 -m scripts.phase0.run_batch B08
+python3 -m scripts.phase0.run_batch B09
 ```
 
 ---
@@ -50,28 +53,52 @@ Preflight（必須）:
 
 ```bash
 python3 -m scripts.phase1.run_p3_batch P3-A
+python3 -m scripts.phase1.run_p3_batch P3-B
 ```
 
 ---
 
-## 4. 合格ゲート
+## 4. P3-C — H-D zone + H-F3 合成
 
-[phase1-spec.md §6](phase1-spec.md) と同一。
-
-| Gate | 条件 |
+| 項目 | 定義 |
 |---|---|
-| Gate1 | 執行 EV > 0、N = 40–60/月 |
-| Gate2 | 執行 P ≥ ¥2,500（OOS 平均） |
+| 前提 | H-F3 Gate1 pass 設定 `cd4_q40_at20`（P3-B-NR） |
+| フィルタ | H-D RSI exit-OS トリガー後 **48 本以内** の zone のみ H-F3 エントリー許可 |
+| 合成ルール | H-F3 単体 Gate1 必須（P2-C 教訓） |
+| tuning | **VALIDATION のみ**（TEST ロック） |
+
+```bash
+python3 -m scripts.phase1.run_p3_batch P3-C
+```
+
+**結果（2026-09-06）**: conditional — OOS2 P≈¥339（H-F3 単体 +22%）、Gate1 fail（N=36）
 
 ---
 
-## 5. 成果物
+## 5. 合格ゲート（二層）
+
+[phase1-spec.md §6](phase1-spec.md) / [validation-spec.md](validation-spec.md) と同一。
+
+| 層 | Gate | 条件 |
+|---|---|---|
+| Research | Research Gate | EV>0, PF≥1.15, WF≥60%, MC, Robustness |
+| Business | Gate1 | 執行 EV > 0、N = 40–60/月 |
+| Business | Gate2 | 執行 P ≥ ¥2,500（OOS 平均） |
+
+Gate1 pass 候補は **V1** で Research Gate を確認してから Paper へ。
+
+---
+
+## 6. 成果物
 
 | パス | 内容 |
 |---|---|
 | `data/phase0/b08_results.json` | B08 結果 |
+| `data/phase0/b09_results.json` | B09 結果 |
+| `data/phase3/p3a_results.json` | P3-A 結果 |
 | `data/phase3/p3b_results.json` | P3-B 結果 |
-| [project-review.md](project-review.md) | 全体レビュー |
-| [future-plan.md](future-plan.md) | 今後のプラン |
+| `data/phase3/p3c_results.json` | P3-C 結果 |
+| `data/validation/v1_all_results.json` | V1 Research Gate |
+| [validation-verification-sheet.csv](validation-verification-sheet.csv) | 記入シート |
 
-改訂: 2026-09-06（B09/P3-B）
+改訂: 2026-09-06（P3-C, Hybrid Validation）

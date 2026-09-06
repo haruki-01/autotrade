@@ -4,35 +4,42 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 
 ## 仕様書
 
-正本（資金・目標・変数構造・検証ルール）。状態維持し、仮説の追記先にはしない。
-
-- [docs/SPEC.md](docs/SPEC.md)
+- [docs/SPEC.md](docs/SPEC.md) — L0 制約・**二層 Gate**（Research Gate + Gate1/Gate2）
+- [AGENTS.md](AGENTS.md) — Cursor / Agent 常時ルール
 
 ## リサーチ（仮説・検証）
 
-仕様書とは分離して管理する。
-
 - [docs/research/README.md](docs/research/README.md) — 置き場・読む順序
-- [docs/research/verification-workflow.md](docs/research/verification-workflow.md) — 検証フロー（バッチ B01〜B07）
+- [docs/research/validation-spec.md](docs/research/validation-spec.md) — Research Gate / WF / MC 正本
+- [docs/research/verification-workflow.md](docs/research/verification-workflow.md) — 検証フロー
+- [docs/research/future-plan.md](docs/research/future-plan.md) — **今後の検証フロー**
 - [docs/research/knowledge-log.md](docs/research/knowledge-log.md) — ナレッジ蓄積
 - [docs/research/edge-catalog.md](docs/research/edge-catalog.md) — エッジ仮説カタログ
-- [docs/research/phase0-stats.md](docs/research/phase0-stats.md) — Phase0 統計定義
-- [docs/research/phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) — 検証記入用シート
-- [docs/research/phase0-summary.md](docs/research/phase0-summary.md) — Phase0 総括（Phase1 候補一覧）
-- [docs/research/phase1-spec.md](docs/research/phase1-spec.md) — Phase1 検証仕様
 
-## Phase0 実行
+## 検証シート
+
+| シート | バッチ |
+|---|---|
+| [phase0-verification-sheet.csv](docs/research/phase0-verification-sheet.csv) | B01–B09 |
+| [phase1-verification-sheet.csv](docs/research/phase1-verification-sheet.csv) | P1-A〜 |
+| [validation-verification-sheet.csv](docs/research/validation-verification-sheet.csv) | V1, B10, P3-C |
+
+## 実行
 
 ```bash
 pip install -r requirements.txt
-python3 -m scripts.phase0.run_batch B02   # B01–B07 任意バッチ
+
+# Phase0
+python3 -m scripts.phase0.run_batch B09
+
+# Phase1 / Phase3
+python3 -m scripts.phase1.run_batch P1-A
+python3 -m scripts.phase1.run_p3_batch P3-B
+
+# Hybrid Validation（Gate1 pass 候補）
+python3 -m scripts.phase1.run_validation_batch V1 --strategy all
+python3 -m scripts.phase1.run_validation_batch B10 --strategy all
+python3 -m scripts.phase1.run_p3_batch P3-C
 ```
 
-## Phase1 実行
-
-```bash
-python3 -m scripts.phase1.run_batch P1-A   # P1-A → P1-B → P1-C → P1-R
-```
-
-データは GMO 公開 API から取得し `data/btc_jpy_5m.parquet` にキャッシュ（git 除外）。
-結果 JSON は `data/phase0/b0x_results.json`、`data/phase1/p1x_results.json`。
+データ: GMO API → `data/btc_jpy_5m.parquet`（git 除外）
