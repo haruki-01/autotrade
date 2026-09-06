@@ -1290,7 +1290,50 @@
 
 ---
 
-改訂: 2026-09-06（P1-R2C canonical exit 確定）
+### KB-GATE2-3PCT-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | GATE2-REBASELINE |
+| purpose | Gate2 を +5%（¥2,500）→ **+3%（¥1,500）** へ interim 再ベースライン |
+| decision_question | 3% に下げると過去 OOS 結果で promote 候補が出るか？ |
+
+**result_summary**
+
+- **OOS + Gate1 pass で Gate2@3% pass: 0 件**（133 metrics 再採点）
+- 旧5% pass も 0 件 → 新3% pass も **promote 候補は依然ゼロ**
+- PT-B 月次 Gate2（複利）: 旧 0/14 → 新 **0/14**（最高月 2026-03 P=¥1,754 < tgt ¥1,767）
+
+**near_miss（OOS、Gate1 pass）**
+
+| 候補 | P | 新3%達成率 |
+|---|---|---|
+| P1-R2C VALIDATION | ¥1,031 | 69% |
+| PT-B forward | ¥943 | 63% |
+| P1-R2C TEST | ¥727 | 48% |
+
+**near_miss（OOS、Gate1 fail）**
+
+| 候補 | P | 問題 |
+|---|---|---|
+| P1N-N100 OOS2 | ¥1,343 | N=64（帯超過） |
+| P1-NR global best | ¥1,127 | N=64.5（帯超過） |
+
+**learnings**
+
+- 3% 変更は **進捗指標の現実化**（最良候補 41%→69%）として有効
+- promote / 本番判断基準は **変わらない** — Research Gate + Paper 継続が主軸
+- EV* は ¥50→**¥30/回**（N=50）に連動変更
+
+**next_actions**
+
+- 新 L0（3%）で今後のバッチを採点
+- 再採点 JSON: `data/research/gate2_rescore_3pct.json`
+- 探索継続（Gate2 未到達は変わらず）
+
+---
+
+改訂: 2026-09-06（Gate2 3% 再ベースライン）
 
 ---
 

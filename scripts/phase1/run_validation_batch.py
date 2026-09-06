@@ -10,7 +10,7 @@ from pathlib import Path
 
 from scripts.phase0.common import load_or_fetch
 from scripts.phase1.backtest import run_backtest
-from scripts.phase1.common import filter_df_by_split
+from scripts.phase1.common import GATE2_P_TARGET, filter_df_by_split
 from scripts.phase1.p3bnr_eval import HF3NRConfig, _signal_kwargs
 from scripts.phase1.signals.h_d_pull import generate_canonical_hd_signals
 from scripts.phase1.signals.h_f3_range import generate_hf3_revert_signals
@@ -71,7 +71,7 @@ def run_v1(df, strategy: str, hf3_config: HF3NRConfig | None = None) -> dict:
     rg = evaluate_research_gate(stats, wf, mc, robust)
 
     gate1 = stats.get("ev", 0) > 0 and 40 <= (stats.get("monthly_n") or 0) <= 60
-    gate2 = (stats.get("p") or 0) >= 2500
+    gate2 = (stats.get("p") or 0) >= GATE2_P_TARGET
 
     return {
         "batch_id": "V1",

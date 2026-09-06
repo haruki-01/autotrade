@@ -1,0 +1,190 @@
+{
+  "gate2_old": {
+    "pct": 0.05,
+    "p_target_jpy": 2500
+  },
+  "gate2_new": {
+    "pct": 0.03,
+    "p_target_jpy": 1500
+  },
+  "ev_star_at_n50": {
+    "old": 50.0,
+    "new": 30.0
+  },
+  "summary": {
+    "total_metrics_scanned": 133,
+    "gate2_pass_at_5pct": 0,
+    "gate2_pass_at_3pct": 3,
+    "gate2_pass_at_3pct_oos_and_gate1": 0
+  },
+  "gate2_pass_at_3pct": [
+    {
+      "file": "data/paper/pt_a_results.json",
+      "metric": "monthly[4]",
+      "context": "monthly[4]",
+      "split": "",
+      "p": 1919.97,
+      "executed_ev": 44.65035896502622,
+      "monthly_n": null,
+      "gate1": null,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": true,
+      "pct_of_5pct_target": 0.768,
+      "pct_of_3pct_target": 1.28,
+      "is_oos": false
+    },
+    {
+      "file": "data/paper/pt_b_results.json",
+      "metric": "monthly[8]",
+      "context": "monthly[8]",
+      "split": "",
+      "p": 1753.69,
+      "executed_ev": 32.475761278230806,
+      "monthly_n": null,
+      "gate1": null,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": true,
+      "pct_of_5pct_target": 0.701,
+      "pct_of_3pct_target": 1.169,
+      "is_oos": false
+    },
+    {
+      "file": "data/paper/pt_a_results.json",
+      "metric": "monthly[7]",
+      "context": "monthly[7]",
+      "split": "",
+      "p": 1650.39,
+      "executed_ev": 38.38122633539527,
+      "monthly_n": null,
+      "gate1": null,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": true,
+      "pct_of_5pct_target": 0.66,
+      "pct_of_3pct_target": 1.1,
+      "is_oos": false
+    }
+  ],
+  "near_miss_oos_gate1": [
+    {
+      "file": "data/phase1/p1c_results.json",
+      "metric": "P1-COMPOSITE_IS",
+      "context": "metrics.P1-COMPOSITE_IS",
+      "split": "IS",
+      "p": 1210.72,
+      "executed_ev": 25.548934317912526,
+      "monthly_n": 47.388278388278394,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.484,
+      "pct_of_3pct_target": 0.807,
+      "is_oos": true
+    },
+    {
+      "file": "data/phase1/p1r2c_results.json",
+      "metric": "P1R2C-HD_TRAIN",
+      "context": "metrics.P1R2C-HD_TRAIN",
+      "split": "TRAIN",
+      "p": 1147.54,
+      "executed_ev": 24.53328388346711,
+      "monthly_n": 46.77501831501832,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.459,
+      "pct_of_3pct_target": 0.765,
+      "is_oos": true
+    },
+    {
+      "file": "data/paper/pt_b_results.json",
+      "metric": "VALIDATION",
+      "context": "monitoring.split_breakdown.VALIDATION",
+      "split": "",
+      "p": 1030.88,
+      "executed_ev": 21.177093090026432,
+      "monthly_n": 48.678842975206614,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.412,
+      "pct_of_3pct_target": 0.687,
+      "is_oos": true
+    },
+    {
+      "file": "data/phase1/p1r2_results.json",
+      "metric": "P1R2-BEST",
+      "context": "metrics.P1R2-BEST",
+      "split": "VALIDATION",
+      "p": 1030.88,
+      "executed_ev": 21.177093090026432,
+      "monthly_n": 48.678842975206614,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.412,
+      "pct_of_3pct_target": 0.687,
+      "is_oos": true
+    },
+    {
+      "file": "data/phase1/p1r2c_results.json",
+      "metric": "P1R2C-HD_VALIDATION",
+      "context": "metrics.P1R2C-HD_VALIDATION",
+      "split": "VALIDATION",
+      "p": 1030.88,
+      "executed_ev": 21.177093090026432,
+      "monthly_n": 48.678842975206614,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.412,
+      "pct_of_3pct_target": 0.687,
+      "is_oos": true
+    },
+    {
+      "file": "data/l1/l1_exploration_summary.json",
+      "metric": "P2-HBD-COMPOSITE_IS",
+      "context": "P2-C.metrics.P2-HBD-COMPOSITE_IS",
+      "split": "IS",
+      "p": 1021.62,
+      "executed_ev": 17.222445428625466,
+      "monthly_n": 59.318974358974366,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.409,
+      "pct_of_3pct_target": 0.681,
+      "is_oos": true
+    },
+    {
+      "file": "data/l1/p2c_results.json",
+      "metric": "P2-HBD-COMPOSITE_IS",
+      "context": "metrics.P2-HBD-COMPOSITE_IS",
+      "split": "IS",
+      "p": 1021.62,
+      "executed_ev": 17.222445428625466,
+      "monthly_n": 59.318974358974366,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.409,
+      "pct_of_3pct_target": 0.681,
+      "is_oos": true
+    },
+    {
+      "file": "data/phase1/p1a_results.json",
+      "metric": "P1-HD-PULL_M4",
+      "context": "metrics.P1-HD-PULL_M4",
+      "split": "ALL",
+      "p": 1012.75,
+      "executed_ev": 21.283470728219122,
+      "monthly_n": 47.584008221993834,
+      "gate1": true,
+      "gate2_at_5pct": false,
+      "gate2_at_3pct": false,
+      "pct_of_5pct_target": 0.405,
+      "pct_of_3pct_target": 0.675,
+      "is_oos": true
+    }
+  ],
+  "recommendation": "Gate2@3%でも OOS+Gate1 pass 候補はゼロ。L0変更は進捗指標の現実化として有効だが promote 候補は未出。最良: P1-R2C VALIDATION P≈¥1,031（新目標の69%）。"
+}

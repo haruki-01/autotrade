@@ -64,7 +64,7 @@ Phase1 P1-C と同一（R-based RR 1:2）。
 | ゲート | 条件 | 意味 |
 |---|---|---|
 | **PT-Gate1** | 執行込み EV > 0 **かつ** N ≈ 50±20%/月 | Phase1 Gate1 の forward 再現 |
-| **PT-Gate2** | 月次 P ≥ 0.05 × 当月月初 \(B\)（複利） | Gate2 の forward 版 |
+| **PT-Gate2** | 月次 P ≥ 0.03 × 当月月初 \(B\)（複利） | Gate2 の forward 版 |
 | **PT-参照** | forward EV / P1-R2C OOS avg EV ≥ 0.7 | 劣化が許容範囲 |
 
 ---

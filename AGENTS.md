@@ -21,7 +21,7 @@
 | 層 | 用途 | 指標 |
 |---|---|---|
 | **Research Gate** | promote / Paper 移行判断 | EV, PF, WF, MC, Robustness |
-| **Business Gate** | 実運用 KPI | Gate1（EV+N）, Gate2（月次 P≥¥2,500） |
+| **Business Gate** | 実運用 KPI | Gate1（EV+N）, Gate2（月次 P≥¥1,500） |
 
 ## Test データ神聖化
 

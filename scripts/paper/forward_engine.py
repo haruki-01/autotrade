@@ -13,6 +13,7 @@ import pandas as pd
 from scripts.phase0.common import add_features
 from scripts.phase1.backtest import run_backtest
 from scripts.phase1.common import (
+    GATE2_PCT,
     HD_CANONICAL_SL_PCT,
     HD_CANONICAL_TP_PCT,
     INITIAL_BANKROLL,
@@ -101,7 +102,7 @@ def run_forward_paper(
         wins = sum(1 for p in pnls_m if p > 0)
         ev = float(np.mean(pnls_m))
         p = sum(pnls_m)
-        gate2_target = b * 0.05
+        gate2_target = b * GATE2_PCT
         monthly_summary.append(
             {
                 "month": mk,
@@ -129,7 +130,7 @@ def run_forward_paper(
     max_dd = float((peak - equity).max()) if len(equity) else 0.0
 
     pt_gate1 = ev > 0 and 40 <= monthly_n <= 60
-    pt_gate2 = p_monthly >= initial_bankroll * 0.05
+    pt_gate2 = p_monthly >= initial_bankroll * GATE2_PCT
 
     return {
         "records": records,
