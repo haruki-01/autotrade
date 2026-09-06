@@ -1,0 +1,26 @@
+axis_id,axis_name,weight,score_1_mean,score_5_mean,notes
+A,edge_discovery,0.25,retail統計優位ほぼ不可,構造歪みが残存,BTC OHLCV単体は2/5。ETF日足は3.5/5
+B,cost_after_tax,0.20,コストがedgeを消す,税引後も残る,NISA現物4/5。BTCレバ2/5
+C,capital_efficiency,0.15,少額不可,少額高回転可,BTC4/5。株式2/5
+D,automation,0.15,API/時間制約厳しい,24h安定API,BTC4/5。日足ETF3.5/5
+E,risk_independence,0.15,破綻大DDリスク,現物分散安定,NISA4/5。BTCレバ2/5
+F,verification_cost,0.05,データ不足,再現BT容易,米ETF4.5/5。自前BTC3/5
+G,sustainability,0.05,規制で消える,制度安定,NISA4/5。BTC3/5
+
+market_id,market_name,layer,A,B,C,D,E,F,G,weighted_score,recommendation,next_action
+MKT-L1-INDEX,NISAインデックス+リバランス,1,3,5,3,4,5,4,5,4.0,Layer1本体,リバランスbot仕様(S1)
+MKT-US-ETF-D1,米ETF日足algo,2,3.5,3.5,2.5,3.5,3.5,4.5,4,3.4,Layer2第一候補,Phase0パイプライン移植(S2)
+MKT-JP-SWING,日本株スイングalgo,2,3,4,2,3,4,3,4,3.3,Layer2第二候補,S2後に検討
+MKT-BTC-5M,BTC/JPY 5m GMO algo,2,2,3,4,4,2,3,3,2.7,Layer2衛星hold,PT-B月次のみ。tuning停止
+
+evidence_id,source,finding,implication
+EV-HD,H-D canonical P1-R2C,VAL P≈1031 TEST P≈727 Gate2 fail,edgeありL3不足
+EV-HC2,P2-E H-C2,N≈3/month Gate1不可,稀イベント単体L1不向き
+EV-HD4,H-D4 30cycle,P≈311 N≈10/month,EV>0でもN不足
+EV-GATE2,gate2_rescore_3pct,0 candidates pass Gate2@3%,現行仮説群の上限確認
+
+pm_decision_pending,id,question,options,default_recommendation
+PM-S1,layer1_allocation,Layer1配分%,70/80/90,80
+PM-S2,layer2_primary,Layer2第一市場,US-ETF-D1 / JP-SWING / BTC-only,US-ETF-D1
+PM-S3,independence_numbers,§3目標数字記入,春希記入,要記入
+PM-S4,btc_gate_freeze,BTC Gate2を凍結し市場別Gateへ,Yes/No,Yes

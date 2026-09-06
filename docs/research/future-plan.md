@@ -1,19 +1,43 @@
 # 今後のプラン
 
-生成: 2026-09-06（PM-20260906 判断反映）  
-前提: [pm-decisions.md](pm-decisions.md) / [project-review.md](project-review.md)
+生成: 2026-09-06（**独立戦略・二層ポートフォリオ反映**）  
+前提: [independence-strategy.md](independence-strategy.md) / [pm-decisions.md](pm-decisions.md) / [project-review.md](project-review.md)
 
 ---
 
-## 1. 北極星（変更なし）
+## 0. 戦略フェーズ（新規 — 最優先）
 
-**Gate2**: 執行込み OOS 平均で月次 P ≥ ¥1,500（+3% / BR ¥50,000）
+| Phase | 内容 | 状態 |
+|---|---|---|
+| **S0** | 独立戦略正本 + 市場選定シート + 市場別 Gate | **完了** |
+| **S1** | Layer1: NISA インデックス + リバランス bot 仕様 | **次** |
+| **S2** | Layer2: 米 ETF 日足 — Phase0 パイプライン移植 | S1 後 |
+| **S3** | BTC PT-B 月次監視 | 継続 |
+| **S4** | Layer2 edge 証明 → Layer1 統合判断 | Gate 依存 |
 
-旧 Gate2（+5% / ¥2,500）は 2026-09-06 まで。再採点: [gate2_rescore_3pct.json](../../data/research/gate2_rescore_3pct.json)
+**PM 記入待ち**: [independence-strategy.md §3](independence-strategy.md) 独立目標数字
 
-Gate2 候補が出るまで **実装・本番フェーズには進まない**。
+---
 
-**追加**: Research Gate pass は「統計的に信頼できる edge あり」と判断するが、Gate2 代替ではない。
+## 1. 北極星（Layer 別）
+
+### Layer 1（資産形成 — 独立の本体）
+
+| KPI | 目標 |
+|---|---|
+| 税引後年利 | ≥ **7%**（MP-INDEX-L1 Gate2） |
+| 最大 DD | < 20% |
+| 配分 | 金融資産の **80%**（PM-20260906-STRAT） |
+
+### Layer 2（algo 研究 — 衛星）
+
+| KPI | BTC（MP-CRYPTO-5M） | 米 ETF（MP-ETF-D1） |
+|---|---|---|
+| Gate2 | P ≥ ¥1,500/月 | P ≥ **¥500/月**（+1%/月） |
+| Gate1 N | 40–60/月 | 4–20/月 |
+| 現状 | **fail** | 未着手 |
+
+Gate2 候補が出るまで **Layer2 の live 禁止**。Layer1 は NISA インデックスで並行。
 
 ---
 
@@ -109,7 +133,7 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 | 1 | **Paper PT-B**（sim） | **継続** — 月初 1 回 |
 | 2 | **H-C2 Phase1**（週明けギャップ） | **完了 → reject**（P2-E） |
 | 3 | **H-D4**（％水準ブレイク）30-cycle NR | **完了 → weak-positive / reject** |
-| 4 | **H-D5**（ピンバー）Phase1 | **次 L1 候補** |
+| 4 | **H-D5**（ピンバー）Phase1 | **defer** — S2（ETF 移植）優先 |
 | 5 | H-D / H-F3 / P3 | **hold** — tuning 禁止 |
 
 **禁止**: live paper、少額 Live、H-D パラメータ tuning、棄却リスト再探索

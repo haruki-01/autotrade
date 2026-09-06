@@ -1517,4 +1517,40 @@
 
 ---
 
-改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E / H-D4-NR**）
+### KB-STRAT-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | STRAT（独立・市場選定） |
+| date | 2026-09-06 |
+| purpose | 人生目標 ↔ 資本 ↔ 市場の分離、二層ポートフォリオ設計 |
+| decision_question | BTC 継続 vs 株式 — どの環境が独立目的に現実的か？ |
+
+**result_summary**
+
+- **二層ポートフォリオ採用**: Layer1 資産形成 80% + Layer2 algo 20%（推奨）
+- **市場スコア**: NISA指数 4.0 > 米ETF日足 3.4 > 日本株 3.3 > BTC 5m 2.7
+- **BTC 位置づけ**: Layer2 衛星 — hold / PT-B のみ。tuning 停止維持
+- **Gate 分離**: MP-CRYPTO-5M / MP-ETF-D1 / MP-JP-SWING / MP-INDEX-L1
+- H-D edge を ETF Gate2（¥500/月）換算すると **145–206%** — 市場移植 worth exploring
+
+**learnings**
+
+- ボラティリティ ≠ 独立に有利
+- Gate2@3% on BTC は Layer2 内でも最厳格
+- 独立の主エンジンは Layer1（NISA + リバランス bot）
+
+**next_actions**
+
+- §3 独立目標数字の PM 記入
+- S1: Layer1 リバランス bot 仕様
+- S2: 米 ETF 日足 Phase0 パイプライン移植
+- H-D5 / BTC 新 L1 は **S2 優先**（PM 判断）
+
+**spawned_hypotheses**
+
+- MP-ETF-D1: H-D 系メカニズムの日足移植
+
+---
+
+改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E / H-D4-NR / 独立戦略**）

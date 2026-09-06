@@ -56,7 +56,7 @@ L1（メカニズム）が書けない案はカタログに載せない。
 | H-D | 教科書シグナル遅延刈り | 初押し継続 | 0→1 | OHLCV |
 | H-D2 | キリ番マグネット | 継続 or 回帰 | 0→1 | OHLCV |
 | H-D3 | 同一インジ過密クロス | 見送り→押し | 0→1 | OHLCV |
-| **H-D4** | weak | **closed** | 30-cycle NR weak-positive（P≈¥311, N≈10/月） |
+| H-D4 | 損切幅群集（−1%等） | 分岐 | 0→1 | OHLCV |
 | H-D5 | 上位足ピンバー信仰 | 継続（逆群集） | 0→1 | OHLCV |
 
 ## Family 5｜レジーム・行き過ぎ
@@ -131,6 +131,7 @@ Phase1 詳細: [phase1-spec.md](phase1-spec.md) / [validation-spec.md](validatio
 Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  
 N 感度: [n-sensitivity-spec.md](n-sensitivity-spec.md) / KB-P1-N  
 P1-NR 10iter: [p1nr-research-report.md](p1nr-research-report.md) / KB-P1-NR  
+H-D4 30cycle: [hd4-research-report.md](hd4-research-report.md) / KB-HD4-NR  
 L1 H-B 探索: [l1-exploration-report.md](l1-exploration-report.md) / KB-L1-A〜D  
 P3 H-F2/F3: [p3-exploration-report.md](p3-exploration-report.md) / KB-B08〜P3-B  
 **全体レビュー**: [project-review.md](project-review.md) / [future-plan.md](future-plan.md)  

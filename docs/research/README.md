@@ -4,7 +4,10 @@
 
 | 文書 | 役割 | 更新方針 |
 |---|---|---|
-| [`../SPEC.md`](../SPEC.md) | プロジェクト正本（資金・目標・二層 Gate） | 構造変更時のみ |
+| [`../SPEC.md`](../SPEC.md) | BTC プロジェクト正本（Layer2 MP-CRYPTO-5M） | 構造変更時のみ |
+| [`independence-strategy.md`](independence-strategy.md) | **独立・二層ポートフォリオ戦略正本** | 目標・配分変更時 |
+| [`gate-by-market.md`](gate-by-market.md) | 市場別 Gate 基準 | 新 Market Profile 追加時 |
+| [`market-selection-sheet.csv`](market-selection-sheet.csv) | 7 軸市場評価シート | 市場追加・再評価時 |
 | [`../../AGENTS.md`](../../AGENTS.md) | Cursor / Agent 常時ルール | 運用ルール変更時 |
 | [`validation-spec.md`](validation-spec.md) | Research Gate / WF / MC / MFE/MAE 正本 | 検証レイヤー変更時 |
 | [`edge-catalog.md`](edge-catalog.md) | エッジ仮説の網羅カタログ | 仮説の追加・棄却・Phase移動で更新 |
@@ -25,6 +28,7 @@
 
 ## 読む順序
 
+0. [independence-strategy.md](independence-strategy.md) — **独立目的・Layer 配分・市場選定**
 1. [edge-catalog.md](edge-catalog.md) — 何を検証するか
 2. [verification-workflow.md](verification-workflow.md) — どう進めるか
 3. [validation-spec.md](validation-spec.md) — Research Gate / データ分割ルール
