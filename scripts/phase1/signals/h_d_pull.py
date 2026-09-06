@@ -7,7 +7,32 @@ import pandas as pd
 
 from scripts.phase0.b06_metrics import rsi_exit_os
 from scripts.phase0.common import add_features
-from scripts.phase1.common import RR_RATIO, Signal
+from scripts.phase1.common import (
+    HD_CANONICAL_COOLDOWN,
+    HD_CANONICAL_MAX_BARS,
+    HD_CANONICAL_SL_PCT,
+    HD_CANONICAL_TP_PCT,
+    RR_RATIO,
+    Signal,
+)
+
+
+def canonical_hd_kwargs(**overrides) -> dict:
+    """H-D + H-M4 canonical params (P1-R2C locked)."""
+    base = {
+        "weekend_filter": True,
+        "mode": "pull",
+        "sl_pct": HD_CANONICAL_SL_PCT,
+        "tp_pct": HD_CANONICAL_TP_PCT,
+        "max_bars": HD_CANONICAL_MAX_BARS,
+        "cooldown": HD_CANONICAL_COOLDOWN,
+    }
+    base.update(overrides)
+    return base
+
+
+def generate_canonical_hd_signals(df: pd.DataFrame, **overrides) -> list[Signal]:
+    return generate_hd_pull_signals(df, **canonical_hd_kwargs(**overrides))
 
 
 def _risk_width(entry: float, atr: float, pct_risk: float = 0.008, atr_mult: float = 0.5) -> float:

@@ -16,24 +16,29 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | **P1-B** | H-A2 | SPIKE 継続は執行込みでも Phase0 promote が再現するか？ | 2 |
 | **P1-C** | 合成 | P1-A/B pass 候補 + H-M4 を合成して Gate1/2 を満たすか？ | 3（ゲート付き） |
 | **P1-R** | H-D + H-M4 | SL/TP 幅グリッドで Gate2（月次 P≥¥2,500 = 5% of BR）到達可能か？ | 4（P1-C 後） |
+| **P1-R2** | H-D + H-M4 | 固定 TP/SL grid（VALIDATION のみ）で Exit 効率改善するか？ | 4b（B10 後） |
+| **P1-R2C** | H-D + H-M4 | P1-R2 best config を **固定** して TRAIN/VAL/TEST で再現するか？ | 4c（P1-R2 後） |
 | **P1-N** | H-D + H-M4 | N=10/20/50/100 各帯で必要 EV/W* を満たすか？ | 5（PT-A 後） |
 
 ---
 
 ## 2. 葉ルール
 
-### 2.1 H-D（P1-A）
+### 2.1 H-D（P1-A / canonical）
 
 | 項目 | 定義 |
 |---|---|
 | トリガー | RSI14 ≤ 30 後、RSI > 30 に復帰（`RSI_EXIT_OS`） |
 | エントリー | トリガー後 **12 本以内** の pull low 確定 bar で **long**（初押し待ち） |
 | 禁止 | トリガー bar 即入り（RAW） |
-| R（リスク幅） | `max(0.008 × entry, 0.5 × ATR14)` |
-| SL / TP | entry − R / entry + 2R（**RR 1:2**） |
+| **SL / TP（canonical）** | **固定 pct: SL = 0.5%, TP = 1.0%**（effective RR 1:2）。H-M4 ON |
+| SL / TP（legacy P1-A） | `max(0.008 × entry, 0.5 × ATR14)` 幅の R ベース RR 1:2 — **P1-A 再現用のみ** |
 | 時間切れ | 48 本（h240） |
 | クールダウン | 前回シグナルから 48 本 |
-| フィルタ（副実行） | H-M4: 土日新規停止 |
+| フィルタ | H-M4: 土日新規停止（canonical では **常時 ON**） |
+
+**canonical 確定根拠**: P1-R2 VALIDATION best（sl=0.5%, tp=1.0%）→ P1-R2C で TRAIN/VAL/TEST 固定検証。  
+コード定数: `HD_CANONICAL_SL_PCT` / `HD_CANONICAL_TP_PCT`（`scripts/phase1/common.py`）。
 
 ### 2.2 H-A2（P1-B）
 
@@ -66,6 +71,15 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 | cooldown | 48, 96 |
 | 手法 | 理論値全組み合わせスクリーニング → 上位15を執行込み再検証 |
 | 選定 | OOS 平均 P 最大かつ Gate1/2 優先 |
+
+### 2.5 固定 Exit 確認（P1-R2C）
+
+| 項目 | 定義 |
+|---|---|
+| 対象 | P1-R2 VALIDATION best（**sl=0.5%, tp=1.0%**） |
+| 分割 | TRAIN / VALIDATION / TEST 各 1 回（**tuning 禁止**） |
+| Research Gate | VALIDATION のみ再計測（config は P1-R2 で確定済み） |
+| 判定 | TEST で Gate1 pass + EV>0 → Paper 継続。Gate2 は TEST の **結果** として記録 |
 
 ---
 
@@ -176,10 +190,12 @@ Phase1 の P 値は固定 Q 前提のため、Gate2 再ベースライン時は 
 | `data/phase1/p1b_results.json` | P1-B 結果 |
 | `data/phase1/p1c_results.json` | P1-C 結果 |
 | `data/phase1/p1r_results.json` | P1-R グリッド結果 |
+| `data/phase1/p1r2_results.json` | P1-R2 Exit grid 結果 |
+| `data/phase1/p1r2c_results.json` | P1-R2C 固定 config 全 split 結果 |
 | `data/validation/v1_*.json` | V1 Research Gate 結果 |
 | `data/validation/b10_*.json` | B10 MFE/MAE 結果 |
 | [phase1-verification-sheet.csv](phase1-verification-sheet.csv) | Phase1 記入シート |
 | [validation-verification-sheet.csv](validation-verification-sheet.csv) | V1/B10/P3-C 記入シート |
 | [knowledge-log.md](knowledge-log.md) | Knowledge Cards |
 
-改訂: 2026-09-06（Hybrid Validation — Research Gate, TRAIN/VAL/TEST）
+改訂: 2026-09-06（H-D canonical exit P1-R2C — sl0.5%/tp1.0%）

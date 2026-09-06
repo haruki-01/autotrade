@@ -13,7 +13,7 @@ import pandas as pd
 from scripts.phase0.common import add_features
 from scripts.phase1.backtest import run_backtest
 from scripts.phase1.common import INITIAL_BANKROLL, POSITION_Q, filter_df_by_split
-from scripts.phase1.signals.h_d_pull import generate_hd_pull_signals
+from scripts.phase1.signals.h_d_pull import generate_canonical_hd_signals
 
 OOS_FORWARD = ("OOS1", "OOS2")
 DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "paper"
@@ -51,7 +51,7 @@ def run_forward_paper(
     forward_df = pd.concat(parts, ignore_index=True)
     forward_df = add_features(forward_df)
 
-    sigs = generate_hd_pull_signals(forward_df, weekend_filter=True, mode="pull")
+    sigs = generate_canonical_hd_signals(forward_df)
     trades = run_backtest(forward_df, sigs, apply_execution=True, seed=seed)
 
     bankroll = float(initial_bankroll)

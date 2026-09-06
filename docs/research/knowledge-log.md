@@ -1221,8 +1221,45 @@
 
 **next_actions**
 
-- IS/OOS2/TEST で best config 再計測（固定 config、追加 tuning なし）
-- H-D 葉ルール更新検討
+- ~~IS/OOS2/TEST で best config 再計測~~ → **P1-R2C 完了**（KB-P1-R2C 参照）
+- H-D 葉ルール更新 → **phase1-spec §2.1 canonical 確定**
+
+---
+
+### KB-P1-R2C-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-R2C |
+| purpose | P1-R2 best config 固定 — TRAIN/VAL/TEST 再現（tuning 禁止） |
+| decision_question | sl=0.5%/tp=1.0% は OOS（TEST）でも Gate1 pass するか？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- TRAIN: EV=+¥24.5, P≈¥1,148, Gate1 pass
+- VALIDATION: EV=+¥21.2, P≈¥1,031, Gate1 pass, Research Gate pass
+- TEST: EV=+¥14.1, P≈¥727, Gate1 pass（Gate2 の 29%）
+- PT-B（canonical）: P≈¥943 forward（旧 ¥692 から +36%）
+
+**learnings**
+
+- P1-R2 VALIDATION best は **TEST でも EV>0・Gate1 pass** — overfit 兆候なし
+- TEST P は VAL より −30% だが依然 Gate1 帯内（N=51）
+- canonical exit を phase1-spec / V1 / Paper に統一
+
+**next_actions**
+
+- Paper 継続監視（PT-B）
+- Gate2 未到達のため本番採用は見送り
+
+**catalog_updates**
+
+- H-D: status → **Phase1 canonical 確定**（sl0.5%/tp1.0% + H-M4）
+
+---
+
+改訂: 2026-09-06（P1-R2C canonical exit 確定）
 
 ---
 

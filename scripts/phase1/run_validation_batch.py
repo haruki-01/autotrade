@@ -12,7 +12,7 @@ from scripts.phase0.common import load_or_fetch
 from scripts.phase1.backtest import run_backtest
 from scripts.phase1.common import filter_df_by_split
 from scripts.phase1.p3bnr_eval import HF3NRConfig, _signal_kwargs
-from scripts.phase1.signals.h_d_pull import generate_hd_pull_signals
+from scripts.phase1.signals.h_d_pull import generate_canonical_hd_signals
 from scripts.phase1.signals.h_f3_range import generate_hf3_revert_signals
 from scripts.phase1.validation.monte_carlo import run_monte_carlo, run_trade_shuffle
 from scripts.phase1.validation.research_gate import evaluate_research_gate
@@ -32,7 +32,7 @@ def _git_commit() -> str:
 
 
 def _hd_signal_fn(sub):
-    return generate_hd_pull_signals(sub, weekend_filter=True, mode="pull")
+    return generate_canonical_hd_signals(sub)
 
 
 def _hf3_signal_fn(cfg: HF3NRConfig):
