@@ -11,7 +11,8 @@ L0 / Gate 定義: [SPEC.md](../SPEC.md)、運用: [verification-roadmap.md](veri
 |---|---|---|---|
 | **B08** | — | H-F2 | ボラ急騰後に平均回帰 edge が残るか？ |
 | **P3-A** | B08 conditional+ | H-F2 MID | 中点回帰は執行込み Gate1/2 pass か？ |
-| **P3-C** | P3-A Gate1 | H-F2 + H-D filter | H-D ゲートで edge 増幅するか？（defer） |
+| **P3-B** | B09 promote | H-F3 REVERT | Gate1/2 pass か？ |
+| **P3-C** | P3-B Gate1 | H-F2 + H-D filter | 合成メリット（defer） |
 
 ---
 
@@ -69,7 +70,8 @@ python3 -m scripts.phase1.run_p3_batch P3-A
 | パス | 内容 |
 |---|---|
 | `data/phase0/b08_results.json` | B08 結果 |
-| `data/phase3/p3a_results.json` | P3-A 結果 |
-| `docs/research/knowledge-log.md` | KB-B08, KB-P3-A |
+| `data/phase3/p3b_results.json` | P3-B 結果 |
+| [project-review.md](project-review.md) | 全体レビュー |
+| [future-plan.md](future-plan.md) | 今後のプラン |
 
-改訂: 2026-09-06
+改訂: 2026-09-06（B09/P3-B）

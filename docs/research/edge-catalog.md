@@ -120,14 +120,16 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | H-B | conditional | **reject** | L1 P2-A/B/D: Gate2 不可。OOS2 のみ Gate1 pass（不安定）。H-M5 フィルタ有効 |
 | H-D | conditional | **conditional** | Gate1 pass。PT-A/P1-NR: Gate2 未達（最良 P≈¥1,127）。W≥W* も EV 不足 |
 | H-B2/H-B3/H-F1/稀イベント | reject | — | — |
-| H-F2 | conditional | **reject** | B08 MID weak → P3-A 執行 EV 負。preflight 符号 warn |
+| H-F2 | conditional | **reject** | B08→P3-A 執行 EV 負 |
+| **H-F3** | **promote** | **conditional（N 不足）** | B09 pass、P3-B OOS2 P≈¥261 だが N≈14/月 |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / KB-P1-A〜C / [knowledge-log.md](knowledge-log.md)  
 Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  
 N 感度: [n-sensitivity-spec.md](n-sensitivity-spec.md) / KB-P1-N  
 P1-NR 10iter: [p1nr-research-report.md](p1nr-research-report.md) / KB-P1-NR  
 L1 H-B 探索: [l1-exploration-report.md](l1-exploration-report.md) / KB-L1-A〜D  
-P3 H-F2: [p3-exploration-report.md](p3-exploration-report.md) / KB-B08, KB-P3-A  
+P3 H-F2/F3: [p3-exploration-report.md](p3-exploration-report.md) / KB-B08〜P3-B  
+**全体レビュー**: [project-review.md](project-review.md) / [future-plan.md](future-plan.md)  
 検証ロードマップ: [verification-roadmap.md](verification-roadmap.md)
 
-改訂: 2026-09-06（B08/P3-A H-F2）
+改訂: 2026-09-06（B09/P3-B + project review）

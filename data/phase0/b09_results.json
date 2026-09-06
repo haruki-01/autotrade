@@ -1,0 +1,58 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B09",
+  "batch_verdict": "promote",
+  "metrics": {
+    "P0-HF3-EDGE": {
+      "n": 5294,
+      "hit_rate": 0.6409142425387231,
+      "mean_edge": 0.0009607285610918522,
+      "median_edge": 0.0008022833374115024,
+      "p25": -0.0007594985274369803,
+      "p75": 0.002527369083120845,
+      "mean_abs_move": 0.002361131749076474,
+      "vs_baseline": 0.0019214571221837045,
+      "verdict": "pass",
+      "notes": "vs BREAK diff=0.001921"
+    },
+    "P0-HF3-BREAK": {
+      "n": 5294,
+      "hit_rate": 0.35889686437476387,
+      "mean_edge": -0.0009607285610918522,
+      "median_edge": -0.0008022833374115024,
+      "p25": -0.002527369083120845,
+      "p75": 0.0007594985274369803,
+      "mean_abs_move": 0.002361131749076474,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "breakout control at edge"
+    },
+    "P0-HF3-EV": {
+      "n": 5294,
+      "hit_rate": 0.6409142425387231,
+      "mean_edge": 0.002361131749076474,
+      "median_edge": 0.001710740691072521,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": 0.002361131749076474,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "mean|edge|=0.0024, target>=0.5% for Gate2 feasibility"
+    },
+    "P0-HF3-FREQ": {
+      "n": 5294,
+      "hit_rate": NaN,
+      "mean_edge": 165.6211305241521,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "events/month=165.6"
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "d30a08c99157a20d9a6c5aff3ed9e56fa40478ce"
+}

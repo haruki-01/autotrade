@@ -1,0 +1,119 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P3-B",
+  "batch_verdict": "reject",
+  "preflight": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "signal_count_hf3_revert",
+        "ok": true,
+        "level": "error",
+        "detail": "hf3_revert: count=347 (min=30), expected_monthly≈165.6"
+      },
+      {
+        "name": "sign_parity_hf3_revert",
+        "ok": true,
+        "level": "info",
+        "detail": "P0 mean=0.0010, P1 theory EV=15.3978"
+      }
+    ]
+  },
+  "metrics": {
+    "P3-HF3-REVERT_IS": {
+      "theoretical_ev": 14.35068461916429,
+      "executed_ev": 9.266036446613585,
+      "degradation": 0.6456860207379563,
+      "n": 232,
+      "w": 0.5948275862068966,
+      "monthly_n": 12.934212454212455,
+      "p": 119.84888400897594,
+      "max_dd": 194.60000919620938,
+      "random_w": 0.5005625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "IS",
+      "mode": "revert",
+      "cooldown": 12
+    },
+    "P3-HF3-REVERT_OOS1": {
+      "theoretical_ev": 8.593488398960517,
+      "executed_ev": 1.3555401463791144,
+      "degradation": 0.1577403824206108,
+      "n": 63,
+      "w": 0.5873015873015873,
+      "monthly_n": 7.9244628099173555,
+      "p": 10.74192747733122,
+      "max_dd": 407.1330350218594,
+      "random_w": 0.4999375,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "mode": "revert",
+      "cooldown": 12
+    },
+    "P3-HF3-REVERT_OOS2": {
+      "theoretical_ev": 13.50191572056296,
+      "executed_ev": 18.681909633975724,
+      "degradation": 1.3836488110738099,
+      "n": 84,
+      "w": 0.7142857142857143,
+      "monthly_n": 13.972459016393444,
+      "p": 261.03221670869164,
+      "max_dd": 59.17040581685524,
+      "random_w": 0.49237499999999995,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "mode": "revert",
+      "cooldown": 12
+    },
+    "P3-HF3-BREAK-CTRL": {
+      "theoretical_ev": -14.466738204878782,
+      "executed_ev": -18.211928571383694,
+      "degradation": 1.2588828465314925,
+      "n": 389,
+      "w": 0.3033419023136247,
+      "monthly_n": 12.169743062692703,
+      "p": -221.63449138985175,
+      "max_dd": 7119.281589323808,
+      "random_w": 0.4975625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "reference",
+      "split": "ALL",
+      "mode": "break",
+      "cooldown": 12
+    },
+    "P3-HF3-M4": {
+      "theoretical_ev": 13.094298692477281,
+      "executed_ev": 9.691467288863354,
+      "degradation": 0.7401287779108884,
+      "n": 390,
+      "w": 0.6153846153846154,
+      "monthly_n": 12.201027749229189,
+      "p": 118.24586132216875,
+      "max_dd": 239.63159257424377,
+      "random_w": 0.4975625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "ALL",
+      "mode": "revert",
+      "cooldown": 12,
+      "weekend_filter": true,
+      "cooldown_tuned": 12
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "d30a08c99157a20d9a6c5aff3ed9e56fa40478ce"
+}

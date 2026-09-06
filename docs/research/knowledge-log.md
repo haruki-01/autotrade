@@ -1005,4 +1005,71 @@
 
 ---
 
-改訂: 2026-09-06（B08 / P3-A H-F2）
+### KB-B09-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | B09 |
+| date | 2026-09-06 |
+| purpose | H-F3 レンジ内回帰 edge（Phase0） |
+| decision_question | レンジ端タッチからの回帰は BREAK より優位か？ |
+| hypotheses | H-F3 REVERT（主）, BREAK（対照） |
+| metrics | P0-HF3-EDGE, EV, FREQ |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **promote**
+- EDGE: mean=+0.096%, hit=64.1%, n=5,294 → **pass**
+- vs BREAK diff=+0.19% — 回帰方向が明確に優位
+- mean\|edge\|=0.24% → Gate2 必要 0.5% には未達（weak EV 指標）
+
+**learnings**
+
+- Phase0 では **H-D / H-B / H-F2 より strongest** の一つ
+- 12h tight range + 2h edge touch の組み合わせ有効
+
+**next_actions**
+
+- P3-B 執行込み検証
+
+---
+
+### KB-P3-B-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P3-B |
+| date | 2026-09-06 |
+| purpose | H-F3 レンジ端回帰の Phase1 執行込み |
+| decision_question | REVERT は RR 1:2 + H-M4 で Gate1/2 pass か？ |
+| hypotheses | H-F3 REVERT, BREAK 対照 |
+| metrics | P3-HF3-REVERT（IS/OOS1/OOS2） |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **reject**（Gate1 — N 帯不足）
+- OOS2: 執行 P≈¥261, W=71.4%, EV=+¥18.7, **N=14/月**
+- OOS1: P≈¥11, N=8/月
+- preflight sign_parity **pass**（P0 +0.001 vs P1 theory +15.4）
+- BREAK 対照: P≈−¥222 — 回帰優位は Phase1 でも維持
+
+**learnings**
+
+- **edge は OOS2 で確認** — H-F2 とは異なり Phase0→Phase1 符号一致
+- **N≈12–14/月** が Gate1/Gate2 阻害要因（EV ではない）
+- cooldown=12 でも N 帯 40–60 に遠い → P3-B-NR で N 拡大が必要
+
+**next_actions**
+
+- **P3-B-NR**: cooldown 短縮 / 検出緩和で N→50 探索
+- Gate1 pass 後 P3-C（H-D filter + H-F3）
+
+**catalog_updates**
+
+- H-F3: Phase0 promote → Phase1 **conditional（N 不足）**
+
+---
+
+改訂: 2026-09-06（B09 / P3-B H-F3 + project review）

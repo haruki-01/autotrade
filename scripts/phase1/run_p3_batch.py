@@ -17,11 +17,12 @@ OUT_DIR = Path(__file__).resolve().parents[2] / "data" / "phase3"
 
 BATCH_MODULES = {
     "P3-A": "scripts.phase1.p3a_hf2",
+    "P3-B": "scripts.phase1.p3b_hf3",
 }
 
 
 def _load_phase0_baseline(batch_id: str) -> dict | None:
-    mapping = {"P3-A": "b08"}
+    mapping = {"P3-A": "b08", "P3-B": "b09"}
     slug = mapping.get(batch_id.upper())
     if not slug:
         return None
