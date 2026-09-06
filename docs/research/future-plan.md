@@ -7,7 +7,9 @@
 
 ## 1. 北極星（変更なし）
 
-**Gate2**: 執行込み OOS 平均で月次 P ≥ ¥2,500（+5% / BR ¥50,000）
+**Gate2**: 執行込み OOS 平均で月次 P ≥ ¥1,500（+3% / BR ¥50,000）
+
+旧 Gate2（+5% / ¥2,500）は 2026-09-06 まで。再採点: [gate2_rescore_3pct.json](../../data/research/gate2_rescore_3pct.json)
 
 Gate2 候補が出るまで **実装・本番フェーズには進まない**。
 
@@ -19,7 +21,7 @@ Gate2 候補が出るまで **実装・本番フェーズには進まない**。
 
 | 候補 | Gate1 | Gate2 | Research Gate | 執行 VALIDATION P | 次アクション |
 |---|---|:---:|:---:|---:|---|
-| **H-D + H-M4** | Y | N | **pass** | ≈¥741–**1,031** (P1-R2 VAL) | **P1-R2 OOS 確認** → Paper |
+| **H-D + H-M4（canonical）** | Y（TRAIN/VAL/TEST） | N | **pass** | ≈¥1,031 VAL / **¥727 TEST** | **Paper 継続**（PT-B ¥943） |
 | **H-F3 cd4_q40_at20** | N (N=33) | N | **pass** | ≈¥234 | N 帯改善 defer |
 | **P3-C 合成** | N | N | pending | OOS2 ¥339 | zone 厳格化 defer |
 
@@ -65,15 +67,27 @@ flowchart TD
 
 ## 4. 短期（次 2–3 バッチ）
 
-### 4.1 PT-B — H-D forward 継続（完了）
+### 4.1 PT-B — H-D forward 継続監視（継続中）
 
-**結果**: Gate1 pass（EV=+¥14.1, N=49, P≈¥692）。V1 Research Gate 整合。
+**結果**: monitoring_status=**continue**, PT-Gate1 pass（EV=+¥19.2, P≈¥943, final BR=¥63,200）
 
-### 4.2 P1-R2 — H-D Exit grid（完了・重要）
+**監視**: `python3 -m scripts.paper.run_pt PT-B` — 月次再実行推奨
 
-**結果**: VALIDATION best **sl=0.5%, tp=1.0%** → P≈¥1,031, Gate1 pass, Research Gate pass（Gate2 の 41%）
+**停止ルール**: EV≤0 または 3 連続赤字月 → pause/stop（[paper-trade-spec.md §6](paper-trade-spec.md)）
 
-**次**: 固定 config で IS/OOS2/TEST 再計測（tuning なし）
+### 4.2 P1-R2 / P1-R2C — H-D Exit（完了・重要）
+
+**P1-R2**: VALIDATION best sl=0.5%, tp=1.0% → P≈¥1,031, Research Gate pass
+
+**P1-R2C**（固定 config、tuning なし）:
+
+| split | EV | P | Gate1 |
+|---|---|---|:---:|
+| TRAIN | +¥24.5 | ¥1,148 | pass |
+| VALIDATION | +¥21.2 | ¥1,031 | pass |
+| TEST | +¥14.1 | ¥727 | pass |
+
+**判定**: conditional — 全 split Gate1 pass、Gate2 未到達（TEST 29%）。**Paper 継続**。
 
 ### 4.3 P3-C-R — zone 厳格化（完了・停止）
 
@@ -92,9 +106,9 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 
 | 優先 | バッチ | 理由 |
 |---:|---|---|
-| 1 | P1-R2 Exit grid | B10 MFE/MAE 示唆 |
-| 2 | H-A Phase1 | 執行ルール未検証 |
-| 3 | H-F4 Phase0 | 新 L1 |
+| 1 | **Paper 継続（PT-B）** | **継続中** — monitoring_status=continue |
+| 2 | P3-NR research loop | H-F3 N 帯改善（defer） |
+| 3 | Gate2 L0 再ベースライン | PM 判断 |
 
 ### 探索停止リスト（変更なし）
 

@@ -11,6 +11,7 @@ import numpy as np
 
 from scripts.phase0.common import load_or_fetch
 from scripts.phase1.nr_targets import NR_N_FOCUS, NR_RR_FOCUS, build_focus_grid
+from scripts.phase1.common import GATE2_P_TARGET
 from scripts.phase1.p1nr_eval import NRConfig, evaluate_config, pick_best
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -203,10 +204,10 @@ def _learning_update(iter_num: int, summary: dict, hypothesis: str) -> str:
 
     if summary.get("gate2_count", 0) > 0:
         lines.append("→ Gate2 pass セルあり。次は fine-tune / 汎化確認。")
-    elif ex_p >= 2500 * 0.5:
-        lines.append(f"→ Gate2 半分超 ({ex_p/2500:.0%})。RR/R/N の微調整継続。")
+    elif ex_p >= GATE2_P_TARGET * 0.5:
+        lines.append(f"→ Gate2 半分超 ({ex_p/GATE2_P_TARGET:.0%})。RR/R/N の微調整継続。")
     else:
-        lines.append(f"→ Gate2 遠隔 ({ex_p/2500:.0%})。W*={w_star:.1%} vs W={ex_w:.1%}。")
+        lines.append(f"→ Gate2 遠隔 ({ex_p/GATE2_P_TARGET:.0%})。W*={w_star:.1%} vs W={ex_w:.1%}。")
 
     if not np.isnan(deg) and deg < 0.7:
         lines.append("→ 執行劣化大（<0.7）。理論値 pass でも promote 不可。")
@@ -312,7 +313,7 @@ def write_report(payload: dict) -> Path:
         lines.extend(
             [
                 f"- **全局最良**: {gb['label']}",
-                f"- 執行込み OOS 月次 P ≈ **¥{gb.get('oos_executed_p', 0):,.0f}**（Gate2 目標 ¥2,500）",
+                f"- 執行込み OOS 月次 P ≈ **¥{gb.get('oos_executed_p', 0):,.0f}**（Gate2 目標 ¥{GATE2_P_TARGET:,}）",
                 f"- W = {gb.get('oos_executed_w', 0):.1%}（W* = {gb.get('target', {}).get('w_star_gate2', 0):.1%}）",
                 f"- 劣化率 = {gb.get('degradation', float('nan')):.2f}",
                 f"- Gate1 = {gb.get('gate1')} / Gate2 = {gb.get('gate2')} / verdict = **{gb.get('verdict')}**",

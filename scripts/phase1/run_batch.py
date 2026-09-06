@@ -21,6 +21,7 @@ BATCH_MODULES = {
     "P1-C": "scripts.phase1.p1c_composite",
     "P1-R": "scripts.phase1.p1r_grid",
     "P1-R2": "scripts.phase1.p1r2_exit_grid",
+    "P1-R2C": "scripts.phase1.p1r2_confirm",
     "P1-HA": "scripts.phase1.p1ha_revert",
     "P1-N": "scripts.phase1.p1n_sensitivity",
 }
@@ -37,14 +38,19 @@ def run_batch(batch_id: str, df=None) -> dict:
     results = mod.compute(df)
     verdict_fn = getattr(mod, "batch_verdict", None)
 
-    if batch_id.upper() in ("P1-R", "P1-R2"):
+    structured = batch_id.upper() in ("P1-R", "P1-R2", "P1-R2C")
+    if structured:
         metrics = results["metrics"]
-        extra = {k: results[k] for k in ("grid", "gate2_combos", "gate1_combos", "tuning_split") if k in results}
+        extra = {
+            k: results[k]
+            for k in ("grid", "gate2_combos", "gate1_combos", "tuning_split", "fixed_config")
+            if k in results
+        }
     else:
         metrics = results
         extra = {}
 
-    batch_verdict = verdict_fn(results if batch_id.upper() in ("P1-R", "P1-R2") else metrics) if verdict_fn else "unknown"
+    batch_verdict = verdict_fn(results if structured else metrics) if verdict_fn else "unknown"
     payload = {
         "sample_period": f"{SAMPLE_START}..{SAMPLE_END}",
         "n_bars": len(df),

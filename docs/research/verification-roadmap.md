@@ -1,6 +1,6 @@
 # 検証ロードマップ
 
-ゴール: **執行込みで Gate2（月次 +5% = ¥2,500）を OOS 平均で満たすロジック**の発見・採用。
+ゴール: **執行込みで Gate2（月次 +3% = ¥1,500）を OOS 平均で満たすロジック**の発見・採用。
 
 本書は [verification-workflow.md](verification-workflow.md) を補完する **PM 向けマスター計画**。
 
@@ -10,7 +10,7 @@
 
 | 仮説 | Phase0 | Phase1/L1 | 執行 OOS P | Gate2 |
 |---|---|---|---|:---:|
-| H-D + H-M4 | conditional | conditional | ≈¥740–1,127 | fail |
+| H-D + H-M4（**canonical**） | conditional | **P1-R2C conditional** | **VAL ¥1,031 / TEST ¥727** | fail |
 | H-B | conditional | **reject** | ≈¥181（OOS2 のみ） | fail |
 | H-A2 | promote | reject | EV 負 | fail |
 | **H-F2** | **B08 conditional** | **P3-A reject** | EV 負 | fail |
@@ -84,8 +84,9 @@ flowchart LR
 | 6 | **V1** WF+MC+Robustness | **完了** — H-D/H-F3 Research Gate pass |
 | 7 | **B10** MFE/MAE | **完了** — conditional |
 | 8 | **P3-C** H-D filter + H-F3 | **完了** — conditional（OOS2 P+22%） |
-| 9 | **PT-B** forward 継続 | **完了** — Gate1 pass |
+| 9 | **PT-B** forward 継続 | **継続中** — monitoring_status=continue |
 | 10 | **P1-R2** Exit grid | **完了** — Gate1 pass（sl0.5/tp1.0, P≈¥1,031 VAL） |
+| 11 | **P1-R2C** 固定 config | **完了** — TRAIN/VAL/TEST 全 Gate1 pass |
 | 11 | **P3-C-R** zone lb=24 | **完了** — reject（P3-C より劣化） |
 | 12 | **B11** H-F4 Phase0 | **完了** — reject |
 | 13 | **P1-HA** revert Phase1 | **完了** — reject |

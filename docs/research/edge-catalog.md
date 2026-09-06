@@ -118,7 +118,7 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | H-A | reject | — | — |
 | H-A2 | promote | **reject** | RR 1:2 執行込み EV 負 |
 | H-B | conditional | **reject** | L1 P2-A/B/D: Gate2 不可。OOS2 のみ Gate1 pass（不安定）。H-M5 フィルタ有効 |
-| H-D | conditional | **conditional** | Gate1 pass。**V1 Research Gate pass**（PF=1.64, WF 3/3）。Paper 継続 |
+| H-D | conditional | **conditional（canonical）** | P1-R2C: TRAIN/VAL/TEST 全 Gate1 pass。sl0.5%/tp1.0% + H-M4。**Research Gate pass**（PF=2.17）。Paper 継続 |
 | H-B2/H-B3/H-F1/稀イベント | reject | — | — |
 | H-F2 | conditional | **reject** | B08→P3-A 執行 EV 負 |
 | **H-F3** | **promote** | **conditional** | P3-B-NR Gate1 pass。**V1 Research Gate pass**（PF=1.53）。Gate2 不可 |

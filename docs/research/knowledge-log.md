@@ -1221,8 +1221,119 @@
 
 **next_actions**
 
-- IS/OOS2/TEST で best config 再計測（固定 config、追加 tuning なし）
-- H-D 葉ルール更新検討
+- ~~IS/OOS2/TEST で best config 再計測~~ → **P1-R2C 完了**（KB-P1-R2C 参照）
+- H-D 葉ルール更新 → **phase1-spec §2.1 canonical 確定**
+
+---
+
+### KB-P1-R2C-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-R2C |
+| purpose | P1-R2 best config 固定 — TRAIN/VAL/TEST 再現（tuning 禁止） |
+| decision_question | sl=0.5%/tp=1.0% は OOS（TEST）でも Gate1 pass するか？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- TRAIN: EV=+¥24.5, P≈¥1,148, Gate1 pass
+- VALIDATION: EV=+¥21.2, P≈¥1,031, Gate1 pass, Research Gate pass
+- TEST: EV=+¥14.1, P≈¥727, Gate1 pass（Gate2 の 29%）
+- PT-B（canonical）: P≈¥943 forward（旧 ¥692 から +36%）
+
+**learnings**
+
+- P1-R2 VALIDATION best は **TEST でも EV>0・Gate1 pass** — overfit 兆候なし
+- TEST P は VAL より −30% だが依然 Gate1 帯内（N=51）
+- canonical exit を phase1-spec / V1 / Paper に統一
+
+**next_actions**
+
+- ~~Paper 継続監視（PT-B）~~ → **継続中**（KB-PT-B-2 参照）
+- Gate2 未到達のため本番採用は見送り
+
+**catalog_updates**
+
+- H-D: status → **Phase1 canonical 確定**（sl0.5%/tp1.0% + H-M4）
+
+---
+
+### KB-PT-B-2-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | PT-B（継続監視 #2） |
+| purpose | canonical H-D forward 監視 — P1-R2C ベンチマーク + 停止ルール |
+| decision_question | monitoring_status=continue で Paper 継続可能か？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- PT-Gate1 pass: EV=+¥19.2, N=49, P≈¥943（複利 forward）
+- **monitoring_status: continue**（停止ルール未発動）
+- split: VALIDATION EV=+¥21.2/P=¥1,031, TEST EV=+¥14.1/P=¥727 — いずれも Gate1 pass
+- Gate2: 14 ヶ月中 0 ヶ月 pass（gate2_pass_rate=0%）
+- final_BR=¥63,200（+26.4%）
+
+**learnings**
+
+- P1-R2C ベンチマークと forward が整合（ev_vs_p1r2c≈1.17）
+- 2026-04〜06 は低 P 帯（¥148–532/月）だが EV>0 維持
+- Gate2 未到達でも Gate1 + Research Gate は安定
+
+**next_actions**
+
+- **Paper 継続**（monitoring_status=continue）
+- 月次で `python3 -m scripts.paper.run_pt PT-B` を再実行
+- Gate2 L0 再ベースラインは PM 判断
+
+---
+
+### KB-GATE2-3PCT-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | GATE2-REBASELINE |
+| purpose | Gate2 を +5%（¥2,500）→ **+3%（¥1,500）** へ interim 再ベースライン |
+| decision_question | 3% に下げると過去 OOS 結果で promote 候補が出るか？ |
+
+**result_summary**
+
+- **OOS + Gate1 pass で Gate2@3% pass: 0 件**（133 metrics 再採点）
+- 旧5% pass も 0 件 → 新3% pass も **promote 候補は依然ゼロ**
+- PT-B 月次 Gate2（複利）: 旧 0/14 → 新 **0/14**（最高月 2026-03 P=¥1,754 < tgt ¥1,767）
+
+**near_miss（OOS、Gate1 pass）**
+
+| 候補 | P | 新3%達成率 |
+|---|---|---|
+| P1-R2C VALIDATION | ¥1,031 | 69% |
+| PT-B forward | ¥943 | 63% |
+| P1-R2C TEST | ¥727 | 48% |
+
+**near_miss（OOS、Gate1 fail）**
+
+| 候補 | P | 問題 |
+|---|---|---|
+| P1N-N100 OOS2 | ¥1,343 | N=64（帯超過） |
+| P1-NR global best | ¥1,127 | N=64.5（帯超過） |
+
+**learnings**
+
+- 3% 変更は **進捗指標の現実化**（最良候補 41%→69%）として有効
+- promote / 本番判断基準は **変わらない** — Research Gate + Paper 継続が主軸
+- EV* は ¥50→**¥30/回**（N=50）に連動変更
+
+**next_actions**
+
+- 新 L0（3%）で今後のバッチを採点
+- 再採点 JSON: `data/research/gate2_rescore_3pct.json`
+- 探索継続（Gate2 未到達は変わらず）
+
+---
+
+改訂: 2026-09-06（Gate2 3% 再ベースライン）
 
 ---
 

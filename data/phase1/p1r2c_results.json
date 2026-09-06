@@ -1,0 +1,89 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P1-R2C",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P1R2C-HD_TRAIN": {
+      "theoretical_ev": 28.29991148672537,
+      "executed_ev": 24.53328388346711,
+      "degradation": 0.8669032019755584,
+      "n": 839,
+      "w": 0.5852205005959475,
+      "monthly_n": 46.77501831501832,
+      "p": 1147.5448029767178,
+      "max_dd": 515.3464284369693,
+      "random_w": 0.42168750000000005,
+      "fee_breakeven_w": 0.36,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "TRAIN",
+      "sl_pct": 0.005,
+      "tp_pct": 0.01,
+      "weekend_filter": true
+    },
+    "P1R2C-HD_VALIDATION": {
+      "theoretical_ev": 20.885184788123613,
+      "executed_ev": 21.177093090026432,
+      "degradation": 1.013976812025566,
+      "n": 387,
+      "w": 0.5762273901808785,
+      "monthly_n": 48.678842975206614,
+      "p": 1030.8763892007296,
+      "max_dd": 252.58449434955583,
+      "random_w": 0.42681250000000004,
+      "fee_breakeven_w": 0.36,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "VALIDATION",
+      "sl_pct": 0.005,
+      "tp_pct": 0.01,
+      "weekend_filter": true
+    },
+    "P1R2C-HD_TEST": {
+      "theoretical_ev": 17.24523977406144,
+      "executed_ev": 14.140867148049667,
+      "degradation": 0.8199866939118435,
+      "n": 309,
+      "w": 0.540453074433657,
+      "monthly_n": 51.39868852459016,
+      "p": 726.8220260102145,
+      "max_dd": 410.40037533887516,
+      "random_w": 0.42168750000000005,
+      "fee_breakeven_w": 0.36,
+      "gate1": true,
+      "gate2": false,
+      "verdict": "conditional",
+      "split": "TEST",
+      "sl_pct": 0.005,
+      "tp_pct": 0.01,
+      "weekend_filter": true
+    },
+    "P1R2C-RESEARCH-GATE": {
+      "split": "VALIDATION",
+      "research_gate": true,
+      "wf_pass_rate": 1.0,
+      "checks": {
+        "ev_positive": true,
+        "pf_min": true,
+        "dd_limit": true,
+        "wf_pass": true,
+        "mc_dd": true,
+        "mc_ruin": true,
+        "robustness": true
+      },
+      "notes": "Research Gate on VALIDATION only (config locked in P1-R2)"
+    }
+  },
+  "tuning_split": "none (locked from P1-R2)",
+  "fixed_config": {
+    "sl_pct": 0.005,
+    "tp_pct": 0.01,
+    "weekend_filter": true,
+    "mode": "pull",
+    "max_bars": 48,
+    "cooldown": 48
+  }
+}
