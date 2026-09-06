@@ -78,39 +78,8 @@ Product Manager（春希）の正式判断を記録する正本。エージェ�
 
 ---
 
-## PM-20260906-STRAT — 独立・市場選定
-
-**日付**: 2026-09-06  
-**背景**: BTC Gate2 全候補未到達。独立・不労所得目的から前提見直し。
-
-### 判断一覧
-
-| # | 論点 | PM 判断 | 状態 |
-|---|---|---|---|
-| 1 | 二層ポートフォリオ採用 | **Yes** | **active** |
-| 2 | Layer1 配分 80% / Layer2 20% | **Yes（推奨）** | **active** |
-| 3 | Layer2 第一市場 = 米 ETF 日足 | **Yes（推奨）** | **active** |
-| 4 | BTC を Layer2 衛星（本体にしない） | **Yes** | **active** |
-| 5 | 市場別 Gate 導入（gate-by-market.md） | **Yes** | **active** |
-| 6 | BTC Gate2 を crypto 専用として維持 | **Yes（freeze）** | **active** |
-| 7 | 独立目標数字（§3） | **未記入** | **pending** |
-
-### 正本
-
-- [independence-strategy.md](independence-strategy.md)
-- [gate-by-market.md](gate-by-market.md)
-- [market-selection-sheet.csv](market-selection-sheet.csv)
-
-### BTC プロジェクトへの影響
-
-| 項目 | 変更 |
-|---|---|
-| SPEC L0（BTC） | **変更なし** — MP-CRYPTO-5M として維持 |
-| tuning / live | **禁止継続** |
-| PT-B | **継続** |
-| 新 L1（H-D5 等） | **S2（ETF 移植）優先** — BTC 単体 L1 は defer |
-
----
+> **独立・不労所得プロジェクト**（NISA / ETF / 多市場）は **本リポジトリのスコープ外**。  
+> 共有用仕様: [../export/wealth-independence-project-spec.md](../export/wealth-independence-project-spec.md)
 
 ## ゲート早見（active）
 

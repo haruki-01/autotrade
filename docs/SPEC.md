@@ -16,7 +16,7 @@
 
 本スペースは「勝てるロジックのリサーチと検証」が主目的である。実装・本番稼働はその後段とする。
 
-> **戦略コンテキスト（2026-09-06）**: 本 SPEC は **Layer 2 衛星（MP-CRYPTO-5M）** の正本。独立・不労所得の本体は [independence-strategy.md](research/independence-strategy.md) の Layer 1（NISA インデックス等）を参照。
+> **スコープ**: 本リポジトリは **BTC/JPY 自動売買のみ**。独立・不労所得（多市場）は [export/wealth-independence-project-spec.md](export/wealth-independence-project-spec.md) を別プロジェクトへ。
 
 ---
 
