@@ -5,7 +5,7 @@
   "batch_id": "PT-B",
   "batch_verdict": "conditional",
   "spec_version": "0.2",
-  "git_commit": "9b292531f8c10cee51f98e69c2c4dffad10899bc",
+  "git_commit": "596bcb9c5cc3a392e7fcf03fe7741dbb130965e6",
   "metrics": {
     "PT-B-FORWARD": {
       "n": 686,

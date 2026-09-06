@@ -78,6 +78,31 @@ Product Manager（春希）の正式判断を記録する正本。エージェ�
 
 ---
 
+## PM-INDEP-20260906 — 独立プロジェクト・市場選定
+
+**日付**: 2026-09-06  
+**背景**: 市場選定シート・wealth-independence 仕様書エクスポート後、春希 PM 判断
+
+### 判断一覧
+
+| # | 論点 | PM 判断 | 状態 |
+|---|---|---|---|
+| S1 | Layer 1 配分 | **80%** | **active** |
+| S2 | Layer 2 第一市場 | **US-ETF-D1** | **active** |
+| S3 | 目標年利 | **100%（複利）** | **active** |
+| S4 | BTC Gate2 凍結 → 市場別 Gate | **Yes** | **active** |
+
+### 本 repo（BTC）への影響
+
+- Gate2@3%（¥1,500/月）は **BTC 用として維持**（凍結 = 変更禁止）
+- 次 L1 検証: **H-D5 Phase1（P2-F）** を実行
+- PT-B sim 月次監視継続
+- 独立プロジェクト Phase S1+ は **別リポジトリ**（export 仕様参照）
+
+**正本**: [../export/wealth-independence-project-spec.md](../export/wealth-independence-project-spec.md)、[../export/market-selection-sheet.csv](../export/market-selection-sheet.csv)
+
+---
+
 > **独立・不労所得プロジェクト**（NISA / ETF / 多市場）は **本リポジトリのスコープ外**。  
 > 共有用仕様: [../export/wealth-independence-project-spec.md](../export/wealth-independence-project-spec.md)
 

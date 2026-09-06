@@ -111,8 +111,9 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 | 1 | **Paper PT-B**（sim） | **継続** — 月初 1 回 |
 | 2 | **H-C2 Phase1**（週明けギャップ） | **完了 → reject**（P2-E） |
 | 3 | **H-D4**（％水準ブレイク）30-cycle NR | **完了 → weak-positive / reject** |
-| 4 | **H-D5**（ピンバー）Phase1 | **次 L1 候補** |
+| 4 | **H-D5**（ピンバー）Phase1 | **完了 → weak-positive / reject**（P2-F） |
 | 5 | H-D / H-F3 / P3 | **hold** — tuning 禁止 |
+| 6 | **新 L1 メカニズム探索** | **次候補** — H-D5 単体 promote 禁止 |
 
 **禁止**: live paper、少額 Live、H-D パラメータ tuning、棄却リスト再探索
 

@@ -108,6 +108,19 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 
 コード: `scripts/phase1/signals/h_d4_pct.py`, `scripts/research/hd4_loop.py`
 
+### 2.8 H-D5 12h ピンバー（P2-F / L1 探索）
+
+| 項目 | 定義 |
+|---|---|
+| トリガー | 12h 足: ヒゲ ≥ 2×実体（bearish/bullish pin） |
+| エントリー | **fade + pull** 推奨（群集逆張り、6 本内押し待ち） |
+| 対照 | fade+immediate、cont+pull |
+| SL / TP | 固定 pct: SL = 0.5%, TP = 1.0%（H-D canonical 同等） |
+| 頻度 | ≈19 イベント/月（**Gate1 N 帯 40–60/月 は構造的に未到達**） |
+| 判定（P2-F） | **conditional / weak-positive** — OOS EV>0 だが Gate1/Gate2 fail |
+
+コード: `scripts/phase1/signals/h_d5_pin.py`, `scripts/phase1/p2f_hd5_pin.py`
+
 ---
 
 ## 3. 執行モデル（SPEC §7.3 仮置き）

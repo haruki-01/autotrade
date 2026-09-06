@@ -19,8 +19,8 @@ EV-HC2,P2-E H-C2,N≈3/month Gate1不可,稀イベント単体L1不向き
 EV-HD4,H-D4 30cycle,P≈311 N≈10/month,EV>0でもN不足
 EV-GATE2,gate2_rescore_3pct,0 candidates pass Gate2@3%,現行仮説群の上限確認
 
-pm_decision_pending,id,question,options,default_recommendation
-PM-S1,layer1_allocation,Layer1配分%,70/80/90,80
-PM-S2,layer2_primary,Layer2第一市場,US-ETF-D1 / JP-SWING / BTC-only,US-ETF-D1
-PM-S3,independence_numbers,§3目標数字記入,春希記入,要記入
-PM-S4,btc_gate_freeze,BTC Gate2を凍結し市場別Gateへ,Yes/No,Yes
+pm_decision_resolved,id,question,decision,date
+PM-S1,layer1_allocation,Layer1配分%,80,2026-09-06
+PM-S2,layer2_primary,Layer2第一市場,US-ETF-D1,2026-09-06
+PM-S3,independence_numbers,§3目標年利,100%（複利）,2026-09-06
+PM-S4,btc_gate_freeze,BTC Gate2凍結→市場別Gate,Yes,2026-09-06
