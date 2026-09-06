@@ -1,0 +1,46 @@
+{
+  "iteration": 23,
+  "hypothesis": "H23: 全局 best 周辺 — swing_bars 微調整（best P≈¥311）",
+  "prior_hint": "cooldown↓ or pct_level 浅く（イベント増）",
+  "refined_hypothesis": "cooldown↓ or pct_level 浅く（イベント増）",
+  "learning": "最良 break_2.0%_sw96_pull_cd144_mb48: 執行P≈¥274, EV≈¥24.2, N≈11.3/月, W=56.3% → EV>0 だが P 不足（N=11.3）。cooldown/N 調整。 → N<40。cooldown 短縮 or pct 浅く。",
+  "gate2_count": 0,
+  "gate1_count": 0,
+  "best_label": "break_2.0%_sw96_pull_cd144_mb48",
+  "best_oos_executed_p": 274.04978748382894,
+  "configs_tested": 1,
+  "stale_count": 1,
+  "results": [
+    {
+      "config": {
+        "mode": "break",
+        "pct_level": -0.02,
+        "swing_bars": 96,
+        "entry_mode": "pull",
+        "cooldown": 144,
+        "sl_pct": 0.005,
+        "tp_pct": 0.01,
+        "pct_risk": 0.008,
+        "atr_mult": 0.5,
+        "max_bars": 48,
+        "rr_ratio": 2.0,
+        "n_target": 50,
+        "weekend_filter": true
+      },
+      "label": "break_2.0%_sw96_pull_cd144_mb48",
+      "oos_theoretical_ev": 27.421112344696738,
+      "oos_theoretical_p": 427.20847064428403,
+      "oos_executed_ev": 24.247670710038246,
+      "oos_executed_w": 0.563049853372434,
+      "oos_executed_n": 11.338188592331662,
+      "oos_executed_p": 274.04978748382894,
+      "is_executed_ev": 19.84616518817652,
+      "is_executed_n": 13.937728937728938,
+      "degradation": 0.8842701348228772,
+      "fee_breakeven_w": 0.36,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail"
+    }
+  ]
+}

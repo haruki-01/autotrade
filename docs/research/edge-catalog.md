@@ -56,7 +56,7 @@ L1（メカニズム）が書けない案はカタログに載せない。
 | H-D | 教科書シグナル遅延刈り | 初押し継続 | 0→1 | OHLCV |
 | H-D2 | キリ番マグネット | 継続 or 回帰 | 0→1 | OHLCV |
 | H-D3 | 同一インジ過密クロス | 見送り→押し | 0→1 | OHLCV |
-| H-D4 | 損切幅群集（−1%等） | 分岐 | 0→1 | OHLCV |
+| **H-D4** | weak | **closed** | 30-cycle NR weak-positive（P≈¥311, N≈10/月） |
 | H-D5 | 上位足ピンバー信仰 | 継続（逆群集） | 0→1 | OHLCV |
 
 ## Family 5｜レジーム・行き過ぎ
@@ -125,6 +125,7 @@ OHLCV＋時刻だけで歪みの有無が見えるもの。
 | **H-F3** | **promote** | **hold** | Gate1 fail（N）。合成 defer |
 | **P3-C** | — | **hold** | OOS2 +22%。Gate1 fail |
 | **H-C2** | weak | **closed** | P2-E reject（N≈3/月、split 不安定） |
+| **H-D4** | weak | **closed** | 30-cycle NR weak-positive（P≈¥311, N≈10/月） |
 
 Phase1 詳細: [phase1-spec.md](phase1-spec.md) / [validation-spec.md](validation-spec.md)  
 Paper trade: [paper-trade-spec.md](paper-trade-spec.md) / KB-PT-A  

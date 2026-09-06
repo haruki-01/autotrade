@@ -1463,7 +1463,7 @@
 **next_actions**
 
 - H-C2 → **closed**（edge-catalog）
-- 次 L1 候補: **H-D4**（Phase0 weak、Phase1 未実施）
+- 次 L1 候補: **H-D5**（Phase0 weak、Phase1 未実施）
 - H-D canonical hold 継続、PT-B 月次監視継続
 
 **spawned_hypotheses**
@@ -1476,4 +1476,45 @@
 
 ---
 
-改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E**）
+### KB-HD4-NR-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | H-D4-NR（30 cycle） |
+| date | 2026-09-06 |
+| purpose | H-D4 ％水準群集 — 30 サイクル verify→refine→verify |
+| decision_question | break/bounce × pct × pull で Gate1/2 pass か？ |
+| hypotheses | H-D4 break@−2% pull, bounce@−1% |
+| metrics | 30 iter × 2–5 configs、計 ~90 評価 |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- **30 サイクル完了** — Gate2 pass **0** / Gate1 pass **0**
+- **全局最良**: break_2.0%_sw72_pull_cd144 — 執行P≈**¥311**/月, EV≈¥30.3, N≈**10.3**/月, W=61.5%
+- Gate2 目標 ¥1,500 の **21%** — N 帯（40–60）構造的未到達
+- Cycle 5 で pull 導入後 P: −45→¥247。Cycle 22 で swing72 最適化後 ¥311 到達。以降 8 iter 無改善
+
+**batch_verdict:** weak-positive / **reject**（単体 L1）
+
+**learnings**
+
+- **break > bounce**（Phase0 再現）。−2% 深い水準 + ショート継続が優位
+- **pull entry** が immediate より大幅改善（H-D 教訓と一致）
+- **swing_bars 72** が最適 — 群集水準定義が重要
+- N≈10/月が上限 — cooldown 短縮でも Gate1 N 帯未到達
+- EV>0 だが P=EV×N で Gate2 遠隔
+
+**next_actions**
+
+- H-D4 → **closed**（単体 promote 禁止）
+- 次 L1: **H-D5**（ピンバー）
+- H-D4 を H-D canonical 合成フィルタとして使う案は **tuning 禁止** のため見送り
+
+**catalog_updates**
+
+- H-D4: 次候補 → **closed / weak-positive**
+
+---
+
+改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E / H-D4-NR**）

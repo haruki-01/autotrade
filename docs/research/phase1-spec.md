@@ -95,6 +95,19 @@ Phase0 候補の **取引可能エッジ** を RR・執行込み・OOS で評価
 
 コード: `scripts/phase1/signals/h_c2_gap.py`, `scripts/phase1/p2e_hc2_gap.py`
 
+### 2.7 H-D4 ％損切群集（H-D4-NR / 30-cycle）
+
+| 項目 | 定義 |
+|---|---|
+| トリガー | 直近 swing high から pct_level（−1.0%〜−2.0%）タッチ |
+| mode | **break** = ショート（貫通）、**bounce** = ロング（反発） |
+| エントリー | **pull** 推奨（タッチ後 6 本内の押し/戻り） |
+| SL / TP | 固定 pct: SL = 0.5%, TP = 1.0% |
+| 最良（30 iter） | break@−2%, swing=72, pull, cd=144 → P≈¥311, N≈10/月 |
+| 判定 | **weak-positive / reject** — Gate1 N 不足 |
+
+コード: `scripts/phase1/signals/h_d4_pct.py`, `scripts/research/hd4_loop.py`
+
 ---
 
 ## 3. 執行モデル（SPEC §7.3 仮置き）
