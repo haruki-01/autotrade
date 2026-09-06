@@ -1,0 +1,58 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B08",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P0-HF2-MID": {
+      "n": 41119,
+      "hit_rate": 0.5124638245093509,
+      "mean_edge": 9.494610223239132e-05,
+      "median_edge": 0.00019055862711125915,
+      "p25": -0.00462122489614436,
+      "p75": 0.00494056111627772,
+      "mean_abs_move": 0.007141571970257069,
+      "vs_baseline": 0.00018872143660386698,
+      "verdict": "weak",
+      "notes": "vs CONT diff=0.000189"
+    },
+    "P0-HF2-ABSREV": {
+      "n": 41122,
+      "hit_rate": 0.7015709352657945,
+      "mean_edge": 0.001056833767605163,
+      "median_edge": 0.0007361508689938347,
+      "p25": -0.00018085480101850032,
+      "p75": 0.0018724830378429368,
+      "mean_abs_move": 0.0016255021803028619,
+      "vs_baseline": null,
+      "verdict": "pass",
+      "notes": "vol contraction after shock"
+    },
+    "P0-HF2-CONT": {
+      "n": 41117,
+      "hit_rate": 0.488751611255685,
+      "mean_edge": -9.377533437147566e-05,
+      "median_edge": -0.00017363129998904103,
+      "p25": -0.004931865217562614,
+      "p75": 0.004638562123423728,
+      "mean_abs_move": 0.007141547468316556,
+      "vs_baseline": null,
+      "verdict": "fail",
+      "notes": "shock continuation control"
+    },
+    "P0-HF2-FREQ": {
+      "n": 41126,
+      "hit_rate": NaN,
+      "mean_edge": 1286.614018499486,
+      "median_edge": NaN,
+      "p25": NaN,
+      "p75": NaN,
+      "mean_abs_move": NaN,
+      "vs_baseline": NaN,
+      "verdict": "weak",
+      "notes": "shocks/month=1286.6"
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "c60e1fd650e0520f149eab75174982a279e6ea28"
+}

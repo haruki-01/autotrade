@@ -1,0 +1,11 @@
+{
+  "batch_id": "P3-NR",
+  "max_iterations": 10,
+  "module": "scripts.phase1.p3a_hf2",
+  "stop_if": {
+    "gate2": true,
+    "no_improvement_for": 3
+  },
+  "initial_configs": [],
+  "iter_configs": {}
+}

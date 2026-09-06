@@ -52,8 +52,8 @@ B06,群集シグナルは即入りより押し待ち・上位整合か,群集シ
 B05,上位トレンド内の行き過ぎ押しが再開エッジを持つか,押し待ち（RESUME）は CTRL より優位か？,P0-HF1-CTRL,P0-HF1-RESUME,H-F1,regime,P0-拡張,行き過ぎ押し後の再開,TREND_EXCESS_PULL,h240,trend dir,50,再開有意,done,7,1.000000,0.021354,0.017342,0.014721,0.027444,0.021354,0.015572,insufficient_n,2024-01-01..2026-08-31,vs CTRL=0.015571876847000957
 B05,上位トレンド内の行き過ぎ押しが再開エッジを持つか,押し待ち（RESUME）は CTRL より優位か？,P0-HF1-RESUME,P0-HF1-CTRL,H-F1,regime,P0-拡張,押し待ちなし対照,trend thrust no pull,h240,trend dir,50,RESUME>CTRL,done,427,0.665105,0.005782,0.004234,-0.002314,0.011876,0.010339,,pass,2024-01-01..2026-08-31,
 B05,上位トレンド内の行き過ぎ押しが再開エッジを持つか,押し待ち（RESUME）は CTRL より優位か？,,P0-HF1-FREQ,H-F1,regime,P0-拡張,月次回数,TREND_EXCESS_PULL,—,count/month,1,N整合,done,7,,0.218993,,,,,,weak,2024-01-01..2026-08-31,events/month=0.2
-,,,,P0-HF2-ABSREV,H-F2,regime,P0-拡張,ショック後ボラ収縮,VOL_SHOCK,h120,abs move shrink,50,ボラ回帰,todo,,,,,,,,,,,
-,,,,P0-HF2-MID,H-F2,regime,P0-拡張,ショック足中点回帰,VOL_SHOCK,h120,to mid,50,価格回帰,todo,,,,,,,,,,,
+,,,,P0-HF2-ABSREV,H-F2,regime,P0-拡張,ショック後ボラ収縮,VOL_SHOCK,h120,abs move shrink,50,ボラ回帰,done,41122,0.701571,0.001057,0.000736,-0.000181,0.001872,0.001626,,pass,2024-01-01..2026-08-31,vol contraction after shock
+,,,,P0-HF2-MID,H-F2,regime,P0-拡張,ショック足中点回帰,VOL_SHOCK,h120,to mid,50,価格回帰,done,41119,0.512464,0.000095,0.000191,-0.004621,0.004941,0.007142,0.000189,weak,2024-01-01..2026-08-31,vs CONT diff=0.000189
 ,,,,P0-HF3-EDGE,H-F3,regime,P0-拡張,レンジ端回帰,RANGE_BOUND edge,h120,to mid,50,回帰あるか,todo,,,,,,,,,,,
 ,,,,P0-HF3-EV,H-F3,regime,P0-拡張,平均|edge|が+2%帯か,RANGE_BOUND edge,h120,mean abs,50,薄利ならdemote,todo,,,,,,,,,,,
 ,,,,P0-HF4-REV,H-F4,regime,P0-拡張,減速後の反転,THRUST_DECAY,h240,against prior,50,終焉シグナル,todo,,,,,,,,,,,

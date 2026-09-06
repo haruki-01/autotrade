@@ -1,0 +1,130 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P3-A",
+  "batch_verdict": "reject",
+  "preflight": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "signal_count_hf2_mid",
+        "ok": true,
+        "level": "error",
+        "detail": "hf2_mid: count=2423 (min=50), expected_monthly≈1286.6"
+      },
+      {
+        "name": "hf2_cont_ctrl",
+        "ok": true,
+        "level": "info",
+        "detail": "control signals count=2423"
+      },
+      {
+        "name": "sign_parity_hf2_mid",
+        "ok": false,
+        "level": "warn",
+        "detail": "P0 mean=0.0001, P1 theory EV=-0.3942"
+      }
+    ]
+  },
+  "metrics": {
+    "P3-HF2-MID_IS": {
+      "theoretical_ev": -0.7968468840216609,
+      "executed_ev": -5.295535087915057,
+      "degradation": 6.645611840995925,
+      "n": 943,
+      "w": 0.45705196182396607,
+      "monthly_n": 52.57311355311356,
+      "p": -278.40276750145546,
+      "max_dd": 6679.657822185158,
+      "random_w": 0.5005625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "IS",
+      "mode": "mid",
+      "cooldown": 48,
+      "rr_ratio": 2.0
+    },
+    "P3-HF2-MID_OOS1": {
+      "theoretical_ev": 0.4357625591311952,
+      "executed_ev": -0.5132771405415615,
+      "degradation": -1.1778826101189408,
+      "n": 421,
+      "w": 0.47743467933491684,
+      "monthly_n": 52.95553719008265,
+      "p": -27.18086670476794,
+      "max_dd": 1461.3555875973775,
+      "random_w": 0.4999375,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "mode": "mid",
+      "cooldown": 48,
+      "rr_ratio": 2.0
+    },
+    "P3-HF2-MID_OOS2": {
+      "theoretical_ev": -0.3809487270678052,
+      "executed_ev": -3.794603743000394,
+      "degradation": 9.960930365111816,
+      "n": 334,
+      "w": 0.49101796407185627,
+      "monthly_n": 55.55715846994536,
+      "p": -210.8174014805207,
+      "max_dd": 2326.468625104352,
+      "random_w": 0.49237499999999995,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "mode": "mid",
+      "cooldown": 48,
+      "rr_ratio": 2.0
+    },
+    "P3-HF2-CONT-CTRL": {
+      "theoretical_ev": -0.6473930597094496,
+      "executed_ev": -6.197009691374349,
+      "degradation": 9.572252279249906,
+      "n": 1690,
+      "w": 0.42958579881656805,
+      "monthly_n": 52.871120246659814,
+      "p": -327.6428445623694,
+      "max_dd": 10895.184220985184,
+      "random_w": 0.4975625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "reference",
+      "split": "ALL",
+      "mode": "cont",
+      "cooldown": 48,
+      "rr_ratio": 2.0
+    },
+    "P3-HF2-M4": {
+      "theoretical_ev": -0.39419347278782174,
+      "executed_ev": -5.577976382980377,
+      "degradation": 14.150351966844397,
+      "n": 1684,
+      "w": 0.45605700712589076,
+      "monthly_n": 52.68341212744091,
+      "p": -293.8668286216874,
+      "max_dd": 11350.18262187367,
+      "random_w": 0.4975625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "ALL",
+      "mode": "mid",
+      "cooldown": 48,
+      "rr_ratio": 2.0,
+      "weekend_filter": true,
+      "cooldown_tuned": 48
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "c60e1fd650e0520f149eab75174982a279e6ea28"
+}

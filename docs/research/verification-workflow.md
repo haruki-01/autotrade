@@ -84,6 +84,20 @@ Phase0 ではロジックを組まない。Phase1 では **理論値と執行込
 
 定義: [p1nr-spec.md](p1nr-spec.md) / [p1nr-research-report.md](p1nr-research-report.md)
 
+### Phase0 延長 / Phase3（L1 探索後）
+
+| batch_id | purpose | 主仮説 | 対照 | バッチで決めること |
+|---|---|---|---|---|
+| **B08** | ボラ急騰後の平均回帰 edge | H-F2 | CONT 継続 | P3-A へ promote するか |
+| **P3-A** | H-F2 執行込み検証 | H-F2 MID | CONT | Gate1/2 pass か |
+| **P3-C** | H-D フィルタ合成 | H-F2 + H-D | H-F2 単体 | 合成メリット（defer） |
+
+定義: [phase3-spec.md](phase3-spec.md) / [verification-roadmap.md](verification-roadmap.md)
+
+**Preflight（Phase1/Phase3 必須）**: `scripts/research/preflight.py` — シグナル数 > 0、Phase0 符号一致。fail 時は計測しない。
+
+**合成ルール**: 各コンポーネントが単独 OOS Gate1 pass 後のみ合成可（P2-C 教訓）。
+
 ### Paper Trade（Phase1 後）
 
 | batch_id | purpose | 主仮説 | 対照 | バッチで決めること |
@@ -184,4 +198,4 @@ sequenceDiagram
 4. [phase0-verification-sheet.csv](phase0-verification-sheet.csv) — 記入  
 5. [knowledge-log.md](knowledge-log.md) — 蓄積  
 
-改訂: 2026-09-03
+改訂: 2026-09-06（B08/P3 + preflight）

@@ -928,4 +928,81 @@
 
 ---
 
-改訂: 2026-09-04（L1 H-B 探索）
+### KB-B08-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | B08 |
+| date | 2026-09-06 |
+| purpose | H-F2 ボラ急騰後の平均回帰 edge（Phase0） |
+| decision_question | VOL_SHOCK 後、中点回帰は CONT より優位か？ |
+| hypotheses | H-F2 MID（主）, CONT（対照）, ABSREV |
+| metrics | P0-HF2-MID, ABSREV, CONT, FREQ |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- MID mean_edge=+0.0095%, hit=51.2%, n=41,119 → weak（CONT より +0.019% 優位）
+- ABSREV pass（ショック後 range 縮小 70% hit）
+- 頻度 ≈1,287 shocks/月 — 検出条件が緩い（range×2.5 OR rv top 10%）
+
+**batch_verdict:** conditional
+
+**learnings**
+
+- 回帰方向は記述統計で CONT より優位だが edge 絶対値は極小
+- イベント過多 → Phase1 では cooldown 必須
+- ABSREV pass はボラ収縮現象の存在を確認（トレード方向性とは別）
+
+**next_actions**
+
+- P3-A 執行込み検証へ
+- reject 時は B09（H-F3）へ pivot
+
+**catalog_updates**
+
+- H-F2: Phase0 conditional
+
+---
+
+### KB-P3-A-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P3-A |
+| date | 2026-09-06 |
+| purpose | H-F2 中点回帰の Phase1 執行込み検証 |
+| decision_question | MID 回帰は RR 1:2 + H-M4 で Gate1/2 pass か？ |
+| hypotheses | H-F2 MID（主）, CONT（対照） |
+| metrics | P3-HF2-MID（IS/OOS1/OOS2）, CONT-CTRL |
+| sample_period | 2024-01-01..2026-08-31 |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- 全 split 執行 EV 負（OOS P≈−¥27〜−¥211）
+- W≈46–49% ≈ ランダム — 勝率優位なし
+- preflight **sign_parity warn**: P0 mean=+0.0001 vs P1 theory EV=−0.39
+
+**batch_verdict:** reject
+
+**learnings**
+
+- Phase0 weak 優位は Phase1 執行込みで再現せず（H-A2/H-B と同型）
+- preflight 符号チェックが非再現を計測前に警告 — 5 段パイプライン有効
+- VOL_SHOCK 即時エントリー + RR 1:2 では Gate1 不可
+
+**next_actions**
+
+- H-F2 MID エントリー棄却
+- B09 H-F3（レンジ回帰）Phase0 を次バッチに選定
+- H-D + H-M4 hold 継続
+
+**catalog_updates**
+
+- H-F2: Phase1 **reject**
+
+---
+
+改訂: 2026-09-06（B08 / P3-A H-F2）

@@ -9,6 +9,7 @@ from datetime import date
 from pathlib import Path
 
 from scripts.phase0.common import load_or_fetch
+from scripts.research.preflight import batch_metadata
 from scripts.phase0.update_sheet import update_sheet_from_json
 
 SAMPLE_START = date(2024, 1, 1)
@@ -23,6 +24,7 @@ BATCH_MODULES = {
     "B05": "scripts.phase0.b05_metrics",
     "B06": "scripts.phase0.b06_metrics",
     "B07": "scripts.phase0.b07_metrics",
+    "B08": "scripts.phase0.b08_metrics",
 }
 
 
@@ -43,6 +45,7 @@ def run_batch(batch_id: str, df=None) -> dict:
         "batch_id": batch_id.upper(),
         "batch_verdict": batch_verdict,
         "metrics": results,
+        **batch_metadata(),
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUT_DIR / f"{batch_id.lower()}_results.json"

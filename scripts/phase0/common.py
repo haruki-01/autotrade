@@ -232,6 +232,22 @@ def metric_from_series(r: pd.Series, vs_baseline: float | None = None, min_n: in
     return stats
 
 
+def detect_vol_shock(df: pd.DataFrame) -> pd.DataFrame:
+    """Mark VOL_SHOCK per phase0-stats HELPER-VOL (rv top 10% or range spike)."""
+    out = df.copy()
+    rv = out["rv_20"]
+    rv_threshold = rv.rolling(2880, min_periods=500).quantile(0.90)
+    range_spike = out["range"] >= out["range_med100"] * 2.5
+    rv_spike = rv >= rv_threshold
+    out["is_vol_shock"] = (rv_spike | range_spike) & out["range_med100"].notna()
+    out["shock_dir"] = np.where(
+        out["close"] > out["open"],
+        1,
+        np.where(out["close"] < out["open"], -1, 0),
+    )
+    return out
+
+
 def detect_ignite(df: pd.DataFrame) -> pd.DataFrame:
     """Mark IGNITE events at 3rd bar of 3 consecutive same-direction candles."""
     out = df.copy()
