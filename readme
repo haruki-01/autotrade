@@ -7,6 +7,11 @@ BTC/JPY の自動売買ロジックを、仮説検証で探索するプロジェ
 - [docs/SPEC.md](docs/SPEC.md) — L0 制約・**二層 Gate**（Research Gate + Gate1/Gate2）
 - [AGENTS.md](AGENTS.md) — Cursor / Agent 常時ルール
 
+## 別プロジェクト用（本 repo スコープ外）
+
+- [docs/export/wealth-independence-project-spec.md](docs/export/wealth-independence-project-spec.md) — 独立・不労所得プロジェクト共有仕様
+- [docs/export/market-selection-sheet.csv](docs/export/market-selection-sheet.csv) — 市場選定シート
+
 ## リサーチ（仮説・検証）
 
 - [docs/research/README.md](docs/research/README.md) — 置き場・読む順序
