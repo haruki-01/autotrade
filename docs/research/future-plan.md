@@ -1,7 +1,7 @@
 # 今後のプラン
 
-生成: 2026-09-06（Hybrid Validation 反映）  
-前提: [project-review.md](project-review.md) / [v1-validation-report.md](v1-validation-report.md)
+生成: 2026-09-06（PM-20260906 判断反映）  
+前提: [pm-decisions.md](pm-decisions.md) / [project-review.md](project-review.md)
 
 ---
 
@@ -102,13 +102,15 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 
 ---
 
-## 5. 中期
+## 5. 中期（PM-20260906 確定）
 
-| 優先 | バッチ | 理由 |
+| 優先 | バッチ | 状態 |
 |---:|---|---|
-| 1 | **Paper 継続（PT-B）** | **継続中** — monitoring_status=continue |
-| 2 | **新 L1 探索** | P1-L で H-D レバー限界確認 — H-G 等 Phase2 へ |
-| 3 | Paper 継続（PT-B） | canonical 維持 |
+| 1 | **Paper PT-B**（sim） | **継続** — 月初 1 回 |
+| 2 | **H-C2 Phase1**（週明けギャップ） | **次 L1 推奨** |
+| 3 | H-D / H-F3 / P3 | **hold** — tuning 禁止 |
+
+**禁止**: live paper、少額 Live、H-D パラメータ tuning、棄却リスト再探索
 
 ### 探索停止リスト（変更なし）
 
