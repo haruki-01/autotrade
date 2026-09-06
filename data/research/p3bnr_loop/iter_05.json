@@ -1,0 +1,68 @@
+{
+  "iteration": 5,
+  "hypothesis": "H5: R 幅（pct_risk）調整",
+  "learning": "最良: cd4_q30_at10_RR2_R0.012 — P≈¥247, N=24.6/mo, W=60.6%, EV=¥9.4 → EV>0 だが N 帯外（N=24.6）。N 拡大継続。 劣化率=0.69。",
+  "auto_cooldown": false,
+  "gate2_count": 0,
+  "gate1_count": 0,
+  "best_label": "cd4_q30_at10_RR2_R0.012",
+  "best_oos_executed_p": 246.7421592270021,
+  "best_oos_executed_n": 24.637731563022175,
+  "configs_tested": 2,
+  "results": [
+    {
+      "config": {
+        "cooldown": 4,
+        "range_quantile": 0.3,
+        "atr_touch_mult": 0.1,
+        "roll_bars": 24,
+        "rr_ratio": 2.0,
+        "pct_risk": 0.008,
+        "atr_mult": 0.5,
+        "max_bars": 24,
+        "n_target": 50
+      },
+      "label": "cd4_q30_at10_RR2_R0.008",
+      "all_monthly_n_tuned": 27.593093525179857,
+      "oos_theoretical_ev": 12.836697337698599,
+      "oos_theoretical_p": 388.07591049676034,
+      "oos_executed_ev": 8.663696389768205,
+      "oos_executed_w": 0.5915311653116531,
+      "oos_executed_n": 25.28487196856795,
+      "oos_executed_p": 214.26244414135914,
+      "degradation": 0.674916309222685,
+      "fee_breakeven_w": 0.35,
+      "gate1": false,
+      "gate2": false,
+      "w_check": true,
+      "verdict": "fail"
+    },
+    {
+      "config": {
+        "cooldown": 4,
+        "range_quantile": 0.3,
+        "atr_touch_mult": 0.1,
+        "roll_bars": 24,
+        "rr_ratio": 2.0,
+        "pct_risk": 0.012,
+        "atr_mult": 0.5,
+        "max_bars": 24,
+        "n_target": 50
+      },
+      "label": "cd4_q30_at10_RR2_R0.012",
+      "all_monthly_n_tuned": 27.593093525179857,
+      "oos_theoretical_ev": 13.63229357541267,
+      "oos_theoretical_p": 409.86361484040435,
+      "oos_executed_ev": 9.388103985257192,
+      "oos_executed_w": 0.6055603201829617,
+      "oos_executed_n": 24.637731563022175,
+      "oos_executed_p": 246.7421592270021,
+      "degradation": 0.6886665059935082,
+      "fee_breakeven_w": 0.34444444444444444,
+      "gate1": false,
+      "gate2": false,
+      "w_check": true,
+      "verdict": "fail"
+    }
+  ]
+}

@@ -19,9 +19,17 @@ def generate_hf3_revert_signals(
     rr_ratio: float | None = None,
     max_bars: int = 24,
     mode: str = "revert",
+    range_quantile: float = 0.20,
+    atr_touch_mult: float = 0.10,
+    roll_bars: int = 24,
 ) -> list[Signal]:
     rr = rr_ratio if rr_ratio is not None else RR_RATIO
-    df = detect_range_bound_events(df)
+    df = detect_range_bound_events(
+        df,
+        range_quantile=range_quantile,
+        atr_touch_mult=atr_touch_mult,
+        roll_bars=roll_bars,
+    )
     signals: list[Signal] = []
     last_bar = -cooldown
 

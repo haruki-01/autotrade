@@ -14,28 +14,34 @@ from scripts.phase0.common import (
 )
 
 
-def detect_range_bound_events(df: pd.DataFrame) -> pd.DataFrame:
+def detect_range_bound_events(
+    df: pd.DataFrame,
+    range_quantile: float = 0.20,
+    atr_touch_mult: float = 0.10,
+    roll_bars: int = 24,
+    quantile_window: int = 60,
+) -> pd.DataFrame:
     """RANGE_BOUND: tight 12h range + 5m edge touch."""
     out = merge_htf(add_features(df))
     h12 = resample_ohlc(out, "12h")
     h12["range12"] = h12["high"] - h12["low"]
     h12["range12_pct"] = h12["range12"] / h12["close"]
-    h12["range12_q20"] = h12["range12_pct"].rolling(60, min_periods=20).quantile(0.20)
+    h12["range12_q"] = h12["range12_pct"].rolling(quantile_window, min_periods=20).quantile(range_quantile)
 
     out = pd.merge_asof(
         out.sort_values("open_time"),
-        h12[["open_time", "range12", "range12_pct", "range12_q20"]],
+        h12[["open_time", "range12", "range12_pct", "range12_q"]],
         on="open_time",
         direction="backward",
     )
 
-    roll_high = out["high"].rolling(24, min_periods=24).max().shift(1)
-    roll_low = out["low"].rolling(24, min_periods=24).min().shift(1)
+    roll_high = out["high"].rolling(roll_bars, min_periods=roll_bars).max().shift(1)
+    roll_low = out["low"].rolling(roll_bars, min_periods=roll_bars).min().shift(1)
     roll_mid = (roll_high + roll_low) / 2
-    tight = out["range12_pct"] <= out["range12_q20"]
+    tight = out["range12_pct"] <= out["range12_q"]
 
-    touch_upper = tight & (out["close"] >= roll_high - 0.1 * out["atr14"])
-    touch_lower = tight & (out["close"] <= roll_low + 0.1 * out["atr14"])
+    touch_upper = tight & (out["close"] >= roll_high - atr_touch_mult * out["atr14"])
+    touch_lower = tight & (out["close"] <= roll_low + atr_touch_mult * out["atr14"])
 
     out["is_range_bound"] = touch_upper | touch_lower
     out["rb_dir"] = np.where(touch_upper, -1, np.where(touch_lower, 1, 0))  # revert direction

@@ -79,8 +79,8 @@ flowchart LR
 | 2 | **P3-A** H-F2 Phase1 | **完了** — reject |
 | 3 | **B09** H-F3 Phase0 | **完了** — promote |
 | 4 | **P3-B** H-F3 Phase1 | **完了** — N 不足 conditional |
-| 5 | **P3-B-NR** H-F3 N 拡大 | **次バッチ（最優先）** |
-| 6 | P3-C H-D filter + H-F3 | P3-B-NR Gate1 後 |
+| 5 | **P3-B-NR** H-F3 N 拡大 | **完了** — Gate1 pass（cd4_q40_at20） |
+| 6 | **P3-C** H-D filter + H-F3 | **次バッチ** |
 | hold | H-D + H-M4 paper | PT-A 継続 |
 | hold | H-D + H-M4 paper | PT-A 継続監視 |
 

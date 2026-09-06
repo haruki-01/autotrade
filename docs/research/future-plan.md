@@ -44,7 +44,13 @@ gantt
 
 ## 4. 短期（次 2–3 バッチ）
 
-### 4.1 P3-B-NR — H-F3 N 帯拡大（最優先）
+### 4.1 P3-B-NR — H-F3 N 帯拡大（完了）
+
+**結果**: Gate1 pass 設定 `cd4_q40_at20`（OOS P≈¥256, N≈40/月）。Gate2 不可。
+
+→ 詳細: [p3bnr-research-report.md](p3bnr-research-report.md)
+
+### 4.2 P3-C — H-D フィルタ + H-F3（最優先）
 
 **問い**: cooldown / 検出条件緩和で N→50/月にしつつ OOS 執行 EV>0 を維持できるか？
 
