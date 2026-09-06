@@ -1,0 +1,51 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P1-R2",
+  "batch_verdict": "conditional",
+  "metrics": {
+    "P1R2-BEST": {
+      "sl_pct": 0.005,
+      "tp_pct": 0.01,
+      "rr_effective": 2.0,
+      "n": 387,
+      "w": 0.5762273901808785,
+      "ev": 21.177093090026432,
+      "p": 1030.8763892007296,
+      "monthly_n": 48.678842975206614,
+      "max_dd": 252.58449434955583,
+      "profit_factor": 2.1722181659954503,
+      "sharpe": 8.281730962329172,
+      "gate1": true,
+      "gate2": false,
+      "research_gate": true,
+      "wf_pass_rate": 1.0,
+      "fee_breakeven_w": 0.36,
+      "w_check": true,
+      "split": "VALIDATION",
+      "verdict": "conditional"
+    },
+    "P1R2-BASELINE": {
+      "sl_pct": 0.008,
+      "tp_pct": 0.016,
+      "rr_effective": 2.0,
+      "n": 385,
+      "w": 0.5636363636363636,
+      "ev": 15.29450818576005,
+      "p": 740.6713191413072,
+      "monthly_n": 48.42727272727273,
+      "max_dd": 696.2278578921823,
+      "profit_factor": 1.6365235419095052,
+      "sharpe": 4.827129177668647,
+      "gate1": true,
+      "gate2": false,
+      "research_gate": true,
+      "wf_pass_rate": 1.0,
+      "fee_breakeven_w": 0.35,
+      "w_check": true,
+      "split": "VALIDATION",
+      "notes": "RR~1:2 pct=0.8/1.6"
+    }
+  },
+  "tuning_split": "VALIDATION"
+}

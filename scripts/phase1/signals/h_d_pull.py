@@ -23,9 +23,12 @@ def generate_hd_pull_signals(
     atr_mult: float = 0.5,
     max_bars: int = 48,
     rr_ratio: float | None = None,
+    sl_pct: float | None = None,
+    tp_pct: float | None = None,
 ) -> list[Signal]:
     """
     mode: pull = wait for first pull (H-D), raw = enter on RSI exit bar (control).
+    sl_pct/tp_pct: fixed percentage exits (P1-R2). Overrides R-based SL/TP when both set.
     """
     rr = rr_ratio if rr_ratio is not None else RR_RATIO
     df = add_features(df)
@@ -54,16 +57,26 @@ def generate_hd_pull_signals(
         atr = df["atr14"].iloc[entry_i]
         if np.isnan(atr) or atr <= 0:
             continue
-        r = _risk_width(entry, atr, pct_risk=pct_risk, atr_mult=atr_mult)
+
+        if sl_pct is not None and tp_pct is not None:
+            sl = entry * (1 - sl_pct)
+            tp = entry * (1 + tp_pct)
+            tag = f"hd_{mode}_sl{sl_pct}_tp{tp_pct}"
+        else:
+            r = _risk_width(entry, atr, pct_risk=pct_risk, atr_mult=atr_mult)
+            sl = entry - r
+            tp = entry + rr * r
+            tag = "hd_pull" if mode == "pull" else "hd_raw"
+
         signals.append(
             Signal(
                 bar_idx=entry_i,
                 direction=1,
                 entry_price=entry,
-                sl_price=entry - r,
-                tp_price=entry + rr * r,
+                sl_price=sl,
+                tp_price=tp,
                 max_bars=max_bars,
-                tag="hd_pull" if mode == "pull" else "hd_raw",
+                tag=tag,
             )
         )
         last_bar = entry_i

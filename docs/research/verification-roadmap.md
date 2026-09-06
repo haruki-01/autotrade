@@ -13,7 +13,8 @@
 | H-D + H-M4 | conditional | conditional | ≈¥740–1,127 | fail |
 | H-B | conditional | **reject** | ≈¥181（OOS2 のみ） | fail |
 | H-A2 | promote | reject | EV 負 | fail |
-| **H-F2** | **未実行 → B08** | P3-A 待ち | — | — |
+| **H-F2** | **B08 conditional** | **P3-A reject** | EV 負 | fail |
+| **H-F3** | **B09 promote** | **P3-B-NR Gate1** | ≈¥256 | fail |
 
 **教訓**
 
@@ -83,7 +84,12 @@ flowchart LR
 | 6 | **V1** WF+MC+Robustness | **完了** — H-D/H-F3 Research Gate pass |
 | 7 | **B10** MFE/MAE | **完了** — conditional |
 | 8 | **P3-C** H-D filter + H-F3 | **完了** — conditional（OOS2 P+22%） |
-| hold | H-D + H-M4 paper | PT-A 継続監視 |
+| 9 | **PT-B** forward 継続 | **完了** — Gate1 pass |
+| 10 | **P1-R2** Exit grid | **完了** — Gate1 pass（sl0.5/tp1.0, P≈¥1,031 VAL） |
+| 11 | **P3-C-R** zone lb=24 | **完了** — reject（P3-C より劣化） |
+| 12 | **B11** H-F4 Phase0 | **完了** — reject |
+| 13 | **P1-HA** revert Phase1 | **完了** — reject |
+| hold | H-D + H-M4 paper | PT-A/B 継続 |
 
 ---
 

@@ -1176,4 +1176,116 @@
 
 ---
 
-改訂: 2026-09-06（V1 / B10 / P3-C hybrid validation）
+### KB-PT-B-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | PT-B |
+| purpose | H-D forward 継続監視（V1 Research Gate pass 後） |
+| decision_question | Gate1 forward 再現 + 執行劣化率は許容か？ |
+| metrics | PT-B-FORWARD |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- PT-Gate1 pass: EV=+¥14.1, N=49/月, W=55.4%
+- PT-Gate2 fail: P≈¥692
+- degradation=0.86 vs Phase1、v1_research_gate_hd=true
+
+**next_actions**
+
+- P1-R2 Exit grid（B10 示唆）へ
+- Paper 継続監視
+
+---
+
+### KB-P1-R2-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-R2 |
+| purpose | B10 示唆の固定 TP/SL grid（VALIDATION のみ） |
+| decision_question | TP 0.5%/SL 0.5% で Gate1/Research Gate 改善するか？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- **Best**: sl=0.5%, tp=1.0% → P≈¥1,031, EV=+¥21.2, N=48.7, **Gate1 pass**, **Research Gate pass**
+- Baseline (0.8%/1.6%): P≈¥741
+- **+39% P 改善**（VALIDATION）。Gate2 未到達（41%）
+
+**learnings**
+
+- B10 MFE/MAE 示唆どおり、狭い TP で edge 効率改善
+- TEST 未使用（VALIDATION tuning のみ）
+
+**next_actions**
+
+- IS/OOS2/TEST で best config 再計測（固定 config、追加 tuning なし）
+- H-D 葉ルール更新検討
+
+---
+
+### KB-P3CR-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P3-C-R |
+| purpose | zone lookback 48→24 厳格化 |
+| decision_question | 厳格 zone で edge/N 改善するか？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**（EV>0 だが Gate1 fail）
+- VALIDATION: P≈¥161 vs P3-C ¥175（**劣化**）、N=17 vs 25
+- filter_ratio: 42% vs 70%（厳格化でシグナル半減）
+
+**learnings**
+
+- lookback=24 は **厳しすぎ** — P3-C (48) の方が VALIDATION で優位
+
+**next_actions**
+
+- P3-C (lookback=48) を hold。zone 厳格化は停止
+
+---
+
+### KB-B11-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | B11 |
+| purpose | H-F4 THRUST_DECAY Phase0 |
+| decision_question | 減速後に revert/continuation edge があるか？ |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- events=1,368/月≈43、mean_edge≈0（revert vs cont 差なし）
+
+**next_actions**
+
+- H-F4 Phase1 不要。棄却
+
+---
+
+### KB-P1-HA-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P1-HA |
+| purpose | H-A SPIKE revert 執行込み（未検証） |
+| decision_question | Phase0 reject でも執行ルールで edge あるか？ |
+
+**result_summary**
+
+- batch_verdict: **reject**
+- OOS 執行 EV≈−¥4.5、W≈28% — Phase0 結論を **再確認**
+
+**next_actions**
+
+- H-A 探索停止（edge-catalog reject 維持）
+
+---
+
+改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA）

@@ -1,11 +1,13 @@
 {
   "batch_id": "P3-NR",
   "max_iterations": 10,
-  "module": "scripts.phase1.p3a_hf2",
+  "module": "scripts.phase1.p3bnr_eval",
   "stop_if": {
     "gate2": true,
     "no_improvement_for": 3
   },
+  "variables": ["cooldown", "range_quantile", "atr_touch_mult", "rr_ratio", "pct_risk"],
+  "hypothesis_template": "H{n}: {var} 変更で Gate1/Gate2 に届くか",
   "initial_configs": [],
   "iter_configs": {}
 }

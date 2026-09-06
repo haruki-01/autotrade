@@ -19,7 +19,7 @@ Gate2 候補が出るまで **実装・本番フェーズには進まない**。
 
 | 候補 | Gate1 | Gate2 | Research Gate | 執行 VALIDATION P | 次アクション |
 |---|---|:---:|:---:|---:|---|
-| **H-D + H-M4** | Y | N | **pass** | ≈¥741 | **Paper 継続** |
+| **H-D + H-M4** | Y | N | **pass** | ≈¥741–**1,031** (P1-R2 VAL) | **P1-R2 OOS 確認** → Paper |
 | **H-F3 cd4_q40_at20** | N (N=33) | N | **pass** | ≈¥234 | N 帯改善 defer |
 | **P3-C 合成** | N | N | pending | OOS2 ¥339 | zone 厳格化 defer |
 
@@ -65,29 +65,26 @@ flowchart TD
 
 ## 4. 短期（次 2–3 バッチ）
 
-### 4.1 PT-B — H-D forward 継続（最優先）
+### 4.1 PT-B — H-D forward 継続（完了）
 
-Research Gate pass 済み。Paper で執行劣化率を蓄積。
+**結果**: Gate1 pass（EV=+¥14.1, N=49, P≈¥692）。V1 Research Gate 整合。
 
-```bash
-# PT-A 相当の forward 継続監視
-```
+### 4.2 P1-R2 — H-D Exit grid（完了・重要）
 
-### 4.2 P1-R2 — H-D Exit 再設計（defer）
+**結果**: VALIDATION best **sl=0.5%, tp=1.0%** → P≈¥1,031, Gate1 pass, Research Gate pass（Gate2 の 41%）
 
-B10 結果: TP 0.5% hit=73%。VALIDATION のみで grid。
+**次**: 固定 config で IS/OOS2/TEST 再計測（tuning なし）
 
-| 変数 | 候補 |
-|---|---|
-| TP | 0.5%, 0.8%, 1.0% |
-| SL | 0.5%, 0.8% |
-| RR | 1:1.5, 1:2 |
+### 4.3 P3-C-R — zone 厳格化（完了・停止）
 
-**停止条件**: 3 iter 無改善 or Research Gate fail
+lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 
-### 4.3 P3-C-R — zone 厳格化（defer）
+### 4.4 L1 探索（完了）
 
-lookback 48 → 24。VALIDATION tuning のみ。
+| batch | verdict | 要点 |
+|---|---|---|
+| B11 H-F4 | reject | edge なし |
+| P1-HA revert | reject | EV 負、Phase0 再確認 |
 
 ---
 

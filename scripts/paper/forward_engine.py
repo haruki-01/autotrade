@@ -44,7 +44,7 @@ def run_forward_paper(
     initial_bankroll: float = INITIAL_BANKROLL,
     seed: int = 42,
 ) -> dict:
-    """Run PT-A on OOS forward window with monthly compounding."""
+    """Run forward paper on OOS window with monthly compounding."""
     parts = []
     for split in OOS_FORWARD:
         parts.append(filter_df_by_split(df, split))
@@ -56,7 +56,6 @@ def run_forward_paper(
 
     bankroll = float(initial_bankroll)
     records: list[PaperTradeRecord] = []
-    # Process trades in order; scale PnL by bankroll at entry (Q = B/5)
     for t in trades:
         if not t.filled:
             continue
@@ -79,7 +78,6 @@ def run_forward_paper(
         )
         bankroll += scaled
 
-    # Monthly summary by exit month
     monthly_buckets: dict[str, list[float]] = {}
     for r in records:
         mk = str(pd.Timestamp(r.exit_time).to_period("M"))
@@ -122,7 +120,7 @@ def run_forward_paper(
     max_dd = float((peak - equity).max()) if len(equity) else 0.0
 
     pt_gate1 = ev > 0 and 40 <= monthly_n <= 60
-    pt_gate2 = p_monthly >= initial_bankroll * 0.05  # simplified avg vs initial BR gate2
+    pt_gate2 = p_monthly >= initial_bankroll * 0.05
 
     return {
         "records": records,
@@ -163,40 +161,62 @@ def compare_phase1_reference(p1c_path: Path, forward_summary: dict) -> dict:
     }
 
 
-def compute(df) -> dict:
+def _load_v1_research_gate() -> dict:
+    v1_path = Path(__file__).resolve().parents[2] / "data" / "validation" / "v1_all_results.json"
+    if not v1_path.exists():
+        return {"v1_research_gate_hd": None}
+    payload = json.loads(v1_path.read_text())
+    for r in payload.get("results", []):
+        if r.get("strategy") == "hd":
+            return {
+                "v1_research_gate_hd": r.get("research_gate", {}).get("pass"),
+                "v1_forward_ev": r.get("stats", {}).get("ev"),
+            }
+    return {"v1_research_gate_hd": None}
+
+
+def compute(batch_id: str = "PT-A") -> dict:
+    from scripts.phase0.common import load_or_fetch
+
+    df = load_or_fetch(date(2024, 1, 1), date(2026, 8, 31))
     result = run_forward_paper(df)
     ref = compare_phase1_reference(
         Path(__file__).resolve().parents[2] / "data" / "phase1" / "p1c_results.json",
         result["summary"],
     )
     summary = {**result["summary"], **ref}
+    if batch_id.upper() == "PT-B":
+        summary.update(_load_v1_research_gate())
+        summary["notes"] = "PT-B: forward monitoring post V1 Research Gate pass"
     verdict = "pass" if summary.get("pt_gate2") else ("conditional" if summary.get("pt_gate1") else "fail")
     if summary.get("pt_ref_pass") is False and verdict == "pass":
         verdict = "conditional"
+    metric_id = f"{batch_id.upper()}-FORWARD"
     return {
-        "metrics": {"PT-A-FORWARD": {**summary, "verdict": verdict}},
+        "metrics": {metric_id: {**summary, "verdict": verdict}},
         "records": result["records"],
         "monthly": result["monthly"],
     }
 
 
 def batch_verdict(results: dict) -> str:
-    m = results.get("metrics", {}).get("PT-A-FORWARD", {})
-    if m.get("pt_gate2"):
-        return "promote"
-    if m.get("pt_gate1"):
-        return "conditional"
+    for m in results.get("metrics", {}).values():
+        if m.get("pt_gate2"):
+            return "promote"
+        if m.get("pt_gate1"):
+            return "conditional"
     return "reject"
 
 
-def save_results(payload: dict, out_dir: Path | None = None) -> Path:
+def save_results(payload: dict, batch_id: str = "PT-A", out_dir: Path | None = None) -> Path:
     out_dir = out_dir or DATA_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
+    slug = batch_id.lower().replace("-", "_")
     records = payload.pop("records", [])
-    trades_path = out_dir / "pt_a_trades.jsonl"
+    trades_path = out_dir / f"{slug}_trades.jsonl"
     with trades_path.open("w", encoding="utf-8") as f:
         for r in records:
             f.write(json.dumps(asdict(r), ensure_ascii=False) + "\n")
-    out_path = out_dir / "pt_a_results.json"
+    out_path = out_dir / f"{slug}_results.json"
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
     return out_path

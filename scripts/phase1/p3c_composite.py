@@ -26,18 +26,18 @@ def _build_hd_zones(df, lookback: int = 48) -> set[int]:
     return zones
 
 
-def generate_p3c_signals(df, hf3_cfg: HF3NRConfig | None = None):
+def generate_p3c_signals(df, hf3_cfg: HF3NRConfig | None = None, zone_lookback: int = 48):
     hf3_cfg = hf3_cfg or DEFAULT_HF3
     sig_kw = _signal_kwargs(hf3_cfg)
     hf3_sigs = generate_hf3_revert_signals(df, **sig_kw)
-    zones = _build_hd_zones(df)
+    zones = _build_hd_zones(df, lookback=zone_lookback)
     filtered = [s for s in hf3_sigs if s.bar_idx in zones]
     return filtered, len(hf3_sigs)
 
 
-def _run_split(df, split: str, hf3_cfg: HF3NRConfig | None = None) -> dict:
+def _run_split(df, split: str, hf3_cfg: HF3NRConfig | None = None, zone_lookback: int = 48) -> dict:
     sub = filter_df_by_split(df, split)
-    sigs, raw_n = generate_p3c_signals(sub, hf3_cfg)
+    sigs, raw_n = generate_p3c_signals(sub, hf3_cfg, zone_lookback=zone_lookback)
     th = run_backtest(sub, sigs, apply_execution=False)
     ex = run_backtest(sub, sigs, apply_execution=True)
     stats_th = summarize_trades(th, sub, "theoretical_pnl")
@@ -52,6 +52,7 @@ def _run_split(df, split: str, hf3_cfg: HF3NRConfig | None = None) -> dict:
     m["filtered_signals"] = len(sigs)
     m["filter_ratio"] = len(sigs) / raw_n if raw_n else 0.0
     m["config"] = cfg.label()
+    m["zone_lookback"] = zone_lookback
     return m
 
 

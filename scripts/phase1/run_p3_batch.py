@@ -19,6 +19,7 @@ BATCH_MODULES = {
     "P3-A": "scripts.phase1.p3a_hf2",
     "P3-B": "scripts.phase1.p3b_hf3",
     "P3-C": "scripts.phase1.p3c_composite",
+    "P3-C-R": "scripts.phase1.p3cr_composite",
 }
 
 

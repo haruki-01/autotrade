@@ -5,3 +5,7 @@ B10,MFE/MAE Exit分析,H-DのExit再設計余地は？,B10-HD-MFE,H-D,VALIDATION
 B10,MFE/MAE Exit分析,H-F3のExit再設計余地は？,B10-HF3-MFE,H-F3,VALIDATION,,,,,,,,1.35,,,,,,conditional,2025-07-01..2026-02-28,mfe_mae_ratio=1.35
 P3-C,H-D zone+H-F3合成,zone内H-F3でedge増幅するか？,P3C-COMPOSITE,H-F3+H-D,OOS1,6.92,201,0.567,25.3,175,392,,,,,,,False,False,fail,2025-07-01..2026-02-28,Gate1 fail N帯
 P3-C,H-D zone+H-F3合成,zone内H-F3でedge増幅するか？,P3C-COMPOSITE,H-F3+H-D,OOS2,9.40,217,0.576,36.1,339,263,,,,,,,False,False,conditional,2026-03-01..2026-08-31,P+22% vs HF3単体278
+PT-B,H-D forward継続,Gate1 forward再現か？,PT-B-FORWARD,H-D+M4,OOS-FWD,14.13,686,0.554,49.0,692,764,,,,,,,True,False,conditional,2025-07-01..2026-08-31,v1_research_gate pass
+P1-R2,H-D Exit grid,B10示唆TP/SLでGate1改善か？,P1R2-BEST,H-D,VALIDATION,21.18,387,0.576,48.7,1031,253,2.17,8.28,1.0,,,True,True,conditional,2025-07-01..2026-02-28,sl0.5% tp1.0% Research Gate pass
+P3CR,zone厳格化,lookback24でedge改善か？,P3CR-COMPOSITE,H-F3+H-D,VALIDATION,9.47,135,0.637,17.0,161,166,,,,,,,False,False,reject,2025-07-01..2026-02-28,P3-Cより劣化
+P1-HA,H-A revert Phase1,執行込みedgeあるか？,P1-HA-REVERT,H-A,OOS1,-4.57,399,0.278,50.2,-230,1845,,,,,,,False,False,reject,2025-07-01..2026-02-28,Phase0 reject再確認

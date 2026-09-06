@@ -1,0 +1,113 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "P3-C-R",
+  "batch_verdict": "conditional",
+  "preflight": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "preflight",
+        "ok": true,
+        "level": "info",
+        "detail": "no checks defined"
+      }
+    ]
+  },
+  "metrics": {
+    "P3CR-COMPOSITE_IS": {
+      "theoretical_ev": 8.40465064503228,
+      "executed_ev": 6.7518885115325515,
+      "degradation": 0.8033514772590074,
+      "n": 414,
+      "w": 0.5434782608695652,
+      "monthly_n": 23.08087912087912,
+      "p": 155.83952257233528,
+      "max_dd": 538.6491588865943,
+      "random_w": 0.5005625,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "IS",
+      "hf3_raw_signals": 2245,
+      "filtered_signals": 904,
+      "filter_ratio": 0.4026726057906459,
+      "config": "cd4_q40_at20_RR2_R0.01",
+      "zone_lookback": 24
+    },
+    "P3CR-COMPOSITE_OOS1": {
+      "theoretical_ev": 14.130461972078521,
+      "executed_ev": 9.46823399603641,
+      "degradation": 0.6700583473311368,
+      "n": 135,
+      "w": 0.6370370370370371,
+      "monthly_n": 16.98099173553719,
+      "p": 160.78000323682656,
+      "max_dd": 165.54482748748705,
+      "random_w": 0.4999375,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "hf3_raw_signals": 697,
+      "filtered_signals": 293,
+      "filter_ratio": 0.42037302725968434,
+      "config": "cd4_q40_at20_RR2_R0.01",
+      "zone_lookback": 24
+    },
+    "P3CR-COMPOSITE_OOS2": {
+      "theoretical_ev": 11.432225370519177,
+      "executed_ev": 7.132155443741818,
+      "degradation": 0.6238641395343593,
+      "n": 152,
+      "w": 0.5460526315789473,
+      "monthly_n": 25.283497267759564,
+      "p": 180.32583267508278,
+      "max_dd": 315.41956004677286,
+      "random_w": 0.49237499999999995,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS2",
+      "hf3_raw_signals": 738,
+      "filtered_signals": 325,
+      "filter_ratio": 0.44037940379403795,
+      "config": "cd4_q40_at20_RR2_R0.01",
+      "zone_lookback": 24
+    },
+    "P3C-REF-OOS1": {
+      "theoretical_ev": 10.830631409730238,
+      "executed_ev": 6.920592309962858,
+      "degradation": 0.6389832732877788,
+      "n": 201,
+      "w": 0.5671641791044776,
+      "monthly_n": 25.282809917355372,
+      "p": 174.97201988830227,
+      "max_dd": 392.20595383156933,
+      "random_w": 0.4999375,
+      "fee_breakeven_w": 0.3466666666666667,
+      "gate1": false,
+      "gate2": false,
+      "verdict": "fail",
+      "split": "OOS1",
+      "hf3_raw_signals": 697,
+      "filtered_signals": 488,
+      "filter_ratio": 0.7001434720229556,
+      "config": "cd4_q40_at20_RR2_R0.01",
+      "zone_lookback": 48
+    },
+    "P3CR-META": {
+      "zone_lookback": 24,
+      "validation_filter_ratio": 0.42037302725968434,
+      "validation_n": 135,
+      "validation_p": 160.78000323682656,
+      "p3c_validation_p": 174.97201988830227,
+      "validation_executed_ev": 9.46823399603641
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "0a86dadbb8f374ee944c744d2334f4fa8c942ea5"
+}

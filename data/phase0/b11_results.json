@@ -1,0 +1,39 @@
+{
+  "sample_period": "2024-01-01..2026-08-31",
+  "n_bars": 276646,
+  "batch_id": "B11",
+  "batch_verdict": "reject",
+  "metrics": {
+    "P0-HF4-REV": {
+      "n": 1368,
+      "hit_rate": 0.49780701754385964,
+      "mean_edge": -2.4758626702879295e-05,
+      "median_edge": -1.3016267306042995e-05,
+      "p25": -0.005512585272571036,
+      "p75": 0.0056797843247961,
+      "mean_abs_move": 0.008301519945185545,
+      "vs_baseline": -4.951725340575859e-05,
+      "verdict": "fail",
+      "notes": "THRUST_DECAY revert h240, events=1368"
+    },
+    "P0-HF4-CONT": {
+      "n": 1368,
+      "hit_rate": 0.5021929824561403,
+      "mean_edge": 2.4758626702879295e-05,
+      "median_edge": 1.3016267306042995e-05,
+      "p25": -0.0056797843247961,
+      "p75": 0.005512585272571036,
+      "mean_abs_move": 0.008301519945185545,
+      "vs_baseline": 4.951725340575859e-05,
+      "verdict": "fail",
+      "notes": "THRUST_DECAY continuation h240"
+    },
+    "P0-HF4-FREQ": {
+      "n": 1368,
+      "events_per_month": 42.79745118191161,
+      "verdict": "pass"
+    }
+  },
+  "spec_version": "0.2",
+  "git_commit": "0a86dadbb8f374ee944c744d2334f4fa8c942ea5"
+}

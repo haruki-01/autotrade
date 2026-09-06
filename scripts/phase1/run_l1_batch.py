@@ -9,6 +9,7 @@ from datetime import date
 from pathlib import Path
 
 from scripts.phase0.common import load_or_fetch
+from scripts.research.preflight import batch_metadata, run_module_preflight
 
 SAMPLE_START = date(2024, 1, 1)
 SAMPLE_END = date(2026, 8, 31)
@@ -22,7 +23,7 @@ BATCH_MODULES = {
 }
 
 
-def run_batch(batch_id: str, df=None) -> dict:
+def run_batch(batch_id: str, df=None, *, skip_preflight: bool = False) -> dict:
     mod_name = BATCH_MODULES.get(batch_id.upper())
     if not mod_name:
         raise ValueError(f"Unknown L1 batch: {batch_id}")
@@ -30,6 +31,26 @@ def run_batch(batch_id: str, df=None) -> dict:
     if df is None:
         df = load_or_fetch(SAMPLE_START, SAMPLE_END)
         print(f"Loaded {len(df)} bars")
+
+    preflight_result = {"passed": True, "checks": []}
+    if not skip_preflight:
+        preflight_result = run_module_preflight(mod, df)
+        if not preflight_result.get("passed"):
+            print(f"PREFLIGHT FAILED: {preflight_result}")
+            payload = {
+                "sample_period": f"{SAMPLE_START}..{SAMPLE_END}",
+                "n_bars": len(df),
+                "batch_id": batch_id.upper(),
+                "batch_verdict": "preflight_fail",
+                "preflight": preflight_result,
+                **batch_metadata(),
+            }
+            OUT_DIR.mkdir(parents=True, exist_ok=True)
+            slug = batch_id.lower().replace("-", "")
+            out_path = OUT_DIR / f"{slug}_results.json"
+            out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
+            return payload
+
     results = mod.compute(df)
     verdict_fn = getattr(mod, "batch_verdict", None)
     batch_verdict = verdict_fn(results) if verdict_fn else "unknown"
@@ -38,7 +59,9 @@ def run_batch(batch_id: str, df=None) -> dict:
         "n_bars": len(df),
         "batch_id": batch_id.upper(),
         "batch_verdict": batch_verdict,
+        "preflight": preflight_result,
         "metrics": results,
+        **batch_metadata(),
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     slug = batch_id.lower().replace("-", "")

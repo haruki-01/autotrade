@@ -26,6 +26,7 @@ BATCH_MODULES = {
     "B07": "scripts.phase0.b07_metrics",
     "B08": "scripts.phase0.b08_metrics",
     "B09": "scripts.phase0.b09_metrics",
+    "B11": "scripts.phase0.b11_hf4_metrics",
 }
 
 
