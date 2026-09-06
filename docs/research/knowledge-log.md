@@ -1534,8 +1534,70 @@
 **next_actions**
 
 - 別リポジトリで wealth-independence プロジェクトを立てる
-- 本 repo: H-D5 Phase1 / PT-B 継続（BTC のみ）
+- 本 repo: ~~H-D5 Phase1~~ **完了** / PT-B 継続（BTC のみ）
 
 ---
 
-改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E / H-D4-NR / 独立戦略**）
+### KB-PM-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | PM-INDEP |
+| date | 2026-09-06 |
+| purpose | 独立プロジェクト PM 判断確定 |
+| status | **active** |
+
+**decisions**
+
+- 目標年利: **100%（複利）**
+- Layer 1 配分: **80%**
+- Layer 2 第一市場: **US-ETF-D1**
+- BTC Gate2 凍結 → 市場別 Gate: **Yes**
+
+**next_actions**
+
+- 別リポジトリ: Phase S1（NISA リバランス）→ S2（米 ETF Phase0）
+- 本 repo: P2-F 実行済
+
+---
+
+### KB-P2F-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | P2-F |
+| date | 2026-09-06 |
+| hypothesis | H-D5: 12h ピンバー群集 fade + pull |
+| data_range | 2024-01-01..2026-08-31 |
+| parameters | sl=0.5%, tp=1.0%, cooldown=48, max_bars=48, H-M4 ON |
+| result | **conditional / weak-positive** |
+| decision | **単体 promote 禁止** — Gate1 N 不足（≈8–10/月） |
+
+**result_summary（FADE-PULL 執行込み）**
+
+| split | EV | P | N/月 | Gate1 |
+|---|---:|---:|---:|:---:|
+| IS | +¥15.4 | ¥158 | 10.3 | fail |
+| OOS1 | +¥9.3 | ¥76 | 8.2 | fail |
+| OOS2 | +¥0.08 | ¥0.6 | 7.7 | fail |
+
+**learnings**
+
+- **pull > immediate**（H-D 教訓再現）。immediate は OOS1/OOS2 で EV≤0
+- IS→OOS 劣化あり（過学習疑いは低いが edge 薄い）
+- N≈10/月が上限 — 12h pin は BTC 5m Gate1 帯に構造的不適
+- Phase0 weak-positive は Phase1 でも再現（EV>0）だが Gate2 遠隔
+
+**next_actions**
+
+- H-D5 → **closed**（単体 promote 禁止）
+- 次: 新 L1 メカニズム探索 or 別リポジトリ US-ETF Phase0
+- PT-B 月次監視継続
+
+**catalog_updates**
+
+- H-D5: Phase0 weak → **closed / weak-positive**
+
+---
+
+改訂: 2026-09-06（PT-B / P1-R2 / P3-C-R / B11 / P1-HA / **P2-E / H-D4-NR / P2-F / 独立戦略**）
