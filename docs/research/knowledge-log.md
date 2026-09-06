@@ -1250,12 +1250,43 @@
 
 **next_actions**
 
-- Paper 継続監視（PT-B）
+- ~~Paper 継続監視（PT-B）~~ → **継続中**（KB-PT-B-2 参照）
 - Gate2 未到達のため本番採用は見送り
 
 **catalog_updates**
 
 - H-D: status → **Phase1 canonical 確定**（sl0.5%/tp1.0% + H-M4）
+
+---
+
+### KB-PT-B-2-20260906
+
+| 項目 | 内容 |
+|---|---|
+| batch_id | PT-B（継続監視 #2） |
+| purpose | canonical H-D forward 監視 — P1-R2C ベンチマーク + 停止ルール |
+| decision_question | monitoring_status=continue で Paper 継続可能か？ |
+
+**result_summary**
+
+- batch_verdict: **conditional**
+- PT-Gate1 pass: EV=+¥19.2, N=49, P≈¥943（複利 forward）
+- **monitoring_status: continue**（停止ルール未発動）
+- split: VALIDATION EV=+¥21.2/P=¥1,031, TEST EV=+¥14.1/P=¥727 — いずれも Gate1 pass
+- Gate2: 14 ヶ月中 0 ヶ月 pass（gate2_pass_rate=0%）
+- final_BR=¥63,200（+26.4%）
+
+**learnings**
+
+- P1-R2C ベンチマークと forward が整合（ev_vs_p1r2c≈1.17）
+- 2026-04〜06 は低 P 帯（¥148–532/月）だが EV>0 維持
+- Gate2 未到達でも Gate1 + Research Gate は安定
+
+**next_actions**
+
+- **Paper 継続**（monitoring_status=continue）
+- 月次で `python3 -m scripts.paper.run_pt PT-B` を再実行
+- Gate2 L0 再ベースラインは PM 判断
 
 ---
 

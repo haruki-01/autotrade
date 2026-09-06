@@ -65,9 +65,13 @@ flowchart TD
 
 ## 4. 短期（次 2–3 バッチ）
 
-### 4.1 PT-B — H-D forward 継続（完了・canonical 更新）
+### 4.1 PT-B — H-D forward 継続監視（継続中）
 
-**結果**: Gate1 pass（EV=+¥19.2, N=49, P≈**¥943**）。canonical exit（sl0.5%/tp1.0%）で +36% 改善。
+**結果**: monitoring_status=**continue**, PT-Gate1 pass（EV=+¥19.2, P≈¥943, final BR=¥63,200）
+
+**監視**: `python3 -m scripts.paper.run_pt PT-B` — 月次再実行推奨
+
+**停止ルール**: EV≤0 または 3 連続赤字月 → pause/stop（[paper-trade-spec.md §6](paper-trade-spec.md)）
 
 ### 4.2 P1-R2 / P1-R2C — H-D Exit（完了・重要）
 
@@ -100,7 +104,7 @@ lookback=24 は P3-C より劣化 → **zone 厳格化停止**
 
 | 優先 | バッチ | 理由 |
 |---:|---|---|
-| 1 | **Paper 継続（PT-B）** | P1-R2C 全 split Gate1 pass — forward 監視 |
+| 1 | **Paper 継続（PT-B）** | **継続中** — monitoring_status=continue |
 | 2 | P3-NR research loop | H-F3 N 帯改善（defer） |
 | 3 | Gate2 L0 再ベースライン | PM 判断 |
 

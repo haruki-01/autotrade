@@ -5,7 +5,7 @@
   "batch_id": "PT-B",
   "batch_verdict": "conditional",
   "spec_version": "0.2",
-  "git_commit": "7c30eeec0871d1f49fb60f3e6352d51505a6e016",
+  "git_commit": "8d2505382c936eccf08e7b42231add836e90c14c",
   "metrics": {
     "PT-B-FORWARD": {
       "n": 686,
@@ -25,7 +25,11 @@
       "pt_ref_pass": true,
       "v1_research_gate_hd": true,
       "v1_forward_ev": 15.294508185760064,
-      "notes": "PT-B: forward monitoring post V1 Research Gate pass",
+      "notes": "PT-B: canonical H-D forward monitoring (sl0.5%/tp1.0%)",
+      "canonical_sl_pct": 0.005,
+      "canonical_tp_pct": 0.01,
+      "monitoring_status": "continue",
+      "gate2_pass_rate": 0.0,
       "verdict": "conditional"
     }
   },
@@ -184,5 +188,54 @@
       "gate2_pass": false,
       "bankroll_end": 63200.20515549293
     }
-  ]
+  ],
+  "monitoring": {
+    "p1r2c_available": true,
+    "p1r2c_val_ev": 21.177093090026432,
+    "p1r2c_val_p": 1030.8763892007296,
+    "p1r2c_test_ev": 14.140867148049667,
+    "p1r2c_test_p": 726.8220260102145,
+    "p1r2c_oos_avg_ev": 17.65898011903805,
+    "p1r2c_oos_avg_p": 878.849207605472,
+    "forward_ev": 19.24228156777396,
+    "forward_p": 942.8717968209241,
+    "ev_vs_p1r2c": 1.0896598466085232,
+    "p_vs_p1r2c": 1.0728482072480776,
+    "p1r2c_ref_pass": true,
+    "monitoring_status": "continue",
+    "alerts": [],
+    "max_consecutive_loss_months": 0,
+    "gate2_pass_months": 0,
+    "gate2_pass_rate": 0.0,
+    "months_tracked": 14,
+    "split_breakdown": {
+      "VALIDATION": {
+        "split_code": "OOS1",
+        "executed_ev": 21.177093090026432,
+        "n": 387,
+        "w": 0.5762273901808785,
+        "monthly_n": 48.678842975206614,
+        "p": 1030.8763892007296,
+        "max_dd": 252.58449434955583,
+        "gate1": true,
+        "gate2": false
+      },
+      "TEST": {
+        "split_code": "OOS2",
+        "executed_ev": 14.140867148049667,
+        "n": 309,
+        "w": 0.540453074433657,
+        "monthly_n": 51.39868852459016,
+        "p": 726.8220260102145,
+        "max_dd": 410.40037533887516,
+        "gate1": true,
+        "gate2": false
+      }
+    },
+    "canonical_config": {
+      "sl_pct": 0.005,
+      "tp_pct": 0.01,
+      "weekend_filter": true
+    }
+  }
 }

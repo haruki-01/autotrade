@@ -12,10 +12,17 @@ import pandas as pd
 
 from scripts.phase0.common import add_features
 from scripts.phase1.backtest import run_backtest
-from scripts.phase1.common import INITIAL_BANKROLL, POSITION_Q, filter_df_by_split
+from scripts.phase1.common import (
+    HD_CANONICAL_SL_PCT,
+    HD_CANONICAL_TP_PCT,
+    INITIAL_BANKROLL,
+    POSITION_Q,
+    filter_df_by_split,
+)
 from scripts.phase1.signals.h_d_pull import generate_canonical_hd_signals
 
 OOS_FORWARD = ("OOS1", "OOS2")
+SPLIT_LABELS = {"OOS1": "VALIDATION", "OOS2": "TEST"}
 DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "paper"
 
 
@@ -43,10 +50,12 @@ def run_forward_paper(
     df: pd.DataFrame,
     initial_bankroll: float = INITIAL_BANKROLL,
     seed: int = 42,
+    splits: tuple[str, ...] | None = None,
 ) -> dict:
     """Run forward paper on OOS window with monthly compounding."""
+    use_splits = splits or OOS_FORWARD
     parts = []
-    for split in OOS_FORWARD:
+    for split in use_splits:
         parts.append(filter_df_by_split(df, split))
     forward_df = pd.concat(parts, ignore_index=True)
     forward_df = add_features(forward_df)
@@ -175,8 +184,36 @@ def _load_v1_research_gate() -> dict:
     return {"v1_research_gate_hd": None}
 
 
+def _split_breakdown(df: pd.DataFrame, seed: int = 42) -> dict:
+    """Per-split forward metrics (fixed Q — Phase1 comparable)."""
+    from scripts.phase1.metrics import evaluate_gates, summarize_trades
+
+    out = {}
+    for split in OOS_FORWARD:
+        sub = filter_df_by_split(df, split)
+        sub = add_features(sub)
+        sigs = generate_canonical_hd_signals(sub)
+        trades = run_backtest(sub, sigs, apply_execution=True, seed=seed)
+        stats = summarize_trades(trades, sub, "executed_pnl")
+        g1, g2 = evaluate_gates(stats)
+        label = SPLIT_LABELS.get(split, split)
+        out[label] = {
+            "split_code": split,
+            "executed_ev": stats.get("ev"),
+            "n": stats.get("n"),
+            "w": stats.get("w"),
+            "monthly_n": stats.get("monthly_n"),
+            "p": stats.get("p"),
+            "max_dd": stats.get("max_dd"),
+            "gate1": g1,
+            "gate2": g2,
+        }
+    return out
+
+
 def compute(batch_id: str = "PT-A") -> dict:
     from scripts.phase0.common import load_or_fetch
+    from scripts.paper.pt_monitor import build_monitoring_block
 
     df = load_or_fetch(date(2024, 1, 1), date(2026, 8, 31))
     result = run_forward_paper(df)
@@ -185,18 +222,30 @@ def compute(batch_id: str = "PT-A") -> dict:
         result["summary"],
     )
     summary = {**result["summary"], **ref}
+    monitoring = None
     if batch_id.upper() == "PT-B":
         summary.update(_load_v1_research_gate())
-        summary["notes"] = "PT-B: forward monitoring post V1 Research Gate pass"
+        summary["notes"] = "PT-B: canonical H-D forward monitoring (sl0.5%/tp1.0%)"
+        summary["canonical_sl_pct"] = HD_CANONICAL_SL_PCT
+        summary["canonical_tp_pct"] = HD_CANONICAL_TP_PCT
+        split_bd = _split_breakdown(df)
+        monitoring = build_monitoring_block(result["summary"], result["monthly"], split_bd)
+        summary["monitoring_status"] = monitoring.get("monitoring_status")
+        summary["gate2_pass_rate"] = monitoring.get("gate2_pass_rate")
     verdict = "pass" if summary.get("pt_gate2") else ("conditional" if summary.get("pt_gate1") else "fail")
     if summary.get("pt_ref_pass") is False and verdict == "pass":
         verdict = "conditional"
+    if batch_id.upper() == "PT-B" and monitoring and monitoring.get("monitoring_status") == "stop":
+        verdict = "fail"
     metric_id = f"{batch_id.upper()}-FORWARD"
-    return {
+    payload = {
         "metrics": {metric_id: {**summary, "verdict": verdict}},
         "records": result["records"],
         "monthly": result["monthly"],
     }
+    if monitoring:
+        payload["monitoring"] = monitoring
+    return payload
 
 
 def batch_verdict(results: dict) -> str:

@@ -1,2 +1,3 @@
 batch_id,purpose,decision_question,metric_id,hypothesis_id,split,executed_ev,n,w,monthly_n,p,max_dd,gate1,gate2,verdict,sample_period,notes
 PT-A,フォワードsim paper trade,H-D+M4はforward+複利でGate1再現か？,PT-A-FORWARD,H-D+M4,OOS-FWD,14.1286,686,0.5539,49.0000,692.3023,764.2794,True,False,conditional,2024-01-01..2026-08-31,"degradation=0.86, final_BR=59692"
+PT-B,canonical H-D forward監視,P1-R2C後Gate1継続+停止ルール,PT-B-FORWARD,H-D+M4,OOS-FWD,19.2423,686,0.5481,49.0000,942.8718,548.5787,True,False,conditional,2024-01-01..2026-08-31,"monitoring=continue, gate2_rate=0/14, final_BR=63200"

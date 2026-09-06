@@ -84,7 +84,7 @@ flowchart LR
 | 6 | **V1** WF+MC+Robustness | **完了** — H-D/H-F3 Research Gate pass |
 | 7 | **B10** MFE/MAE | **完了** — conditional |
 | 8 | **P3-C** H-D filter + H-F3 | **完了** — conditional（OOS2 P+22%） |
-| 9 | **PT-B** forward 継続 | **完了** — Gate1 pass |
+| 9 | **PT-B** forward 継続 | **継続中** — monitoring_status=continue |
 | 10 | **P1-R2** Exit grid | **完了** — Gate1 pass（sl0.5/tp1.0, P≈¥1,031 VAL） |
 | 11 | **P1-R2C** 固定 config | **完了** — TRAIN/VAL/TEST 全 Gate1 pass |
 | 11 | **P3-C-R** zone lb=24 | **完了** — reject（P3-C より劣化） |

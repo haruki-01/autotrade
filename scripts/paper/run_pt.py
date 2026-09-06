@@ -43,6 +43,15 @@ def main() -> None:
     args = parser.parse_args()
     payload = run_pt(args.batch_id)
     print(json.dumps(payload["metrics"], indent=2, ensure_ascii=False, default=str))
+    if args.batch_id.upper() == "PT-B" and "monitoring" in payload:
+        mon = payload["monitoring"]
+        print("\n--- PT-B Monitoring ---")
+        print(f"status: {mon.get('monitoring_status')}")
+        print(f"gate2_pass_rate: {mon.get('gate2_pass_rate')} ({mon.get('gate2_pass_months')}/{mon.get('months_tracked')} months)")
+        if mon.get("alerts"):
+            print(f"alerts: {mon['alerts']}")
+        for label, split_m in (mon.get("split_breakdown") or {}).items():
+            print(f"  {label}: EV={split_m.get('executed_ev'):.1f}, P={split_m.get('p'):.0f}, gate1={split_m.get('gate1')}")
 
 
 if __name__ == "__main__":
